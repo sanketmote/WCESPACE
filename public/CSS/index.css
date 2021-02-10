@@ -143,16 +143,38 @@
 }
 
 .team .member {
-  padding: 30px;
+  padding: 40px;
 }
 
 .team img {
-  width: 140px;
-  height: 140px;
+  width: 190px;
+  height: 190px;
   border-radius: 50%;
   text-align: center;
+  padding-left: 20px;
 }
 
 .team .info {
   padding-top: 20px;
 }
+.linkimg {
+  text-align: center;
+}
+.linkimg img {
+  padding-left: 5px;
+}
+.linkimg div {
+  padding: 20px 0 0 0px;
+}
+
+.linkimg div a {
+  text-decoration: none;
+  color: black;
+  font-size: 25px;
+  padding: 0 6px ;
+}
+
+.linkimg div a :hover{
+  color: white;
+}
+
