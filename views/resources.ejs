@@ -2,22 +2,23 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
 <link rel="stylesheet" href="assets/css/resstyle.css" />
 
-
-<section id="headsec" class="d-flex align-items-center">
-
+<%- include("navigation") -%>
+<!-- <section id="headsec" class="d-flex align-items-center">
+  
   <div class="container-fluid" data-aos="fade-up">
     <div class="row justify-content-center">
       <div class="col-xl-5 col-lg-6 pt-3 pt-lg-0 order-2 order-lg-1 d-flex flex-column justify-content-center">
         <h1>WCE SPACE</h1>
-      </div>
+      </div> -->
       <!-- <div class="col-xl-4 col-lg-6 order-1 order-lg-2 headsec-img" data-aos="zoom-in" data-aos-delay="150">
         <img src="img/about2.jpg" class="img-fluid animated" alt="">
       </div> -->
-    </div>
+    <!-- </div>
   </div>
 
-</section>
-
+</section> -->
+<div id="resources"></div>
+<section id="headsec" style="padding: 50px 0; height:0"></section>
 <div id="page-wraper">
     <!-- Sidebar Menu -->
     <div class="responsive-nav">
@@ -27,66 +28,253 @@
         <div class="container">
           <nav class="main-nav" role="navigation">
             <ul class="main-menu" style="padding: 0%;">
-              <li><a href="#section1">About Me</a></li>
-              <li><a href="#section2">What I’m good at</a></li>
-              <li><a href="#section3">My Work</a></li>
-              <li><a href="#section4">Contact Me</a></li>
+              <li><a href="#section1"> Books/Notes </a></li>
+              <li><a href="#section2"> Exam Paper</a></li>
+              <li><a href="contribute" target="_blank">Contribute US</a></li>
+              <li><a href="#">Forum</a></li>
             </ul>
           </nav>
         </div>
       </div>
     </div>
 
-    <section class="section my-work gallery__masonry__activation" data-section="section3">
+    <section class="section my-work gallery__masonry__activation" data-section="section1" style="padding-top: 50px;">
       <div class="container">
-        <div class="section-heading">
-          <h2>NOTES</h2>
+        <div class="section-heading" style="padding: 30px 45px; ">
+          <h2 style="color: black;font-size:43px;">NOTES</h2>
         </div>
           <div class="isotope-wrapper">
             <div class="row isotope-toolbar">
                 <div class="gallery__menu">
+
                     <button data-filter=".cse" class="is-checked">CSE</button>
                     <button data-filter=".it" class="">IT</button>
                     <button data-filter=".civil" class="">Civil</button>
                     <button data-filter=".mechanical" class=""> Mechanical</button>
                     <button data-filter=".electrical" class=""> Electrical </button>
                     <button data-filter=".electronics" class=""> Electronics </button>
+                    
                 </div>
             </div>
-
+<!-- CSE  -->
             <div class="row isotope-box masonry__wrap">
-              <div id="rm" class="gallery__item civil hidden" style="position: absolute; left: 0%; top: 0px;">
-                <div class="portfolio">
+              <div class="gallery__item cse" style="position: absolute; left: 0%; top: 0px;">
+                <div class="portfolio table-adj">
+                  <div class="row">
+                    <div class="col-sm-6 card-col">
+                      <div class="card">
+                        <div class="card-body bsuccess">
+                          <h2><a href="#">First Year</a></h2>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-sm-6 card-col">
+                      <div class="card">
+                        <div class="card-body bdanger">
+                          <h2 ><a href="#">Second Year</a></h2>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-sm-6 card-col">
+                      <div class="card">
+                        <div class="card-body bwarning">
+                          <h2><a href="#">Third Year</a></h2>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="col-sm-6 card-col">
+                      <div class="card">
+                        <div class="card-body binfo">
+                          <h2><a href="#">Final Year</a></h2>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                   
-                  <table class="table">
-                    <tbody>
-                    <tr>
-                      <td class="table-primary">Semester 1</td>
-                    </tr>
-                    <tr>
-                      <td class="table-secondary">Semester 2</td>
-                    </tr>
-                    <tr>
-                      <td class="table-success">Semester 3</td>
-                    </tr>
-                    <tr>
-                      <td class="table-danger">Semester 4</td>
-                    </tr>
-                    <tr>
-                      <td class="table-warning">Semester 5</td>
-                    </tr>
-    
-                    <tr>
-                      <td class="table-info">Semester 6</td>
-                    </tr>
-                    <tr>
-                      <td class="table-warning">Semester 7</td>
-                    </tr>
-                    <tr>
-                      <td class="table-danger">Semester 8</td>
-                    </tr>
-                    </tbody>
-                  </table>
+                </div>
+              </div>
+
+<!-- IT  -->
+              <div id="rm" class="gallery__item it hidden" style="position: absolute; left: 0%; top: 0px;">
+                <div class="portfolio table-adj">
+                  <div class="row">
+                    <div class="col-sm-6 card-col">
+                      <div class="card">
+                        <div class="card-body binfo">
+                          <h2><a href="#">First Year</a></h2>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-sm-6 card-col">
+                      <div class="card">
+                        <div class="card-body bsuccess">
+                          <h2 ><a href="#">Second Year</a></h2>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-sm-6 card-col">
+                      <div class="card">
+                        <div class="card-body bdanger">
+                          <h2><a href="#">Third Year</a></h2>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="col-sm-6 card-col">
+                      <div class="card">
+                        <div class="card-body bwarning">
+                          <h2><a href="#">Final Year</a></h2>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+
+<!-- CIVIL  -->
+              <div id="rm" class="gallery__item civil hidden" style="position: absolute; left: 0%; top: 0px;">
+                <div class="portfolio table-adj">
+                  <div class="row">
+                    <div class="col-sm-6 card-col">
+                      <div class="card">
+                        <div class="card-body bwarning">
+                          <h2><a href="#">First Year</a></h2>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-sm-6 card-col">
+                      <div class="card">
+                        <div class="card-body binfo">
+                          <h2 ><a href="#">Second Year</a></h2>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-sm-6 card-col">
+                      <div class="card">
+                        <div class="card-body bsuccess">
+                          <h2><a href="#">Third Year</a></h2>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="col-sm-6 card-col">
+                      <div class="card">
+                        <div class="card-body bdanger">
+                          <h2><a href="#">Final Year</a></h2>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+<!-- Mechanical -->
+              <div id="rm" class="gallery__item mechanical hidden" style="position: absolute; left: 0%; top: 0px;">
+                <div class="portfolio table-adj">
+                  <div class="row">
+                    <div class="col-sm-6 card-col">
+                      <div class="card">
+                        <div class="card-body bdanger">
+                          <h2><a href="#">First Year</a></h2>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-sm-6 card-col">
+                      <div class="card">
+                        <div class="card-body bwarning">
+                          <h2 ><a href="#">Second Year</a></h2>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-sm-6 card-col">
+                      <div class="card">
+                        <div class="card-body binfo">
+                          <h2><a href="#">Third Year</a></h2>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="col-sm-6 card-col">
+                      <div class="card">
+                        <div class="card-body bsuccess">
+                          <h2><a href="#">Final Year</a></h2>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+<!-- Electrical -->
+              <div id="rm" class="gallery__item electrical hidden" style="position: absolute; left: 0%; top: 0px;">
+                <div class="portfolio table-adj">
+                  <div class="row">
+                    <div class="col-sm-6 card-col">
+                      <div class="card">
+                        <div class="card-body bsuccess">
+                          <h2><a href="#">First Year</a></h2>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-sm-6 card-col">
+                      <div class="card">
+                        <div class="card-body bdanger">
+                          <h2 ><a href="#">Second Year</a></h2>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-sm-6 card-col">
+                      <div class="card">
+                        <div class="card-body bwarning">
+                          <h2><a href="#">Third Year</a></h2>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="col-sm-6 card-col">
+                      <div class="card">
+                        <div class="card-body binfo">
+                          <h2><a href="#">Final Year</a></h2>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+<!-- Electronics -->
+              <div id="rm" class="gallery__item electronics hidden" style="position: absolute; left: 0%; top: 0px;">
+                <div class="portfolio table-adj">
+                  <div class="row">
+                    <div class="col-sm-6 card-col">
+                      <div class="card">
+                        <div class="card-body binfo">
+                          <h2><a href="#">First Year</a></h2>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-sm-6 card-col">
+                      <div class="card">
+                        <div class="card-body bsuccess">
+                          <h2 ><a href="#">Second Year</a></h2>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-sm-6 card-col">
+                      <div class="card">
+                        <div class="card-body bdanger">
+                          <h2><a href="#">Third Year</a></h2>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="col-sm-6 card-col">
+                      <div class="card">
+                        <div class="card-body bwarning">
+                          <h2><a href="#">Final Year</a></h2>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -98,3 +286,4 @@
     <script src="assets/js/jquery-3.2.1.min.js"></script>
 	<script src="assets/js/plugins.js"></script>
 	<script src="assets/js/active.js"></script>
+  

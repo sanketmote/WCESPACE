@@ -497,6 +497,7 @@ section {
 .moto {
   background: linear-gradient(90deg, rgba(88, 70, 249, 0.5) 0%, rgba(123, 39, 216, 0.5) 100%), url("../img/counts-bg.png") center center no-repeat;
   padding: 80px 0 60px 0;
+  color: white;
 }
 .moto .icon-box {
   text-align: center;
@@ -505,6 +506,9 @@ section {
   background: #fff;
 }
 
+.moto h2::after {
+  background: white;
+}
 .moto .icon-box .icon {
   margin: 0 auto;
   width: 100px;
@@ -540,7 +544,7 @@ section {
 }
 
 .moto .icon-box h4 a {
-  color: #2c4964;
+  color: #ffffff;
   transition: ease-in-out 0.3s;
 }
 
@@ -556,7 +560,7 @@ section {
 }
 
 .moto .iconbox-blue i {
-  color: #47aeff;
+  color: #ffffff;
 }
 
 .moto .iconbox-blue:hover .icon i {
@@ -564,11 +568,11 @@ section {
 }
 
 .moto .iconbox-blue:hover .icon path {
-  fill: #47aeff;
+  fill: #ffffff;
 }
 
 .moto .iconbox-orange i {
-  color: #ffa76e;
+  color: #ff7113;
 }
 
 .moto .iconbox-orange:hover .icon i {
@@ -616,7 +620,7 @@ section {
 }
 
 .moto .iconbox-teal i {
-  color: #11dbcf;
+  color: #ffffff;
 }
 
 .moto .iconbox-teal:hover .icon i {

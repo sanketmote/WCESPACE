@@ -173,7 +173,7 @@ a:hover {
 }
 
 .main-nav li:last-child a {
-    border-bottom: 2px solid #fff;
+    border-bottom: 2px solid #000;
 }
 
 .main-nav li {
@@ -186,17 +186,17 @@ a:hover {
     display: inline-block;
     font-size: 16px;
     font-weight: 700;
-    color: #fff;
+    color: #000;
     width: 100%;
     transition: all 0.5s;
-    border-top: 2px solid #fff;
+    border-top: 2px solid #000;
 }
 
 .main-nav li:hover a,
 .main-nav li.active a {
-    background: #fff;
-    color: #8c363e;
-}
+  background-image: -webkit-linear-gradient(45deg, #563afae6 0%, #563afae6 100%);
+    color: #000;
+} 
 
 /* Sidebar Menu */
 
@@ -247,7 +247,7 @@ a:hover {
 
 .menu .social-network ul li a:hover {
     background-color: #fff;
-    color: #a43f49;
+    color: #fff;
 }
 
 .menu .copyright-text {
@@ -289,9 +289,9 @@ a:hover {
 }
 
 .menu {
-    left: 10%;
+    left: 0%;
     -webkit-overflow-scrolling: touch;
-    background-color: #a43f49;
+    background-color: #fff;
     box-sizing: border-box;
     height: 100vh;  
     max-height: 100vh !important;
@@ -305,7 +305,7 @@ a:hover {
     /* top: calc(0px);   */
     width: 20%;
     will-change: transform;
-    z-index: 9999 !important;
+    /* z-index: 9999 !important; */
 }
 
 .menu-toggle {
@@ -318,13 +318,13 @@ a:hover {
 }
 
 #menu-toggle {
-    z-index: 999;
+    /* z-index: 999; */
     cursor: pointer;
     position: fixed;
     top: 0;
     left: 0;
-    color: #a43f49;
-    background-color: #fff;
+    color: #fff;
+    /* background-color: #fff; */
     width: 60px;
     height: 60px;
     text-align: center;
@@ -339,7 +339,7 @@ a:hover {
 #menu-close {
     cursor: pointer;
     text-align: right;
-    color: #a43f49;
+    color: #fff;
     background-color: #fff;
     width: 100%;
     height: 60px;
@@ -395,9 +395,10 @@ a:hover {
 button {
     display: inline-block;
     padding: 10px 20px;
+    margin: 5px 4px!important;
     background-color: #fff;
-    color: #a43f49;
-    font-size: 12px;
+    color: black;
+    font-size: 16px;
     font-weight: 800;
     letter-spacing: 0.5px;
     text-transform: uppercase;
@@ -407,9 +408,9 @@ button {
     cursor: pointer;
 }
 
-button:hover {
+.is-checked,button:hover,:active {
     outline: none;
-    background-color: #a43f49;
+    background-image:  -webkit-linear-gradient(45deg, #563afae6 0%, #563afae6 100%);
     color: #fff;
 }
 
@@ -418,7 +419,7 @@ button:hover {
 
 @media screen and (max-width: 1680px) {
     .menu {
-        left: 5%;
+        left: 0%;
     }
 
     .section {

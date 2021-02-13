@@ -26,7 +26,8 @@
 
         
         function remclass() {
-          $('#rm').removeClass('hidden');
+          // $('#rm').removeClass('hidden');
+          $("[id='rm']").removeClass('hidden');
       };
         // init Isotope
         var $grid = $('.masonry__wrap').isotope({
