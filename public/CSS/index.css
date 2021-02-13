@@ -1,13 +1,11 @@
 @import url("https://fonts.googleapis.com/css?family=Josefin+Sans|Mountains+of+Christmas&display=swap");
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  list-style: none;
-  text-decoration: none;
-  font-family: "Josefin Sans", sans-serif;
+.slidercustom {
+  padding-bottom: 0px; 
+  background: linear-gradient(45deg, rgba(86, 58, 250, 0.9) 0%, rgba(116, 15, 214, 0.9) 100%), url(../img/hero-bg.jpg) center center no-repeat;
+  background-size: cover;
 }
+
 
 .wrapper .multi_color_border{
   width: 100%;
@@ -139,7 +137,30 @@
 
 .team {
   padding: 50px 35px;
-  background-color: #8d50288f;
+  background-color: white;
+}
+
+.team .loading:before {
+  -webkit-animation: animate-loading 4s linear infinite;
+  animation: animate-loading 4s linear infinite;
+}
+
+@-webkit-keyframes animate-loading {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes animate-loading {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .team .member {
@@ -177,4 +198,3 @@
 .linkimg div a :hover{
   color: white;
 }
-

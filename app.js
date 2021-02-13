@@ -13,6 +13,13 @@ app.get("/",function(req,res){
     res.render("home")
 }); 
 
+app.get("/contribute",function(req,res){
+    res.render("contribute")
+}); 
+
+app.get("/resources",function(req,res){
+    res.render("resources")
+});
 // app.post("/", function(req,res){
 //     var item = req.body.newItem;
 //     items.push(item);
