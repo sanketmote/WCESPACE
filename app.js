@@ -20,6 +20,11 @@ app.get("/contribute",function(req,res){
 app.get("/resources",function(req,res){
     res.render("resources")
 });
+
+app.get("/books",function(req,res){
+    res.render("books")
+}); 
+
 // app.post("/", function(req,res){
 //     var item = req.body.newItem;
 //     items.push(item);

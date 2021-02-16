@@ -1,0 +1,59 @@
+.filter h3{
+    /* font-size: 35px!important; */
+    /* padding-top: 30px; */
+    text-align: center!important;
+    align-items: center;
+    display: inline;
+}
+
+.filter{
+    /* margin-top: 30px; */
+    text-align: center;
+    display: inline;
+}
+
+aside {
+    margin-top: 15px;
+}
+
+aside select {
+    padding: 10px;
+    margin-left: 10px;
+}
+
+.sorting {
+    display: inline;
+    padding-top: 15px;
+}
+
+/* .formcontrol {
+    display: inline;
+    width: auto;
+} */
+
+.sorting select {
+    padding: 10px;
+    margin-left: 10px;
+    appearance: none;
+    background-color: white;
+    margin-bottom: 3px;
+}
+
+.sorting select ul {
+    margin-top: 3px;
+}
+
+.filtmob {
+    display: none;
+}
+
+@media only screen and (max-width: 950px) {
+    .filtmob {
+        display: block;
+    }
+
+    .filtlap {
+        display: none;
+    }
+    
+}
