@@ -1,0 +1,200 @@
+@import url("https://fonts.googleapis.com/css?family=Josefin+Sans|Mountains+of+Christmas&display=swap");
+
+.slidercustom {
+  padding-bottom: 0px; 
+  background: linear-gradient(45deg, rgba(86, 58, 250, 0.9) 0%, rgba(116, 15, 214, 0.9) 100%), url(../img/hero-bg.jpg) center center no-repeat;
+  background-size: cover;
+}
+
+
+.wrapper .multi_color_border{
+  width: 100%;
+  height: 5px;
+  background: linear-gradient(to right, #37a000 0% , #37a000 25%, #494949 25%, #494949 50%, #37a000 50%, #37a000 75%, #494949 75%, #494949 100%);
+}
+
+.wrapper .top_nav{
+  margin-top: 5px;
+  /* width: 100%; */
+  height: 65px;
+  background: #fff;
+  padding: 0 50px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.wrapper .left{
+  margin-top: 5px;
+  height: 130px;
+  display: flex;
+  align-items: center;
+}
+
+.wrapper .left .logo p{
+  font-size: 54px;
+  font-weight: bold;
+  color: #494949;
+  font-family: "Mountains of Christmas", cursive;
+  margin-right: 25px;
+  padding-left: 12px;
+  width: 100%;
+  letter-spacing: 6px;
+  display: flex;
+}
+
+.wrapper .left .logo p span{
+  color: #37a000;
+  padding-right: 4px;
+  font-family: "Mountains of Christmas", cursive;
+}
+
+.wrapper .top_nav .search_bar input[type="text"]{
+  border: 1px solid #666666;
+  padding: 5px 10px; 
+  outline: none;
+  transition: all 0.5s linear;
+}
+
+.wrapper .top_nav .search_bar input[type="text"]:focus{
+  width: 50%;
+}
+
+.wrapper .top_nav .right ul{
+  display: flex;
+}
+
+.wrapper .top_nav .right ul li{
+  margin: 0 12px;
+}
+
+.wrapper .top_nav .right ul li:last-child{
+  background:  #37a000;
+  margin-right: 0;
+  border-radius: 2px;
+  text-transform: uppercase;
+  /* letter-spacing: 3px; */
+}
+
+.wrapper .top_nav .right ul li:hover:last-child{
+  background: #494949;
+}
+
+.wrapper .top_nav .right ul li a{
+  /* display: block; */
+  padding: 8px 10px;
+  color: #666666;
+}
+
+.wrapper .top_nav .right ul li:last-child a{
+   color: #fff;
+}
+
+.wrapper .bottom_nav{
+    margin-top: 5px;
+    /* width: 100%; */
+    height: 65px;
+    background: #fff;
+    padding: 0 50px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.wrapper .bottom_nav ul{
+  width: 100%;
+  height: 45px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.wrapper .bottom_nav ul li a{
+  color: #494949;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  font-size: 12px;
+}
+
+.wrapper .banner img{
+  width: 100%;
+  height: 400px;
+}
+
+.aboutus {
+  padding: 50px 35px;
+}
+
+.aboutus h1 {
+  font-size: 2.5rem;
+}
+
+.aboutus p {
+  padding: 0 43px;
+  font-size: 2rem;
+  font-weight: 400;
+}
+
+.team {
+  padding: 50px 35px;
+  background-color: white;
+}
+
+.team .loading:before {
+  -webkit-animation: animate-loading 4s linear infinite;
+  animation: animate-loading 4s linear infinite;
+}
+
+@-webkit-keyframes animate-loading {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes animate-loading {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.team .member {
+  padding: 40px;
+}
+
+.team img {
+  width: 190px;
+  height: 190px;
+  border-radius: 50%;
+  text-align: center;
+  padding-left: 20px;
+}
+
+.team .info {
+  padding-top: 20px;
+}
+.linkimg {
+  text-align: center;
+}
+.linkimg img {
+  padding-left: 5px;
+}
+.linkimg div {
+  padding: 20px 0 0 0px;
+}
+
+.linkimg div a {
+  text-decoration: none;
+  color: black;
+  font-size: 25px;
+  padding: 0 6px ;
+}
+
+.linkimg div a :hover{
+  color: white;
+}
