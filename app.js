@@ -4,6 +4,10 @@ const app = express('express');
 
 const BodyParser = require('body-parser');
 
+// added trial books.js file for testing of books.ejs file using array of key value pair see in books.js file 
+const books = require("./books")
+
+
 var alert = require('alert');
 
 const sha256 = require('sha256');
@@ -350,6 +354,20 @@ app.post('/cpass',(req,res)=>{
         res.redirect('/home');
     });
 });
+
+// other route 
+app.get("/contribute",function(req,res){
+    res.render("Other/contribute",{curUser : curUser})
+}); 
+
+app.get("/resources",function(req,res){
+    res.render("Other/resources",{curUser : curUser})
+});
+
+app.get("/books",function(req,res){
+    res.render("Other/books",{curUser : curUser,bookinfo : books})
+}); 
+
 
 app.listen(3000,()=>{
     console.log("server is running on port 3000");
