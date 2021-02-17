@@ -4,7 +4,10 @@ var express = require('express');
 
 var app = express('express');
 
-var BodyParser = require('body-parser');
+var BodyParser = require('body-parser'); // added trial books.js file for testing of books.ejs file using array of key value pair see in books.js file 
+
+
+var books = require("./books");
 
 var alert = require('alert');
 
@@ -80,7 +83,7 @@ app.get('/logout', function (req, res) {
   res.redirect('/home');
 });
 app.get('/', function (req, res) {
-  if (isLogin) res.render('/home');else res.render('login/index');
+  if (isLogin) res.redirect('/home');else res.render('login/index');
 });
 app.post('/', function (req, res) {
   var _ref = [req.body.username, sha256(req.body.pass)],
@@ -311,6 +314,23 @@ app.post('/cpass', function (req, res) {
         res.redirect('/cpass');
       }
     }
+  });
+}); // other route 
+
+app.get("/contribute", function (req, res) {
+  res.render("Other/contribute", {
+    curUser: curUser
+  });
+});
+app.get("/resources", function (req, res) {
+  res.render("Other/resources", {
+    curUser: curUser
+  });
+});
+app.get("/books", function (req, res) {
+  res.render("Other/books", {
+    curUser: curUser,
+    bookinfo: books
   });
 });
 app.listen(3000, function () {

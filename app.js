@@ -96,7 +96,7 @@ app.get('/logout',(req,res)=>{
 
 app.get('/',(req,res)=>{
     if(isLogin)
-        res.render('/home');
+        res.redirect('/home');
     else
         res.render('login/index');
 }); 
