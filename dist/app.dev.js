@@ -261,8 +261,8 @@ app.post('/forget', function (req, res) {
         var mailOptions = {
           from: "wcespace1947@gmail.com",
           to: doc.email,
-          subject: 'Email Varification for WCE SPACE sign up',
-          text: String(randNumber)
+          subject: 'Change Password for WCE SPACE Account',
+          text: "Hello " + doc.username + "\nYour Temporory password for WCE SPACE Log in is: " + String(randNumber) + "\nPlease Don't Share it with anyone and We recommand you to change it ,  When" + " You will log in using provided temporory password"
         };
         transporter.sendMail(mailOptions, function (error, info) {
           if (error) {
@@ -281,7 +281,7 @@ app.post('/forget', function (req, res) {
   });
 });
 app.get('/cpass', function (req, res) {
-  res.render('login/cpass');
+  if (isLogin) res.render('login/cpass');else res.redirect('/');
 });
 app.post('/cpass', function (req, res) {
   var curPassword = sha256(req.body.cur_pass);
@@ -304,9 +304,13 @@ app.post('/cpass', function (req, res) {
         }, function (error) {
           if (error) console.log("Error in updating");
         });
+        alert("Your Password Has been updated");
+        res.redirect('/home');
+      } else {
+        alert("Please Enter Correct Current Password");
+        res.redirect('/cpass');
       }
     }
-    res.redirect('/home');
   });
 });
 app.listen(3000, function () {
