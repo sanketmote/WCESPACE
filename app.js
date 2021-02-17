@@ -274,6 +274,83 @@ app.post('/info',(req,res)=>{
     });
 })
 
+app.get('/forget' , (req,res)=>{
+    res.render('login/forget');
+});
+
+app.post('/forget' , (req,res)=>{
+    User.findOne({ username : req.body.username } , (err , doc)=>{
+        if(err)
+            console.log("Error in forget pass process");
+        else{
+            if(doc)
+            {
+                const randNumber = Math.floor((Math.random())*1000000000);
+                const tempMail =  doc.email;
+                console.log(sha256(String(randNumber)));
+                User.updateOne({ username : req.body.username } , { password : sha256(String(randNumber))},(error)=>{
+                    if(err)
+                        console.log("Error in updating")
+                });
+
+                console.log(tempMail);
+
+                var mailOptions = {
+                    from: "wcespace1947@gmail.com",
+                    to: doc.email,
+                    subject: 'Email Varification for WCE SPACE sign up',
+                    text: String(randNumber)
+                };
+                
+                transporter.sendMail(mailOptions, function(error, info){
+                    if (error) {
+                    console.log("Sending mail");
+                    } else {
+                    console.log('Email sent: ' + info.response);
+                    }
+                }); 
+
+                alert('Mail has been sent to your Walchand Email ID');
+                res.redirect('/');
+            }
+            else
+            {
+                alert("No such user is available");
+                res.redirect('/forget');
+            }
+        }
+        
+    });
+});
+
+app.get('/cpass',(req,res)=>{
+    res.render('login/cpass');
+});
+
+app.post('/cpass',(req,res)=>{
+    const curPassword = sha256(req.body.cur_pass); 
+    const newPassword = sha256(req.body.new_pass); 
+
+    console.log(newPassword);
+    console.log(curUser);
+
+    User.findOne({ $and : [{ username : curUser } , { password : curPassword }]} , (err,doc)=>{
+        if(err)
+            console.log("Error");
+        else{
+            
+            if(doc)
+            {
+                User.updateOne( { username : curUser } , { password : newPassword } ,(error)=>{
+                    if(error)
+                    console.log("Error in updating");
+                })
+            }
+        }
+        res.redirect('/home');
+    });
+});
+
 app.listen(3000,()=>{
     console.log("server is running on port 3000");
 });

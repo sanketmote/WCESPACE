@@ -238,6 +238,77 @@ app.post('/info', function (req, res) {
     }
   });
 });
+app.get('/forget', function (req, res) {
+  res.render('login/forget');
+});
+app.post('/forget', function (req, res) {
+  User.findOne({
+    username: req.body.username
+  }, function (err, doc) {
+    if (err) console.log("Error in forget pass process");else {
+      if (doc) {
+        var randNumber = Math.floor(Math.random() * 1000000000);
+        var tempMail = doc.email;
+        console.log(sha256(String(randNumber)));
+        User.updateOne({
+          username: req.body.username
+        }, {
+          password: sha256(String(randNumber))
+        }, function (error) {
+          if (err) console.log("Error in updating");
+        });
+        console.log(tempMail);
+        var mailOptions = {
+          from: "wcespace1947@gmail.com",
+          to: doc.email,
+          subject: 'Email Varification for WCE SPACE sign up',
+          text: String(randNumber)
+        };
+        transporter.sendMail(mailOptions, function (error, info) {
+          if (error) {
+            console.log("Sending mail");
+          } else {
+            console.log('Email sent: ' + info.response);
+          }
+        });
+        alert('Mail has been sent to your Walchand Email ID');
+        res.redirect('/');
+      } else {
+        alert("No such user is available");
+        res.redirect('/forget');
+      }
+    }
+  });
+});
+app.get('/cpass', function (req, res) {
+  res.render('login/cpass');
+});
+app.post('/cpass', function (req, res) {
+  var curPassword = sha256(req.body.cur_pass);
+  var newPassword = sha256(req.body.new_pass);
+  console.log(newPassword);
+  console.log(curUser);
+  User.findOne({
+    $and: [{
+      username: curUser
+    }, {
+      password: curPassword
+    }]
+  }, function (err, doc) {
+    if (err) console.log("Error");else {
+      if (doc) {
+        User.updateOne({
+          username: curUser
+        }, {
+          password: newPassword
+        }, function (error) {
+          if (error) console.log("Error in updating");
+        });
+      }
+    }
+    res.redirect('/home');
+  });
+});
 app.listen(3000, function () {
   console.log("server is running on port 3000");
 });
