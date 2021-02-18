@@ -21,14 +21,14 @@
 				</span>
 
 				<div class="wrap-input100 validate-input" data-validate="Name is required">
-					<span class="label-input100">Your Name</span>
-					<input class="input100" type="text" name="name" placeholder="Enter your name" value="WCE SPACE" disabled>
+					<span class="label-input100">Your Username</span>
+					<input class="input100" type="text" name="name" placeholder="Enter your name" value=<%= curUser.username %> disabled>
 					<span class="focus-input100"></span>
 				</div>
 
 				<div class="wrap-input100 validate-input" data-validate = "Valid email is required: ex@abc.xyz">
 					<span class="label-input100">Email</span>
-					<input class="input100" type="text" name="email" placeholder="Enter your email addess" value="wcespace@gmail.com" disabled>
+					<input class="input100" type="text" name="email" placeholder="Enter your email addess" value= <%= curUser.email %> disabled>
 					<span class="focus-input100"></span>
 				</div>
 

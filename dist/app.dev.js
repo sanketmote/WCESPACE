@@ -37,7 +37,9 @@ mongoose.connect("mongodb://localhost:27017/User", {
 var userSchema = new mongoose.Schema({
   email: String,
   username: String,
-  password: String
+  password: String,
+  admin: Number,
+  shelf: [String]
 }); // for otps
 
 var otpSchema = new mongoose.Schema({
@@ -71,7 +73,13 @@ var isSigningUp = false;
 var validated = false;
 var isLogin = false; // This show which user is currently logged in
 
-var curUser = "";
+var curUser = {
+  email: "",
+  username: "",
+  password: "",
+  admin: 0,
+  shelf: []
+};
 app.get('/home', function (req, res) {
   res.render('Other/home', {
     curUser: curUser
@@ -79,7 +87,13 @@ app.get('/home', function (req, res) {
 });
 app.get('/logout', function (req, res) {
   isLogin = false;
-  curUser = "";
+  curUser = {
+    email: "",
+    username: "",
+    password: "",
+    admin: 0,
+    shelf: []
+  };
   res.redirect('/home');
 });
 app.get('/', function (req, res) {
@@ -102,7 +116,7 @@ app.post('/', function (req, res) {
       res.redirect('/login');
     } else {
       if (doc) {
-        curUser = req.body.username;
+        curUser = doc;
         isLogin = true;
         res.redirect('/home');
       } else {
@@ -230,7 +244,9 @@ app.post('/info', function (req, res) {
         User.insertMany([{
           email: curMail,
           password: curPassword,
-          username: curUsername
+          username: curUsername,
+          admin: 0,
+          shelf: []
         }], function (err) {
           if (err) console.log("Error in successful signup");else {
             alert('You have been signed up successfully');
@@ -293,7 +309,7 @@ app.post('/cpass', function (req, res) {
   console.log(curUser);
   User.findOne({
     $and: [{
-      username: curUser
+      username: curUser.username
     }, {
       password: curPassword
     }]
@@ -301,7 +317,7 @@ app.post('/cpass', function (req, res) {
     if (err) console.log("Error");else {
       if (doc) {
         User.updateOne({
-          username: curUser
+          username: curUser.username
         }, {
           password: newPassword
         }, function (error) {
