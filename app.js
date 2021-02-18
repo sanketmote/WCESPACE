@@ -35,7 +35,9 @@ mongoose.connect("mongodb://localhost:27017/User",{useUnifiedTopology: true,useN
 const userSchema = new mongoose.Schema({
     email : String,
     username : String,
-    password : String 
+    password : String ,
+    admin : Number,
+    shelf : [String]
 });
 // for otps
 const otpSchema = new mongoose.Schema({
@@ -78,7 +80,13 @@ let validated = false;
 let isLogin = false;
 
 // This show which user is currently logged in
-let curUser = "";
+let curUser = {
+    email : "",
+    username : "",
+    password : "",
+    admin : 0,
+    shelf : []
+};
 
 
 app.get('/home',(req,res)=>{
@@ -88,7 +96,13 @@ app.get('/home',(req,res)=>{
 
 app.get('/logout',(req,res)=>{
     isLogin = false;
-    curUser = "";
+    curUser = {
+        email : "",
+        username : "",
+        password : "",
+        admin : 0,
+        shelf : []
+    };
     res.redirect('/home');
 });
 
@@ -113,7 +127,7 @@ app.post('/',(req,res)=>{
         else{
             if(doc)
             {
-                curUser = req.body.username;
+                curUser = doc;
                 isLogin = true;
                 res.redirect('/home');
             }
@@ -265,7 +279,7 @@ app.post('/info',(req,res)=>{
                 res.send("Already have an account");
             }
             else{
-                User.insertMany ([{ email : curMail , password : curPassword , username : curUsername}] , (err)=>{
+                User.insertMany ([{ email : curMail , password : curPassword , username : curUsername , admin : 0 , shelf : []}] , (err)=>{
                     if(err)
                         console.log("Error in successful signup");
                     else{
@@ -343,14 +357,14 @@ app.post('/cpass',(req,res)=>{
     console.log(newPassword);
     console.log(curUser);
 
-    User.findOne({ $and : [{ username : curUser } , { password : curPassword }]} , (err,doc)=>{
+    User.findOne({ $and : [{ username : curUser.username } , { password : curPassword }]} , (err,doc)=>{
         if(err)
             console.log("Error");
         else{
             
             if(doc)
             {
-                User.updateOne( { username : curUser } , { password : newPassword } ,(error)=>{
+                User.updateOne( { username : curUser.username } , { password : newPassword } ,(error)=>{
                     if(error)
                     console.log("Error in updating");
                 });
