@@ -46,6 +46,7 @@ const otpSchema = new mongoose.Schema({
 });
 
 
+
 let samplePassword = "pavan";
 samplePassword = sha256(samplePassword); 
 // console.log(samplePassword);
@@ -67,7 +68,7 @@ const sampleOtp = new Otp({
     email : "pavan.shinde@walchandsangli.ac.in",
     otp : 7777
 });
-// sampleOtp.save();
+
 
 app.use(BodyParser.urlencoded({extended : true}));
 
@@ -389,8 +390,394 @@ app.get("/resources",function(req,res){
     res.render("Other/resources",{curUser : curUser})
 });
 
-app.get("/books",function(req,res){
-    res.render("Other/books",{curUser : curUser,bookinfo : books})
+// app.get("/books",function(req,res){
+//     res.render("Other/books",{curUser : curUser,bookinfo : books})
+// }); 
+
+
+
+
+
+
+
+
+// CSE books
+const CSEschema = new mongoose.Schema({
+    year : String,
+    bookname : String,
+    author : String,
+    subject : String,
+    imgUrl : String,
+    bookUrl : String
+});
+// IT books
+const ITschema = new mongoose.Schema({
+    year : String,
+    bookname : String,
+    author : String,
+    subject : String,
+    imgUrl : String,
+    bookUrl : String
+});
+// ELE books
+const ELEschema = new mongoose.Schema({
+    year : String,
+    bookname : String,
+    author : String,
+    subject : String,
+    imgUrl : String,
+    bookUrl : String
+});
+// ELET books
+const ELETschema = new mongoose.Schema({
+    year : String,
+    bookname : String,
+    author : String,
+    subject : String,
+    imgUrl : String,
+    bookUrl : String
+});
+// MECH books
+const MECHschema = new mongoose.Schema({
+    year : String,
+    bookname : String,
+    author : String,
+    subject : String,
+    imgUrl : String,
+    bookUrl : String
+});
+// CIVIL books
+const CIVILschema = new mongoose.Schema({
+    year : String,
+    bookname : String,
+    author : String,
+    subject : String,
+    imgUrl : String,
+    bookUrl : String
+});
+
+
+
+const CSE = mongoose.model("CSE", CSEschema);
+const IT = mongoose.model("IT", ITschema);
+const ELE = mongoose.model("ELE", ELEschema);
+const ELET = mongoose.model("ELET", ELETschema);
+const MECH = mongoose.model("MECH", MECHschema);
+const CIVIL = mongoose.model("CIVIL", CIVILschema);
+
+
+
+
+const sampleCSE = new CSE({
+    year : 'fy',
+    bookname : "Python",
+    author : "Pavan Shinde",
+    subject : "Coding",
+    imgUrl : 'https://i0.wp.com/iplmatchlive.in/wp-content/uploads/2021/01/Rohit-Sharma-in-Test-Team.jpg?resize=370%2C250&ssl=1',
+    bookUrl : 'https://drive.google.com/file/d/1hxhUvb1FZW8dXgbIcF8JDPWAajkhuTVE/view?usp=sharing'
+})
+// sampleCSE.save();
+
+
+app.get("/resources/:yrbr",function(req,res){
+    if(true)
+    {
+        let yrbr = req.params.yrbr;
+        // CSE
+        if( yrbr === 'fycse' )
+        {
+            CSE.find( { year : 'fy' } , (err,doc)=>{
+                if(!err)
+                {
+                    if(doc)
+                    {
+                        res.render('Other/books',{curUser : curUser,bookinfo : doc , yrbr : yrbr});           
+                    }
+                }
+            })
+        }
+        if( yrbr === 'sycse' )
+        {
+            CSE.find( { year : 'sy' } , (err,doc)=>{
+                if(!err)
+                {
+                    if(doc)
+                    {
+                        res.render('Other/books',{curUser : curUser,bookinfo : doc});           
+                    }
+                }
+            })
+        }
+        if( yrbr === 'tycse' )
+        {
+            CSE.find( { year : 'ty' } , (err,doc)=>{
+                if(!err)
+                {
+                    if(doc)
+                    {
+                        res.render('Other/books',{curUser : curUser,bookinfo : doc , yrbr : yrbr});           
+                    }
+                }
+            })
+        }
+        if( yrbr === 'btechcse' )
+        {
+            CSE.find( { year : 'btech' } , (err,doc)=>{
+                if(!err)
+                {
+                    if(doc)
+                    {
+                        res.render('Other/books',{curUser : curUser,bookinfo : doc , yrbr : yrbr});           
+                    }
+                }
+            })
+        }
+        // IT
+        if( yrbr === 'fyit' )
+        {
+            IT.find( { year : 'fy' } , (err,doc)=>{
+                if(!err)
+                {
+                    if(doc)
+                    {
+                        res.render('Other/books',{curUser : curUser,bookinfo : doc , yrbr : yrbr});           
+                    }
+                }
+            })
+        }
+        if( yrbr === 'syit' )
+        {
+            IT.find( { year : 'sy' } , (err,doc)=>{
+                if(!err)
+                {
+                    if(doc)
+                    {
+                        res.render('Other/books',{curUser : curUser,bookinfo : doc});           
+                    }
+                }
+            })
+        }
+        if( yrbr === 'tyit' )
+        {
+            IT.find( { year : 'ty' } , (err,doc)=>{
+                if(!err)
+                {
+                    if(doc)
+                    {
+                        res.render('Other/books',{curUser : curUser,bookinfo : doc , yrbr : yrbr});           
+                    }
+                }
+            })
+        }
+        if( yrbr === 'btechit' )
+        {
+            IT.find( { year : 'btech' } , (err,doc)=>{
+                if(!err)
+                {
+                    if(doc)
+                    {
+                        res.render('Other/books',{curUser : curUser,bookinfo : doc , yrbr : yrbr});           
+                    }
+                }
+            })
+        }
+        // ELE
+        if( yrbr === 'fyele' )
+        {
+            ELE.find( { year : 'fy' } , (err,doc)=>{
+                if(!err)
+                {
+                    if(doc)
+                    {
+                        res.render('Other/books',{curUser : curUser,bookinfo : doc , yrbr : yrbr});           
+                    }
+                }
+            })
+        }
+        if( yrbr === 'syele' )
+        {
+            ELE.find( { year : 'sy' } , (err,doc)=>{
+                if(!err)
+                {
+                    if(doc)
+                    {
+                        res.render('Other/books',{curUser : curUser,bookinfo : doc});           
+                    }
+                }
+            })
+        }
+        if( yrbr === 'tyele' )
+        {
+            ELE.find( { year : 'ty' } , (err,doc)=>{
+                if(!err)
+                {
+                    if(doc)
+                    {
+                        res.render('Other/books',{curUser : curUser,bookinfo : doc , yrbr : yrbr});           
+                    }
+                }
+            })
+        }
+        if( yrbr === 'btechele' )
+        {
+            ELE.find( { year : 'btech' } , (err,doc)=>{
+                if(!err)
+                {
+                    if(doc)
+                    {
+                        res.render('Other/books',{curUser : curUser,bookinfo : doc , yrbr : yrbr});           
+                    }
+                }
+            })
+        }
+        // ELET
+        if( yrbr === 'fyelet' )
+        {
+            ELET.find( { year : 'fy' } , (err,doc)=>{
+                if(!err)
+                {
+                    if(doc)
+                    {
+                        res.render('Other/books',{curUser : curUser,bookinfo : doc , yrbr : yrbr});           
+                    }
+                }
+            })
+        }
+        if( yrbr === 'syelet' )
+        {
+            ELET.find( { year : 'sy' } , (err,doc)=>{
+                if(!err)
+                {
+                    if(doc)
+                    {
+                        res.render('Other/books',{curUser : curUser,bookinfo : doc});           
+                    }
+                }
+            })
+        }
+        if( yrbr === 'tyelet' )
+        {
+            ELET.find( { year : 'ty' } , (err,doc)=>{
+                if(!err)
+                {
+                    if(doc)
+                    {
+                        res.render('Other/books',{curUser : curUser,bookinfo : doc , yrbr : yrbr});           
+                    }
+                }
+            })
+        }
+        if( yrbr === 'btechelet' )
+        {
+            ELET.find( { year : 'btech' } , (err,doc)=>{
+                if(!err)
+                {
+                    if(doc)
+                    {
+                        res.render('Other/books',{curUser : curUser,bookinfo : doc , yrbr : yrbr});           
+                    }
+                }
+            })
+        }
+        // MECH
+        if( yrbr === 'fymech' )
+        {
+            MECH.find( { year : 'fy' } , (err,doc)=>{
+                if(!err)
+                {
+                    if(doc)
+                    {
+                        res.render('Other/books',{curUser : curUser,bookinfo : doc , yrbr : yrbr});           
+                    }
+                }
+            })
+        }
+        if( yrbr === 'symech' )
+        {
+            MECH.find( { year : 'sy' } , (err,doc)=>{
+                if(!err)
+                {
+                    if(doc)
+                    {
+                        res.render('Other/books',{curUser : curUser,bookinfo : doc});           
+                    }
+                }
+            })
+        }
+        if( yrbr === 'tymech' )
+        {
+            MECH.find( { year : 'ty' } , (err,doc)=>{
+                if(!err)
+                {
+                    if(doc)
+                    {
+                        res.render('Other/books',{curUser : curUser,bookinfo : doc , yrbr : yrbr});           
+                    }
+                }
+            })
+        }
+        if( yrbr === 'btechmech' )
+        {
+            MECH.find( { year : 'btech' } , (err,doc)=>{
+                if(!err)
+                {
+                    if(doc)
+                    {
+                        res.render('Other/books',{curUser : curUser,bookinfo : doc , yrbr : yrbr});           
+                    }
+                }
+            })
+        }
+        // CIVIL
+        if( yrbr === 'fycivil' )
+        {
+            CIVIL.find( { year : 'fy' } , (err,doc)=>{
+                if(!err)
+                {
+                    if(doc)
+                    {
+                        res.render('Other/books',{curUser : curUser,bookinfo : doc , yrbr : yrbr});           
+                    }
+                }
+            })
+        }
+        if( yrbr === 'sycivil' )
+        {
+            CIVIL.find( { year : 'sy' } , (err,doc)=>{
+                if(!err)
+                {
+                    if(doc)
+                    {
+                        res.render('Other/books',{curUser : curUser,bookinfo : doc});           
+                    }
+                }
+            })
+        }
+        if( yrbr === 'tycivil' )
+        {
+            CIVIL.find( { year : 'ty' } , (err,doc)=>{
+                if(!err)
+                {
+                    if(doc)
+                    {
+                        res.render('Other/books',{curUser : curUser,bookinfo : doc , yrbr : yrbr});           
+                    }
+                }
+            })
+        }
+        if( yrbr === 'btechcivil' )
+        {
+            CIVIL.find( { year : 'btech' } , (err,doc)=>{
+                if(!err)
+                {
+                    if(doc)
+                    {
+                        res.render('Other/books',{curUser : curUser,bookinfo : doc , yrbr : yrbr});           
+                    }
+                }
+            })
+        }
+    }
 }); 
 
 

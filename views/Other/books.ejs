@@ -73,23 +73,21 @@
         <!-- shelf book design  -->
         <div class="row" style="margin: 0%;padding: 30px;">
 
-           <% for(var i=0 ; i<bookinfo.length ; i++ ) { %>
+           <% for(var i=0 ; i<bookinfo.length ; i++ ) { let curBook = bookinfo[i]%>
               <% let {name,Auther,Date,subject,semester,link,downloadlink} = bookinfo[i]; %>
             <div class="col-md-3 single">
                 <div class="single-item">
 
                     <div class="single-item-image overlay-effect">
-                        <a href="#"><img src= <%= link %> alt=""></a>
+                        <a href="#"><img src= <%= curBook.imgUrl %> alt=""></a>
                     </div>
                     
                     <div class="single-item-text">
 
-                        <h4><a href="#"> <%= name %></a></h4>
+                        <h4><a href="#"> <%= curBook.bookname %></a></h4>
                         <div class="single-item-text-info">
-                            <span>Author: <span>   <%= Auther %> </span></span>
-                            <span><br>Uploaded Date: <span>   <%= Date %> </span></span>
-                            <span><br>Subject: <span>  <%= subject %> </span></span>
-                            <span><br> Semester: <span>  <%= semester %> </span></span>
+                            <span>Author: <span>   <%= curBook.author %> </span></span>
+                            <span><br>Subject: <span>  <%= curBook.subject %> </span></span>
                         </div>
                         <div style="text-align: center;">
                             <button class="button-default tip">
@@ -97,7 +95,7 @@
                                 <span class="tiptext">Add To Wishlist</span>
                             </button>
 
-                            <a href= <%= downloadlink %> target="_blank" >
+                            <a href= <%= curBook.bookUrl %> target="_blank" >
                                 <button class="button-default button-dow tip">
                                     <i class="fas fa-file-download"></i>
                                     <span class="tiptext">Download Book</span>

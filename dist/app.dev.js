@@ -62,8 +62,7 @@ var sampleUser = new User({
 var sampleOtp = new Otp({
   email: "pavan.shinde@walchandsangli.ac.in",
   otp: 7777
-}); // sampleOtp.save();
-
+});
 app.use(BodyParser.urlencoded({
   extended: true
 }));
@@ -342,12 +341,466 @@ app.get("/resources", function (req, res) {
   res.render("Other/resources", {
     curUser: curUser
   });
+}); // app.get("/books",function(req,res){
+//     res.render("Other/books",{curUser : curUser,bookinfo : books})
+// }); 
+// CSE books
+
+var CSEschema = new mongoose.Schema({
+  year: String,
+  bookname: String,
+  author: String,
+  subject: String,
+  imgUrl: String,
+  bookUrl: String
+}); // IT books
+
+var ITschema = new mongoose.Schema({
+  year: String,
+  bookname: String,
+  author: String,
+  subject: String,
+  imgUrl: String,
+  bookUrl: String
+}); // ELE books
+
+var ELEschema = new mongoose.Schema({
+  year: String,
+  bookname: String,
+  author: String,
+  subject: String,
+  imgUrl: String,
+  bookUrl: String
+}); // ELET books
+
+var ELETschema = new mongoose.Schema({
+  year: String,
+  bookname: String,
+  author: String,
+  subject: String,
+  imgUrl: String,
+  bookUrl: String
+}); // MECH books
+
+var MECHschema = new mongoose.Schema({
+  year: String,
+  bookname: String,
+  author: String,
+  subject: String,
+  imgUrl: String,
+  bookUrl: String
+}); // CIVIL books
+
+var CIVILschema = new mongoose.Schema({
+  year: String,
+  bookname: String,
+  author: String,
+  subject: String,
+  imgUrl: String,
+  bookUrl: String
 });
-app.get("/books", function (req, res) {
-  res.render("Other/books", {
-    curUser: curUser,
-    bookinfo: books
-  });
+var CSE = mongoose.model("CSE", CSEschema);
+var IT = mongoose.model("IT", ITschema);
+var ELE = mongoose.model("ELE", ELEschema);
+var ELET = mongoose.model("ELET", ELETschema);
+var MECH = mongoose.model("MECH", MECHschema);
+var CIVIL = mongoose.model("CIVIL", CIVILschema);
+var sampleCSE = new CSE({
+  year: 'fy',
+  bookname: "Python",
+  author: "Pavan Shinde",
+  subject: "Coding",
+  imgUrl: 'https://i0.wp.com/iplmatchlive.in/wp-content/uploads/2021/01/Rohit-Sharma-in-Test-Team.jpg?resize=370%2C250&ssl=1',
+  bookUrl: 'https://drive.google.com/file/d/1hxhUvb1FZW8dXgbIcF8JDPWAajkhuTVE/view?usp=sharing'
+}); // sampleCSE.save();
+
+app.get("/resources/:yrbr", function (req, res) {
+  if (true) {
+    var yrbr = req.params.yrbr; // CSE
+
+    if (yrbr === 'fycse') {
+      CSE.find({
+        year: 'fy'
+      }, function (err, doc) {
+        if (!err) {
+          if (doc) {
+            res.render('Other/books', {
+              curUser: curUser,
+              bookinfo: doc,
+              yrbr: yrbr
+            });
+          }
+        }
+      });
+    }
+
+    if (yrbr === 'sycse') {
+      CSE.find({
+        year: 'sy'
+      }, function (err, doc) {
+        if (!err) {
+          if (doc) {
+            res.render('Other/books', {
+              curUser: curUser,
+              bookinfo: doc
+            });
+          }
+        }
+      });
+    }
+
+    if (yrbr === 'tycse') {
+      CSE.find({
+        year: 'ty'
+      }, function (err, doc) {
+        if (!err) {
+          if (doc) {
+            res.render('Other/books', {
+              curUser: curUser,
+              bookinfo: doc,
+              yrbr: yrbr
+            });
+          }
+        }
+      });
+    }
+
+    if (yrbr === 'btechcse') {
+      CSE.find({
+        year: 'btech'
+      }, function (err, doc) {
+        if (!err) {
+          if (doc) {
+            res.render('Other/books', {
+              curUser: curUser,
+              bookinfo: doc,
+              yrbr: yrbr
+            });
+          }
+        }
+      });
+    } // IT
+
+
+    if (yrbr === 'fyit') {
+      IT.find({
+        year: 'fy'
+      }, function (err, doc) {
+        if (!err) {
+          if (doc) {
+            res.render('Other/books', {
+              curUser: curUser,
+              bookinfo: doc,
+              yrbr: yrbr
+            });
+          }
+        }
+      });
+    }
+
+    if (yrbr === 'syit') {
+      IT.find({
+        year: 'sy'
+      }, function (err, doc) {
+        if (!err) {
+          if (doc) {
+            res.render('Other/books', {
+              curUser: curUser,
+              bookinfo: doc
+            });
+          }
+        }
+      });
+    }
+
+    if (yrbr === 'tyit') {
+      IT.find({
+        year: 'ty'
+      }, function (err, doc) {
+        if (!err) {
+          if (doc) {
+            res.render('Other/books', {
+              curUser: curUser,
+              bookinfo: doc,
+              yrbr: yrbr
+            });
+          }
+        }
+      });
+    }
+
+    if (yrbr === 'btechit') {
+      IT.find({
+        year: 'btech'
+      }, function (err, doc) {
+        if (!err) {
+          if (doc) {
+            res.render('Other/books', {
+              curUser: curUser,
+              bookinfo: doc,
+              yrbr: yrbr
+            });
+          }
+        }
+      });
+    } // ELE
+
+
+    if (yrbr === 'fyele') {
+      ELE.find({
+        year: 'fy'
+      }, function (err, doc) {
+        if (!err) {
+          if (doc) {
+            res.render('Other/books', {
+              curUser: curUser,
+              bookinfo: doc,
+              yrbr: yrbr
+            });
+          }
+        }
+      });
+    }
+
+    if (yrbr === 'syele') {
+      ELE.find({
+        year: 'sy'
+      }, function (err, doc) {
+        if (!err) {
+          if (doc) {
+            res.render('Other/books', {
+              curUser: curUser,
+              bookinfo: doc
+            });
+          }
+        }
+      });
+    }
+
+    if (yrbr === 'tyele') {
+      ELE.find({
+        year: 'ty'
+      }, function (err, doc) {
+        if (!err) {
+          if (doc) {
+            res.render('Other/books', {
+              curUser: curUser,
+              bookinfo: doc,
+              yrbr: yrbr
+            });
+          }
+        }
+      });
+    }
+
+    if (yrbr === 'btechele') {
+      ELE.find({
+        year: 'btech'
+      }, function (err, doc) {
+        if (!err) {
+          if (doc) {
+            res.render('Other/books', {
+              curUser: curUser,
+              bookinfo: doc,
+              yrbr: yrbr
+            });
+          }
+        }
+      });
+    } // ELET
+
+
+    if (yrbr === 'fyelet') {
+      ELET.find({
+        year: 'fy'
+      }, function (err, doc) {
+        if (!err) {
+          if (doc) {
+            res.render('Other/books', {
+              curUser: curUser,
+              bookinfo: doc,
+              yrbr: yrbr
+            });
+          }
+        }
+      });
+    }
+
+    if (yrbr === 'syelet') {
+      ELET.find({
+        year: 'sy'
+      }, function (err, doc) {
+        if (!err) {
+          if (doc) {
+            res.render('Other/books', {
+              curUser: curUser,
+              bookinfo: doc
+            });
+          }
+        }
+      });
+    }
+
+    if (yrbr === 'tyelet') {
+      ELET.find({
+        year: 'ty'
+      }, function (err, doc) {
+        if (!err) {
+          if (doc) {
+            res.render('Other/books', {
+              curUser: curUser,
+              bookinfo: doc,
+              yrbr: yrbr
+            });
+          }
+        }
+      });
+    }
+
+    if (yrbr === 'btechelet') {
+      ELET.find({
+        year: 'btech'
+      }, function (err, doc) {
+        if (!err) {
+          if (doc) {
+            res.render('Other/books', {
+              curUser: curUser,
+              bookinfo: doc,
+              yrbr: yrbr
+            });
+          }
+        }
+      });
+    } // MECH
+
+
+    if (yrbr === 'fymech') {
+      MECH.find({
+        year: 'fy'
+      }, function (err, doc) {
+        if (!err) {
+          if (doc) {
+            res.render('Other/books', {
+              curUser: curUser,
+              bookinfo: doc,
+              yrbr: yrbr
+            });
+          }
+        }
+      });
+    }
+
+    if (yrbr === 'symech') {
+      MECH.find({
+        year: 'sy'
+      }, function (err, doc) {
+        if (!err) {
+          if (doc) {
+            res.render('Other/books', {
+              curUser: curUser,
+              bookinfo: doc
+            });
+          }
+        }
+      });
+    }
+
+    if (yrbr === 'tymech') {
+      MECH.find({
+        year: 'ty'
+      }, function (err, doc) {
+        if (!err) {
+          if (doc) {
+            res.render('Other/books', {
+              curUser: curUser,
+              bookinfo: doc,
+              yrbr: yrbr
+            });
+          }
+        }
+      });
+    }
+
+    if (yrbr === 'btechmech') {
+      MECH.find({
+        year: 'btech'
+      }, function (err, doc) {
+        if (!err) {
+          if (doc) {
+            res.render('Other/books', {
+              curUser: curUser,
+              bookinfo: doc,
+              yrbr: yrbr
+            });
+          }
+        }
+      });
+    } // CIVIL
+
+
+    if (yrbr === 'fycivil') {
+      CIVIL.find({
+        year: 'fy'
+      }, function (err, doc) {
+        if (!err) {
+          if (doc) {
+            res.render('Other/books', {
+              curUser: curUser,
+              bookinfo: doc,
+              yrbr: yrbr
+            });
+          }
+        }
+      });
+    }
+
+    if (yrbr === 'sycivil') {
+      CIVIL.find({
+        year: 'sy'
+      }, function (err, doc) {
+        if (!err) {
+          if (doc) {
+            res.render('Other/books', {
+              curUser: curUser,
+              bookinfo: doc
+            });
+          }
+        }
+      });
+    }
+
+    if (yrbr === 'tycivil') {
+      CIVIL.find({
+        year: 'ty'
+      }, function (err, doc) {
+        if (!err) {
+          if (doc) {
+            res.render('Other/books', {
+              curUser: curUser,
+              bookinfo: doc,
+              yrbr: yrbr
+            });
+          }
+        }
+      });
+    }
+
+    if (yrbr === 'btechcivil') {
+      CIVIL.find({
+        year: 'btech'
+      }, function (err, doc) {
+        if (!err) {
+          if (doc) {
+            res.render('Other/books', {
+              curUser: curUser,
+              bookinfo: doc,
+              yrbr: yrbr
+            });
+          }
+        }
+      });
+    }
+  }
 });
 app.listen(3000, function () {
   console.log("server is running on port 3000");

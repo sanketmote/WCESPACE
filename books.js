@@ -6,7 +6,7 @@ const books = [
         "subject" : "DC",
         "semester" : "III",
         "link" : "/img/books/dc.png",
-        "downloadlink" : "dcbook.pdf",
+        "downloadlink" : "https://drive.google.com/file/d/1M_6Gs411U7RB_BNgRVHZ-BL6BurQQTBo/view?usp=sharing.pdf",
     },
     {
         "name" : 'DS',
