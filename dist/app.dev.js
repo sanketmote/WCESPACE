@@ -126,10 +126,7 @@ app.post('/', function (req, res) {
   });
 });
 app.get('/signup', function (req, res) {
-  res.render('login/signup', {
-    fname: "Pavan",
-    lname: "Shinde"
-  });
+  res.render('login/signup');
 });
 var curMail;
 app.post('/signup', function (req, res) {
@@ -143,6 +140,7 @@ app.post('/signup', function (req, res) {
     if (err) console.log("There might be some error in finding email");else {
       if (doc) {
         alert("Already Have an account");
+        isSigningUp = false;
         res.redirect('/signup');
       } else {
         Otp.findOne({
@@ -191,7 +189,7 @@ app.post('/signup', function (req, res) {
   });
 });
 app.get('/otp', function (req, res) {
-  if (isSigningUp) res.render('login/otp');else res.send("Fuck Off");
+  if (isSigningUp) res.render('login/otp');else res.redirect('/');
 });
 app.post('/otp', function (req, res) {
   Otp.findOne({
@@ -216,7 +214,8 @@ app.post('/otp', function (req, res) {
           }
         });
       } else {
-        res.send("Invalid Otp");
+        alert("Invalid OTP");
+        res.redirect('/otp');
       }
     }
   });
@@ -226,7 +225,7 @@ app.get('/info', function (req, res) {
     isSigningUp = false;
     validated = false;
     res.render('login/info');
-  } else res.send("Fuck Off");
+  } else res.redirect('/');
 });
 app.post('/info', function (req, res) {
   var curPassword = sha256(req.body.pass);
@@ -238,7 +237,8 @@ app.post('/info', function (req, res) {
       console.log("error in searching username");
     } else {
       if (doc) {
-        res.send("Already have an account");
+        alert("This username already exists");
+        res.redirect('/');
       } else {
         User.insertMany([{
           email: curMail,
@@ -257,7 +257,7 @@ app.post('/info', function (req, res) {
   });
 });
 app.get('/forget', function (req, res) {
-  res.render('login/forget');
+  if (isLogin) res.render('login/forget');else res.redirect('/');
 });
 app.post('/forget', function (req, res) {
   User.findOne({
@@ -333,14 +333,24 @@ app.post('/cpass', function (req, res) {
 }); // other route 
 
 app.get("/contribute", function (req, res) {
-  res.render("Other/contribute", {
-    curUser: curUser
-  });
+  if (isLogin) {
+    User.findOne({
+      username: curUser.username
+    }, function (err, doc) {
+      if (!err) {
+        if (doc.admin === 1) {
+          res.render("Other/contribute", {
+            curUser: curUser
+          });
+        } else res.redirect('/');
+      }
+    });
+  } else res.redirect('/');
 });
 app.get("/resources", function (req, res) {
-  res.render("Other/resources", {
+  if (isLogin) res.render("Other/resources", {
     curUser: curUser
-  });
+  });else res.redirect('/');
 }); // app.get("/books",function(req,res){
 //     res.render("Other/books",{curUser : curUser,bookinfo : books})
 // }); 

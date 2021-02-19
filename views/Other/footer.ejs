@@ -15,19 +15,21 @@
                 Walchand College of Engineering, <br>
                 - Miraj Rd, Vishrambag, Sangli,  <br>
                 Maharashtra 416415 <br><br>
-                <strong><i class="fas fa-phone-alt"></i></strong><a href="tel:+0233 230 0383"> &nbsp &nbsp 0233 230 0383</a><br>
-                <strong><i class="far fa-envelope"></i></strong> <a href="mailto:wcespace1947@gmail.com" target="_blank"> &nbsp &nbsp wcespace1947@gmail.com</a> <br>
+                <strong><i class="far fa-envelope"></i></strong> <a href="mailto:wcespace1947@gmail.com" > &nbsp &nbsp wcespace1947@gmail.com</a> <br>
             </p>
           </div>
 
           <div class="col-lg-4 col-md-4 col-sm-6 footer-links">
             <h4>Useful Links</h4>
             <ul>
-              <li><i class="bx bx-chevron-right"></i> <a href="/" target="_blank"> Home</a> </li>
-              <% if(curUser !== "" ) {%>
-              <li><i class="bx bx-chevron-right"></i> <a href="contribute" target="_blank"> Contribute</a> </li>
-              <li><i class="bx bx-chevron-right"></i> <a href="resources" target="_blank"> Resourses</a> </li>
+              <li><i class="bx bx-chevron-right"></i> <a href="/" > Home</a> </li>
+              <% if(curUser.admin === 1 ) {%>
+              <li><i class="bx bx-chevron-right"></i> <a href="contribute" > Contribute</a> </li>
               <% } %>
+              <% if(curUser.username !== "") {%>
+              <li><i class="bx bx-chevron-right"></i> <a href="resources" > Resourses</a> </li>
+              <%}%>
+              
             </ul>
           </div>
 
@@ -36,8 +38,8 @@
             <p>
                 Main purpose is that everyone gets their desired book on this website.
                 If you have any new  books then contribute to us.<br><br>
-                <% if(curUser !== "" ) {%>
-                <a href="#" target="_blank"><i class="fas fa-external-link-alt"></i> Contribute Us</a>
+                <% if(curUser.admin === 1  ) {%>
+                <a href="#" ><i class="fas fa-external-link-alt"></i> Contribute Us</a>
                 <%}%>
             </p>
           </div>
