@@ -26,8 +26,9 @@
           <nav class="main-nav" role="navigation">
             <ul class="main-menu" style="padding: 0%;">
               <li><a href="#section1"> Books/Notes </a></li>
-              <li><a href="#section2"> Exam Paper</a></li>
+              <% if(curUser.admin === 1){%>
               <li><a href="contribute" target="_blank">Contribute US</a></li>
+              <%}%>
               <li><a href="#">Forum</a></li>
             </ul>
           </nav>

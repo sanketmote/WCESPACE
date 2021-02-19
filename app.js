@@ -143,7 +143,10 @@ app.post('/',(req,res)=>{
 
 
 app.get('/signup',(req,res)=>{
-    res.render('login/signup');
+    if(isLogin)
+        res.redirect('/');
+    else
+        res.render('login/signup');
 })
 
 
@@ -492,7 +495,7 @@ const CIVIL = mongoose.model("CIVIL", CIVILschema);
 
 
 
-const sampleCSE = new CSE({
+const sampleCSE = new IT({
     year : 'fy',
     bookname : "Python",
     author : "Pavan Shinde",

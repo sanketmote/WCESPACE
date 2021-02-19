@@ -126,7 +126,7 @@ app.post('/', function (req, res) {
   });
 });
 app.get('/signup', function (req, res) {
-  res.render('login/signup');
+  if (isLogin) res.redirect('/');else res.render('login/signup');
 });
 var curMail;
 app.post('/signup', function (req, res) {
@@ -415,7 +415,7 @@ var ELE = mongoose.model("ELE", ELEschema);
 var ELET = mongoose.model("ELET", ELETschema);
 var MECH = mongoose.model("MECH", MECHschema);
 var CIVIL = mongoose.model("CIVIL", CIVILschema);
-var sampleCSE = new CSE({
+var sampleCSE = new IT({
   year: 'fy',
   bookname: "Python",
   author: "Pavan Shinde",
