@@ -1,0 +1,78 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css">
+<link rel="stylesheet" href="/CSS/footer.css">
+
+
+<!-- ======= Footer ======= -->
+<footer id="footer">
+
+    <div class="footer-top">
+      <div class="container">
+        <div class="row">
+
+          <div class="col-lg-4 col-md-4 col-sm-6 footer-contact">
+            <h3> <a href="#"> </i> WCE SPACE </a></h3>
+            <p>
+                Walchand College of Engineering, <br>
+                - Miraj Rd, Vishrambag, Sangli,  <br>
+                Maharashtra 416415 <br><br>
+                <strong><i class="far fa-envelope"></i></strong> <a href="mailto:wcespace1947@gmail.com" > &nbsp &nbsp wcespace1947@gmail.com</a> <br>
+            </p>
+          </div>
+
+          <div class="col-lg-4 col-md-4 col-sm-6 footer-links">
+            <h4>Useful Links</h4>
+            <ul>
+              <li><i class="bx bx-chevron-right"></i> <a href="/" > Home</a> </li>
+              <% if(curUser.admin === 1 ) {%>
+              <li><i class="bx bx-chevron-right"></i> <a href="contribute" > Contribute</a> </li>
+              <% } %>
+              <% if(curUser.username !== "") {%>
+              <li><i class="bx bx-chevron-right"></i> <a href="resources" > Resourses</a> </li>
+              <%}%>
+              
+            </ul>
+          </div>
+
+          <div class="col-lg-4 col-md-4 col-sm-12 footer-newsletter">
+            <h4>About Us - </h4>
+            <p>
+                Main purpose is that everyone gets their desired book on this website.
+                If you have any new  books then contribute to us.<br><br>
+                <% if(curUser.admin === 1  ) {%>
+                <a href="#" ><i class="fas fa-external-link-alt"></i> Contribute Us</a>
+                <%}%>
+            </p>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+
+      <div class="copyright-wrap d-md-flex py-2">
+        <div class="me-md-auto text-center text-md-centre" style="width: 100%;">
+          <div class="copyright">
+            &copy; Copyright 2021 <strong><span>WCE SPACE</span></strong> All Rights Reserved.
+          </div>
+        </div>
+      </div>
+    </div>
+</footer>
+
+<!-- map part -->
+<!-- <div class="col-md-6 mapadj">
+    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3818.60897277298!2d74.5992688142445!3d16.84574382263526!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bc1237f52c65db5%3A0xa3535676176ded0a!2sWalchand%20College%20of%20Engineering!5e0!3m2!1sen!2sin!4v1612891113553!5m2!1sen!2sin" width="600" height="420" frameborder="0" style="border:0;" allowfullscreen="" aria-hidden="false" tabindex="0"></iframe>
+</div> -->
+<!-- 
+<div class="contactform">
+    <h2>Contact US</h2>
+    <form action="/" method="post">
+        <input type="text" name="email" id="" placeholder="Enter Email">
+        <input type="text" name="name" id="" placeholder="Enter Name">
+        <input type="file" name="File" id="">
+        <textarea name="commit" id="" cols="30" rows="5" placeholder="Commit"></textarea>
+        <button type="submit">SEND</button>
+    </form>
+    
+</div> -->

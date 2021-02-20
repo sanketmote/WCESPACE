@@ -1,0 +1,89 @@
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+<style>
+	.hidden {
+		display: none;
+	}
+</style>
+
+<%- include('partials/header') -%>
+<body>
+	
+	<div class="limiter">
+		<div class="container-login100" style="background-image: url('images/bg-01.jpg');">
+			<div class="wrap-login100 p-l-55 p-r-55 p-t-65 p-b-54">
+				<form method="POST" action="/cpass" class="login100-form validate-form">
+					<span class="login100-form-title p-b-49">
+						Change Password
+					</span>
+
+					<div class="wrap-input100 validate-input" data-validate="Password is required">
+						<span class="label-input100">Current Password</span>
+						<input class="input100" type="password" name="cur_pass" placeholder="Type your current password">
+						<span class="focus-input100" data-symbol="&#xf190;"></span>
+					</div>
+
+					<div class="wrap-input100 validate-input" data-validate="Password is required" style="margin: 10% auto;">
+						<span class="label-input100">New Password</span>
+						<input class="input100" id="password" type="password" name="new_pass" placeholder="Type your new password" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$" 
+						title="Minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character">
+
+						<span class="focus-input100" data-symbol="&#xf190;"></span>
+					</div>
+					
+					<div class="wrap-input100 validate-input form-group has-feedback" id="message1" data-validate="Password is required" style="margin-top: 7%;">
+						<span class="label-input100">Confirm Password</span>
+						<input class="input100" id="confirm_password" type="password" name="pass1" placeholder="Type your Confirm password" autocomplete="off">
+						<span class="focus-input100" data-symbol="&#xf190;"></span>
+						<span class="glyphicon  form-control-feedback" id="message2"></span>
+					</div>
+					
+					<div class="container-login100-form-btn hidden" id="disabled">
+						<div class="wrap-login100-form-btn">
+							<div class="login100-form-bgbtn"></div>
+							<button class="login100-form-btn" type="submit" name="submit" value="Login">
+								Submit
+							</button>
+						</div>
+					</div>
+
+				</form>
+			</div>
+		</div>
+	</div>
+	
+
+	<div id="dropDownSelect1"></div>
+	
+<%- include('partials/footer') -%>
+
+
+<script>
+	$('#password, #confirm_password').on('keyup', function () {
+		if (!$('#confirm_password').val()){
+    		$('#message1').removeClass("has-error");
+        $('#message2').removeClass("glyphicon-remove");
+        $('#message1').removeClass("has-success");
+        $('#message2').removeClass("glyphicon-ok");
+
+    } else {
+    		if ($('#password').val() == $('#confirm_password').val() ) {
+            $('#message1').addClass("has-success");
+            $('#message2').addClass("glyphicon-ok");
+            $('#message1').removeClass("has-error");
+            $('#message2').removeClass("glyphicon-remove");
+			$("#disabled").removeClass('hidden');
+        } else {
+            $('#message1').addClass("has-error");
+            $('#message2').addClass("glyphicon-remove");
+            $('#message1').removeClass("has-success");
+            $('#message2').removeClass("glyphicon-ok");
+			$("#disabled").addClass('hidden');
+        }
+    }
+    
+    
+});
+</script>

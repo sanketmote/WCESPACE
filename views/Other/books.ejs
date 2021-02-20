@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Books</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Roboto:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css">
+    <link rel="stylesheet" href="/CSS/books.css">
+
+
+</head>
+<body>
+
+    <section>
+        <div class="row" style="margin: 0%;">
+            <div class="col-md-3 filtlap">
+                <!-- filter  -->
+                <div class="filter">
+                    <aside>
+                        <!-- <h3><i class="fas fa-filter"></i>Filter By</h3> -->
+                        <span><strong>Filter By : </strong> </span>
+                        <select name="Category" id="" aria-placeholder="">
+                            <option value="">All Subject</option>
+                            <option value="">Chemistry</option>
+                        </select>
+                    </aside>
+                </div>
+            </div>
+        <!-- search book section  -->
+            <div class="col-md-6">
+                <!-- <div class="card"> -->
+                    <div class="card-body">
+                        <form class="d-flex">
+                            <input class="form-control me-2" type="search" placeholder="Enter Book Name" aria-label="Search">
+                            <button class="btn btn-outline-success" type="submit">Search</button>
+                        </form>
+                    </div>
+                <!-- </div> -->
+            </div>
+
+            <div class="col-md-3 filtmob">
+                <!-- filter  -->
+                <div class="filter">
+                    <aside>
+                        <h3><i class="fas fa-filter"></i>Filter By</h3>
+                        <select name="Category" id="" aria-placeholder="">
+                            <option value="">All Subject</option>
+                            <option value="">Chemistry</option>
+                        </select>
+                    </aside>
+                </div>
+            </div>
+
+    <!-- sort section  -->
+            <div class="col-md-3 sorting">
+                <span><strong>Sort by : </strong> </span>
+                <select name="sort" id="sort">
+                <option value="">Default Sorting</option>
+                <option value="">Latest Book</option>
+                <option value="">Old Book</option>
+                </select>
+            </div>
+
+
+        </div>
+
+        <!-- shelf book design  -->
+        <div class="row" style="margin: 0%;padding: 30px;">
+
+           <% for(var i=0 ; i<bookinfo.length ; i++ ) { let curBook = bookinfo[i]%>
+              <% let {name,Auther,Date,subject,semester,link,downloadlink,year} = bookinfo[i]; %>
+            <div class="col-md-3 single">
+                <div class="single-item">
+
+                    <div class="single-item-image overlay-effect">
+                        <a href="#"><img src= <%= curBook.imgUrl %> alt=""></a>
+                    </div>
+                    
+                    <div class="single-item-text">
+
+                        <h4><a href="#"> <%= curBook.bookname %></a></h4>
+                        <div class="single-item-text-info">
+                            <span>Author: <span>   <%= curBook.author %> </span></span>
+                            <span><br>Subject: <span>  <%= curBook.subject %> </span></span>
+                        </div>
+                        <div style="text-align: center;">
+                            <% const isIdpresent = curUser.shelf.some((o) => o.id === curBook._id ); %>
+                            <% if (isIdpresent) { %>
+                                <button class="button-default tip">
+                                    <i class="fas fa-star" style="color: yellow;"></i>
+                                    <span class="tiptext">Remove From Wishlist</span>
+                                </button>
+                            <% } else { %>
+                                <form class="tip" action="/books" method="post">
+                                    <input type="hidden" name="wish_yrbr" value="<%= yrbr %>">
+                                    <input type="hidden" name="id" value="<%= curBook._id %>">
+                                    <input type="hidden" name="year" value="<%= curBook.year %>">
+                                    <button class="button-default tip">
+                                        <i class="fas fa-star"></i>
+                                        <span class="tiptext">Add To Wishlist</span>
+                                    </button>
+                                </form>
+                            <% } %>
+                            <a href= <%= curBook.bookUrl %> target="_blank" >
+                                <button class="button-default button-dow tip">
+                                    <i class="fas fa-file-download"></i>
+                                    <span class="tiptext">Download Book</span>
+                                </button>
+                            </a>
+                            
+                            
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <%    }  %>
+
+        </div>
+
+    </section>
+   
+</body>
+</html>

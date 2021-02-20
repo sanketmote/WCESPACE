@@ -1,0 +1,32 @@
+<%- include('partials/header') -%>
+<body>
+	
+	<div class="limiter">
+		<div class="container-login100" style="background-image: url('/images/bg-01.jpg');">
+			<div class="wrap-login100 p-l-55 p-r-55 p-t-65 p-b-54">
+		
+                <form action="/otp" method="POST" class="login100-form validate-form">
+
+                    <div class="wrap-input100 validate-input" data-validate="OTP is required">
+						<span class="label-input100">OTP</span>
+						<input class="input100" type="number" name="otp" placeholder="Type your OTP" autocomplete="off">
+						<span class="focus-input100" data-symbol="&#xf190;"></span>
+					</div>
+                    <br>
+                    <div class="container-login100-form-btn" >
+						<div class="wrap-login100-form-btn">
+							<div class="login100-form-bgbtn"></div>
+							<button class="login100-form-btn" type="submit" name = "submit" value="OTP">
+								Validate
+							</button>
+						</div>
+					</div>
+
+                </form>
+			</div>
+		</div>
+	</div>
+	
+
+	<div id="dropDownSelect1"></div>
+<%- include('partials/footer') -%>

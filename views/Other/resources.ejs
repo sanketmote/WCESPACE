@@ -1,0 +1,287 @@
+<%- include("navigation") -%>
+
+<!-- <section id="headsec" class="d-flex align-items-center">
+  
+  <div class="container-fluid" data-aos="fade-up">
+    <div class="row justify-content-center">
+      <div class="col-xl-5 col-lg-6 pt-3 pt-lg-0 order-2 order-lg-1 d-flex flex-column justify-content-center">
+        <h1>WCE SPACE</h1>
+      </div> -->
+      <!-- <div class="col-xl-4 col-lg-6 order-1 order-lg-2 headsec-img" data-aos="zoom-in" data-aos-delay="150">
+        <img src="/img/about2.jpg" class="img-fluid animated" alt="">
+      </div> -->
+    <!-- </div>
+  </div>
+
+</section> -->
+<div id="resources"></div>
+<section id="headsec" style="padding: 50px 0; height:0"></section>
+<div id="page-wraper">
+    <!-- Sidebar Menu -->
+    <div class="responsive-nav">
+      <i class="fa fa-bars" id="menu-toggle"></i>
+      <div id="menu" class="menu">
+        <i class="fa fa-times" id="menu-close"></i>
+        <div class="container">
+          <nav class="main-nav" role="navigation">
+            <ul class="main-menu" style="padding: 0%;">
+              <li><a href="#section1"> Books/Notes </a></li>
+              <% if(curUser.admin === 1){%>
+              <li><a href="contribute" target="_blank">Contribute US</a></li>
+              <%}%>
+              <li><a href="#">Forum</a></li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+    </div>
+
+    <section class="section my-work gallery__masonry__activation" data-section="section1" style="padding-top: 50px;">
+      <div class="container">
+        <div class="section-heading" style="padding: 30px 45px; ">
+          <h2 style="color: black;font-size:43px;">NOTES</h2>
+        </div>
+          <div class="isotope-wrapper">
+            <div class="row isotope-toolbar">
+                <div class="gallery__menu">
+
+                    <button data-filter=".cse" class="is-checked">CSE</button>
+                    <button data-filter=".it" class="">IT</button>
+                    <button data-filter=".civil" class="">Civil</button>
+                    <button data-filter=".mechanical" class=""> Mechanical</button>
+                    <button data-filter=".electrical" class=""> Electrical </button>
+                    <button data-filter=".electronics" class=""> Electronics </button>
+                    
+                </div>
+            </div>
+<!-- CSE  -->
+            <div class="row isotope-box masonry__wrap">
+              <div class="gallery__item cse" style="position: absolute; left: 0%; top: 0px;">
+                <div class="portfolio table-adj">
+                  <div class="row">
+                    <div class="col-sm-6 card-col">
+                      <div class="card">
+                        <div class="card-body bsuccess">
+                          <h2><a href="/resources/fycse">First Year</a></h2>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-sm-6 card-col">
+                      <div class="card">
+                        <div class="card-body bdanger">
+                          <h2 ><a href="/resources/sycse">Second Year</a></h2>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-sm-6 card-col">
+                      <div class="card">
+                        <div class="card-body bwarning">
+                          <h2><a href="/resources/tycse">Third Year</a></h2>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="col-sm-6 card-col">
+                      <div class="card">
+                        <div class="card-body binfo">
+                          <h2><a href="/resources/btechcse">Final Year</a></h2>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                </div>
+              </div>
+
+<!-- IT  -->
+              <div id="rm" class="gallery__item it hidden" style="position: absolute; left: 0%; top: 0px;">
+                <div class="portfolio table-adj">
+                  <div class="row">
+                    <div class="col-sm-6 card-col">
+                      <div class="card">
+                        <div class="card-body binfo">
+                          <h2><a href="/resources/fyit">First Year</a></h2>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-sm-6 card-col">
+                      <div class="card">
+                        <div class="card-body bsuccess">
+                          <h2 ><a href="/resources/syit">Second Year</a></h2>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-sm-6 card-col">
+                      <div class="card">
+                        <div class="card-body bdanger">
+                          <h2><a href="/resources/tyit">Third Year</a></h2>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="col-sm-6 card-col">
+                      <div class="card">
+                        <div class="card-body bwarning">
+                          <h2><a href="/resources/btechit">Final Year</a></h2>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+
+<!-- CIVIL  -->
+              <div id="rm" class="gallery__item civil hidden" style="position: absolute; left: 0%; top: 0px;">
+                <div class="portfolio table-adj">
+                  <div class="row">
+                    <div class="col-sm-6 card-col">
+                      <div class="card">
+                        <div class="card-body bwarning">
+                          <h2><a href="/resources/fycivil">First Year</a></h2>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-sm-6 card-col">
+                      <div class="card">
+                        <div class="card-body binfo">
+                          <h2 ><a href="/resources/sycivil">Second Year</a></h2>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-sm-6 card-col">
+                      <div class="card">
+                        <div class="card-body bsuccess">
+                          <h2><a href="/resources/tycivil">Third Year</a></h2>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="col-sm-6 card-col">
+                      <div class="card">
+                        <div class="card-body bdanger">
+                          <h2><a href="/resources/btechcivil">Final Year</a></h2>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+<!-- Mechanical -->
+              <div id="rm" class="gallery__item mechanical hidden" style="position: absolute; left: 0%; top: 0px;">
+                <div class="portfolio table-adj">
+                  <div class="row">
+                    <div class="col-sm-6 card-col">
+                      <div class="card">
+                        <div class="card-body bdanger">
+                          <h2><a href="/resources/fymech">First Year</a></h2>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-sm-6 card-col">
+                      <div class="card">
+                        <div class="card-body bwarning">
+                          <h2 ><a href="/resources/symech">Second Year</a></h2>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-sm-6 card-col">
+                      <div class="card">
+                        <div class="card-body binfo">
+                          <h2><a href="/resources/tymech">Third Year</a></h2>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="col-sm-6 card-col">
+                      <div class="card">
+                        <div class="card-body bsuccess">
+                          <h2><a href="/resources/btechmech">Final Year</a></h2>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+<!-- Electrical -->
+              <div id="rm" class="gallery__item electrical hidden" style="position: absolute; left: 0%; top: 0px;">
+                <div class="portfolio table-adj">
+                  <div class="row">
+                    <div class="col-sm-6 card-col">
+                      <div class="card">
+                        <div class="card-body bsuccess">
+                          <h2><a href="/resources/fyele">First Year</a></h2>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-sm-6 card-col">
+                      <div class="card">
+                        <div class="card-body bdanger">
+                          <h2 ><a href="/resources/syele">Second Year</a></h2>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-sm-6 card-col">
+                      <div class="card">
+                        <div class="card-body bwarning">
+                          <h2><a href="/resources/tyele">Third Year</a></h2>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="col-sm-6 card-col">
+                      <div class="card">
+                        <div class="card-body binfo">
+                          <h2><a href="/resources/btechele">Final Year</a></h2>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+<!-- Electronics -->
+              <div id="rm" class="gallery__item electronics hidden" style="position: absolute; left: 0%; top: 0px;">
+                <div class="portfolio table-adj">
+                  <div class="row">
+                    <div class="col-sm-6 card-col">
+                      <div class="card">
+                        <div class="card-body binfo">
+                          <h2><a href="/resources/fyelet">First Year</a></h2>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-sm-6 card-col">
+                      <div class="card">
+                        <div class="card-body bsuccess">
+                          <h2 ><a href="/resources/syelet">Second Year</a></h2>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-sm-6 card-col">
+                      <div class="card">
+                        <div class="card-body bdanger">
+                          <h2><a href="/resources/tyelet">Third Year</a></h2>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="col-sm-6 card-col">
+                      <div class="card">
+                        <div class="card-body bwarning">
+                          <h2><a href="/resources/btechelet">Final Year</a></h2>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+      </div>
+    </section>
+
+  <script src="/assets/js/jquery-3.2.1.min.js"></script>
+	<script src="/assets/js/plugins.js"></script>
+	<script src="/assets/js/active.js"></script>
+  
