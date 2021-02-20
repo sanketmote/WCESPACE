@@ -299,7 +299,7 @@ app.post('/info',(req,res)=>{
 })
 
 app.get('/forget' , (req,res)=>{
-    if(isLogin)
+    if(!isLogin)
         res.render('login/forget');
     else
         res.redirect('/');
