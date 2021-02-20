@@ -74,7 +74,7 @@
         <div class="row" style="margin: 0%;padding: 30px;">
 
            <% for(var i=0 ; i<bookinfo.length ; i++ ) { let curBook = bookinfo[i]%>
-              <% let {name,Auther,Date,subject,semester,link,downloadlink} = bookinfo[i]; %>
+              <% let {name,Auther,Date,subject,semester,link,downloadlink,year} = bookinfo[i]; %>
             <div class="col-md-3 single">
                 <div class="single-item">
 
@@ -90,11 +90,23 @@
                             <span><br>Subject: <span>  <%= curBook.subject %> </span></span>
                         </div>
                         <div style="text-align: center;">
-                            <button class="button-default tip">
-                                <i class="fas fa-star"></i>
-                                <span class="tiptext">Add To Wishlist</span>
-                            </button>
-
+                            <% const isIdpresent = curUser.shelf.some((o) => o.id === curBook._id ); %>
+                            <% if (isIdpresent) { %>
+                                <button class="button-default tip">
+                                    <i class="fas fa-star" style="color: yellow;"></i>
+                                    <span class="tiptext">Remove From Wishlist</span>
+                                </button>
+                            <% } else { %>
+                                <form class="tip" action="/books" method="post">
+                                    <input type="hidden" name="wish_yrbr" value="<%= yrbr %>">
+                                    <input type="hidden" name="id" value="<%= curBook._id %>">
+                                    <input type="hidden" name="year" value="<%= curBook.year %>">
+                                    <button class="button-default tip">
+                                        <i class="fas fa-star"></i>
+                                        <span class="tiptext">Add To Wishlist</span>
+                                    </button>
+                                </form>
+                            <% } %>
                             <a href= <%= curBook.bookUrl %> target="_blank" >
                                 <button class="button-default button-dow tip">
                                     <i class="fas fa-file-download"></i>

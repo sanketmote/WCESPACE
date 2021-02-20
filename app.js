@@ -37,7 +37,7 @@ const userSchema = new mongoose.Schema({
     username : String,
     password : String ,
     admin : Number,
-    shelf : [String]
+    shelf : []
 });
 // for otps
 const otpSchema = new mongoose.Schema({
@@ -807,6 +807,15 @@ app.get("/resources/:yrbr",function(req,res){
     }
 }); 
 
+app.post("/books", function(req,res){
+    var wishyrbr = req.body.wish_yrbr;
+    var wishId = req.body.id;
+    var wishyear = req.body.year;
+    var list = { year : wishyear , id : wishId}
+    curUser.shelf.push(list);
+    res.redirect("resources/"+wishyrbr);
+    // console.log(curUser.shelf[0].year);
+});
 
 app.listen(3000,()=>{
     console.log("server is running on port 3000");
