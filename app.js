@@ -861,6 +861,7 @@ app.get('/shelf',(req,res)=>{
         User.findOne({username : curUser.username },(err,doc)=>{
             if(!err){
                 curShelf = doc.shelf;
+                console.log(curUser.shelf.length);
             }
             res.render('Other/shelf', {bookinfo : curShelf , curUser : curUser});
         })

@@ -95,23 +95,25 @@
                             <span><br>Subject: <span>  <%= curBook.subject %> </span></span>
                         </div>
                         <div style="text-align: center;">
-                            <% const isIdpresent = curUser.shelf.some((o) => o.id === curBook._id ); %>
-                            <% if (isIdpresent) { %>
-                                <button class="button-default tip">
-                                    <i class="fas fa-star" style="color: yellow;"></i>
-                                    <span class="tiptext">Remove From Wishlist</span>
-                                </button>
-                            <% } else { %>
-                                <form class="tip" action= <%= yrbr %>  method="post">
-                                    <input type="hidden" name="wish_yrbr" value="<%= yrbr %>">
-                                    <input type="hidden" name="id" value="<%= curBook._id %>">
-                                    <input type="hidden" name="year" value="<%= curBook.year %>">
+                            <form class="tip" action= <%= yrbr %>  method="post">
+                                <input type="hidden" name="wish_yrbr" value="<%= yrbr %>">
+                                <input type="hidden" name="id" value="<%= curBook._id %>">
+                                <input type="hidden" name="year" value="<%= curBook.year %>">
+                                <% const arrayId = curUser.shelf.map(({ _id }) => _id); %>
+                                <%// console.log(curUser.shelf); %>
+                                <% if (arrayId.indexOf(curBook._id)>=0) { %>
+                                    <button class="button-default tip">
+                                        <i class="fas fa-star" style="color: yellow;"></i>
+                                        <span class="tiptext">Remove From Wishlist</span>
+                                    </button>
+                                <% } else { %>
                                     <button class="button-default tip">
                                         <i class="fas fa-star"></i>
                                         <span class="tiptext">Add To Wishlist</span>
                                     </button>
-                                </form>
-                            <% } %>
+                                    
+                                <% } %>
+                            </form>
                             <a href= <%= curBook.bookUrl %> target="_blank" >
                                 <button class="button-default button-dow tip">
                                     <i class="fas fa-file-download"></i>
