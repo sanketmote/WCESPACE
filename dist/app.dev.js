@@ -25,7 +25,10 @@ var transporter = nodemailer.createTransport({
   }
 }); // requiring
 
-var mongoose = require('mongoose'); // connecting database to url
+var mongoose = require('mongoose');
+
+var _require = require('./books'),
+    forEach = _require.forEach; // connecting database to url
 
 
 mongoose.connect("mongodb://localhost:27017/User", {
@@ -39,7 +42,7 @@ var userSchema = new mongoose.Schema({
   username: String,
   password: String,
   admin: Number,
-  shelf: [String]
+  shelf: []
 }); // for otps
 
 var otpSchema = new mongoose.Schema({
@@ -257,7 +260,7 @@ app.post('/info', function (req, res) {
   });
 });
 app.get('/forget', function (req, res) {
-  if (isLogin) res.render('login/forget');else res.redirect('/');
+  if (!isLogin) res.render('login/forget');else res.redirect('/');
 });
 app.post('/forget', function (req, res) {
   User.findOne({
@@ -415,17 +418,17 @@ var ELE = mongoose.model("ELE", ELEschema);
 var ELET = mongoose.model("ELET", ELETschema);
 var MECH = mongoose.model("MECH", MECHschema);
 var CIVIL = mongoose.model("CIVIL", CIVILschema);
-var sampleCSE = new IT({
+var sampleCSE = new CSE({
   year: 'fy',
   bookname: "Python",
   author: "Pavan Shinde",
   subject: "Coding",
-  imgUrl: 'https://i0.wp.com/iplmatchlive.in/wp-content/uploads/2021/01/Rohit-Sharma-in-Test-Team.jpg?resize=370%2C250&ssl=1',
+  imgUrl: 'https://media.newstracklive.com/uploads/sports-news/cricket/Aug/14/big_thumb/msd2_5f3609e79d303.jpg',
   bookUrl: 'https://drive.google.com/file/d/1hxhUvb1FZW8dXgbIcF8JDPWAajkhuTVE/view?usp=sharing'
 }); // sampleCSE.save();
 
 app.get("/resources/:yrbr", function (req, res) {
-  if (true) {
+  if (isLogin) {
     var yrbr = req.params.yrbr; // CSE
 
     if (yrbr === 'fycse') {
@@ -705,6 +708,8 @@ app.get("/resources/:yrbr", function (req, res) {
         year: 'sy'
       }, function (err, doc) {
         if (!err) {
+          807969029;
+
           if (doc) {
             res.render('Other/books', {
               curUser: curUser,
@@ -810,7 +815,79 @@ app.get("/resources/:yrbr", function (req, res) {
         }
       });
     }
-  }
+  } else res.redirect('/');
+});
+app.post("/resources/:yrbr", function (req, res) {
+  var yrbr = req.params.yrbr;
+  var wishyrbr = req.body.wish_yrbr;
+  var wishId = req.body.id;
+  var wishyear = req.body.year;
+  var list = {
+    year: wishyear,
+    id: wishId
+  };
+  CSE.findOne({
+    $and: [{
+      year: list.year
+    }, {
+      _id: list.id
+    }]
+  }, function (err, doc) {
+    if (!err && doc) {
+      var _curShelf = [];
+      User.findOne({
+        username: curUser.username
+      }, function (err, result) {
+        if (!err) {
+          _curShelf = result.shelf;
+          var i = 0;
+
+          for (i = 0; i < _curShelf.length; i++) {
+            if (JSON.stringify(_curShelf[i]) === JSON.stringify(doc)) {
+              break;
+            }
+          }
+
+          console.log(_curShelf.length + " " + i); // Book not in shelf
+
+          if (i === _curShelf.length) {
+            _curShelf.push(doc);
+          } // Book is in shelf
+          else {
+              _curShelf.splice(i, 1);
+            }
+
+          User.updateOne({
+            username: curUser.username
+          }, {
+            shelf: _curShelf
+          }, function (err) {
+            if (!err) {
+              console.log("Shelf Updated Successfully");
+              res.redirect("/resources/" + yrbr);
+            }
+          });
+        }
+      });
+    }
+  });
+});
+app.get('/shelf', function (req, res) {
+  if (isLogin) {
+    var curShef = [];
+    User.findOne({
+      username: curUser.username
+    }, function (err, doc) {
+      if (!err) {
+        curShelf = doc.shelf;
+      }
+
+      res.render('Other/shelf', {
+        bookinfo: curShelf,
+        curUser: curUser
+      });
+    });
+  } else res.redirect('/');
 });
 app.listen(3000, function () {
   console.log("server is running on port 3000");
