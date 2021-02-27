@@ -816,6 +816,8 @@ app.post("/resources/:yrbr", function(req,res){
     var wishId = req.body.id;
     var wishyear = req.body.year;
     var list = { year : wishyear , id : wishId}
+
+    let x =  'CSE';
     CSE.findOne({$and : [{ year : list.year },{ _id : list.id }] },(err,doc)=>{
         if(!err && doc)
         {
@@ -846,6 +848,50 @@ app.post("/resources/:yrbr", function(req,res){
                             res.redirect("/resources/"+yrbr);
                         }
                     });
+                    User.findOne({username : curUser.username},(err,doc)=>{
+                        if(!err)
+                            curUser = doc;
+                    })
+                            
+                }
+            });
+            
+        }
+    }) ;
+    IT.findOne({$and : [{ year : list.year },{ _id : list.id }] },(err,doc)=>{
+        if(!err && doc)
+        {
+            let curShelf = [];
+            User.findOne({username : curUser.username} , (err,result)=>{
+                if(!err){
+                         
+                    curShelf = result.shelf;
+                    let i = 0;
+                      
+                    for( i=0 ; i < curShelf.length ;i++){
+                        if(JSON.stringify(curShelf[i]) === JSON.stringify(doc)){
+                            break;
+                        }
+                    }
+                    console.log(curShelf.length+" "+i);
+                    // Book not in shelf
+                    if( i === curShelf.length ){
+                        curShelf.push(doc);
+                    }
+                    // Book is in shelf
+                    else{ 
+                        curShelf.splice(i , 1);
+                    }
+                    User.updateOne({username : curUser.username} , { shelf : curShelf } , (err)=>{
+                        if(!err){
+                            console.log("Shelf Updated Successfully");
+                            res.redirect("/resources/"+yrbr);
+                        }
+                    });
+                    User.findOne({username : curUser.username},(err,doc)=>{
+                        if(!err)
+                            curUser = doc;
+                    })
                             
                 }
             });

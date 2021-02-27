@@ -826,6 +826,7 @@ app.post("/resources/:yrbr", function (req, res) {
     year: wishyear,
     id: wishId
   };
+  var x = 'CSE';
   CSE.findOne({
     $and: [{
       year: list.year
@@ -867,6 +868,61 @@ app.post("/resources/:yrbr", function (req, res) {
               res.redirect("/resources/" + yrbr);
             }
           });
+          User.findOne({
+            username: curUser.username
+          }, function (err, doc) {
+            if (!err) curUser = doc;
+          });
+        }
+      });
+    }
+  });
+  IT.findOne({
+    $and: [{
+      year: list.year
+    }, {
+      _id: list.id
+    }]
+  }, function (err, doc) {
+    if (!err && doc) {
+      var _curShelf2 = [];
+      User.findOne({
+        username: curUser.username
+      }, function (err, result) {
+        if (!err) {
+          _curShelf2 = result.shelf;
+          var i = 0;
+
+          for (i = 0; i < _curShelf2.length; i++) {
+            if (JSON.stringify(_curShelf2[i]) === JSON.stringify(doc)) {
+              break;
+            }
+          }
+
+          console.log(_curShelf2.length + " " + i); // Book not in shelf
+
+          if (i === _curShelf2.length) {
+            _curShelf2.push(doc);
+          } // Book is in shelf
+          else {
+              _curShelf2.splice(i, 1);
+            }
+
+          User.updateOne({
+            username: curUser.username
+          }, {
+            shelf: _curShelf2
+          }, function (err) {
+            if (!err) {
+              console.log("Shelf Updated Successfully");
+              res.redirect("/resources/" + yrbr);
+            }
+          });
+          User.findOne({
+            username: curUser.username
+          }, function (err, doc) {
+            if (!err) curUser = doc;
+          });
         }
       });
     }
@@ -880,6 +936,7 @@ app.get('/shelf', function (req, res) {
     }, function (err, doc) {
       if (!err) {
         curShelf = doc.shelf;
+        console.log(curUser.shelf.length);
       }
 
       res.render('Other/shelf', {
