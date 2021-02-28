@@ -26,6 +26,7 @@ var transporter = nodemailer.createTransport({
 
 // requiring
 const mongoose = require('mongoose');
+const { forEach } = require('./books');
 
 // connecting database to url
 mongoose.connect("mongodb://localhost:27017/User",{useUnifiedTopology: true,useNewUrlParser: true});
@@ -299,7 +300,7 @@ app.post('/info',(req,res)=>{
 })
 
 app.get('/forget' , (req,res)=>{
-    if(isLogin)
+    if(!isLogin)
         res.render('login/forget');
     else
         res.redirect('/');
@@ -495,19 +496,19 @@ const CIVIL = mongoose.model("CIVIL", CIVILschema);
 
 
 
-const sampleCSE = new IT({
+const sampleCSE = new CSE({
     year : 'fy',
     bookname : "Python",
     author : "Pavan Shinde",
     subject : "Coding",
-    imgUrl : 'https://i0.wp.com/iplmatchlive.in/wp-content/uploads/2021/01/Rohit-Sharma-in-Test-Team.jpg?resize=370%2C250&ssl=1',
+    imgUrl : 'https://media.newstracklive.com/uploads/sports-news/cricket/Aug/14/big_thumb/msd2_5f3609e79d303.jpg',
     bookUrl : 'https://drive.google.com/file/d/1hxhUvb1FZW8dXgbIcF8JDPWAajkhuTVE/view?usp=sharing'
 })
 // sampleCSE.save();
 
 
 app.get("/resources/:yrbr",function(req,res){
-    if(true)
+    if(isLogin)
     {
         let yrbr = req.params.yrbr;
         // CSE
@@ -723,7 +724,7 @@ app.get("/resources/:yrbr",function(req,res){
         {
             MECH.find( { year : 'sy' } , (err,doc)=>{
                 if(!err)
-                {
+                {807969029
                     if(doc)
                     {
                         res.render('Other/books',{curUser : curUser,bookinfo : doc});           
@@ -805,16 +806,114 @@ app.get("/resources/:yrbr",function(req,res){
             })
         }
     }
+    else
+        res.redirect('/');
 }); 
 
-app.post("/books", function(req,res){
+app.post("/resources/:yrbr", function(req,res){
+    let yrbr = req.params.yrbr;
     var wishyrbr = req.body.wish_yrbr;
     var wishId = req.body.id;
     var wishyear = req.body.year;
     var list = { year : wishyear , id : wishId}
-    curUser.shelf.push(list);
-    res.redirect("resources/"+wishyrbr);
-    // console.log(curUser.shelf[0].year);
+
+    let x =  'CSE';
+    CSE.findOne({$and : [{ year : list.year },{ _id : list.id }] },(err,doc)=>{
+        if(!err && doc)
+        {
+            let curShelf = [];
+            User.findOne({username : curUser.username} , (err,result)=>{
+                if(!err){
+                         
+                    curShelf = result.shelf;
+                    let i = 0;
+                      
+                    for( i=0 ; i < curShelf.length ;i++){
+                        if(JSON.stringify(curShelf[i]) === JSON.stringify(doc)){
+                            break;
+                        }
+                    }
+                    console.log(curShelf.length+" "+i);
+                    // Book not in shelf
+                    if( i === curShelf.length ){
+                        curShelf.push(doc);
+                    }
+                    // Book is in shelf
+                    else{ 
+                        curShelf.splice(i , 1);
+                    }
+                    User.updateOne({username : curUser.username} , { shelf : curShelf } , (err)=>{
+                        if(!err){
+                            console.log("Shelf Updated Successfully");
+                            res.redirect("/resources/"+yrbr);
+                        }
+                    });
+                    User.findOne({username : curUser.username},(err,doc)=>{
+                        if(!err)
+                            curUser = doc;
+                    })
+                            
+                }
+            });
+            
+        }
+    }) ;
+    IT.findOne({$and : [{ year : list.year },{ _id : list.id }] },(err,doc)=>{
+        if(!err && doc)
+        {
+            let curShelf = [];
+            User.findOne({username : curUser.username} , (err,result)=>{
+                if(!err){
+                         
+                    curShelf = result.shelf;
+                    let i = 0;
+                      
+                    for( i=0 ; i < curShelf.length ;i++){
+                        if(JSON.stringify(curShelf[i]) === JSON.stringify(doc)){
+                            break;
+                        }
+                    }
+                    console.log(curShelf.length+" "+i);
+                    // Book not in shelf
+                    if( i === curShelf.length ){
+                        curShelf.push(doc);
+                    }
+                    // Book is in shelf
+                    else{ 
+                        curShelf.splice(i , 1);
+                    }
+                    User.updateOne({username : curUser.username} , { shelf : curShelf } , (err)=>{
+                        if(!err){
+                            console.log("Shelf Updated Successfully");
+                            res.redirect("/resources/"+yrbr);
+                        }
+                    });
+                    User.findOne({username : curUser.username},(err,doc)=>{
+                        if(!err)
+                            curUser = doc;
+                    })
+                            
+                }
+            });
+            
+        }
+    }) ;
+    
+});
+
+app.get('/shelf',(req,res)=>{
+    if(isLogin){
+        let curShef = [];
+        User.findOne({username : curUser.username },(err,doc)=>{
+            if(!err){
+                curShelf = doc.shelf;
+                console.log(curUser.shelf.length);
+            }
+            res.render('Other/shelf', {bookinfo : curShelf , curUser : curUser});
+        })
+    }
+    else
+        res.redirect('/');
 });
 
 app.listen(3000,()=>{

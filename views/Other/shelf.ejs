@@ -1,3 +1,4 @@
+
 <%- include("navigation") -%>
 
 <!DOCTYPE html>
@@ -19,7 +20,7 @@
 </head>
 <body style="background: linear-gradient(
     45deg
-    , rgb(137, 122, 221) 0%, rgba(137, 122, 221) 100%), url(../img/hero-bg.jpg) center center no-repeat;
+    , rgba(121, 110, 184, 0.9) 0%, rgba(121, 110, 184, 0.9) 100%), url(/img/hero-bg.jpg) center center no-repeat;
         background-size: cover;">
 
     <section>
@@ -95,25 +96,7 @@
                             <span><br>Subject: <span>  <%= curBook.subject %> </span></span>
                         </div>
                         <div style="text-align: center;">
-                            <form class="tip" action= <%= yrbr %>  method="post">
-                                <input type="hidden" name="wish_yrbr" value="<%= yrbr %>">
-                                <input type="hidden" name="id" value="<%= curBook._id %>">
-                                <input type="hidden" name="year" value="<%= curBook.year %>">
-                                <% const arrayId = curUser.shelf.map(({ _id }) => _id); %>
-                                <%// console.log(curUser.shelf); %>
-                                <% if (arrayId.indexOf(curBook._id)>=0) { %>
-                                    <button class="button-default tip">
-                                        <i class="fas fa-star" style="color: yellow;"></i>
-                                        <span class="tiptext">Remove From Wishlist</span>
-                                    </button>
-                                <% } else { %>
-                                    <button class="button-default tip">
-                                        <i class="fas fa-star"></i>
-                                        <span class="tiptext">Add To Wishlist</span>
-                                    </button>
-                                    
-                                <% } %>
-                            </form>
+                           
                             <a href= <%= curBook.bookUrl %> target="_blank" >
                                 <button class="button-default button-dow tip">
                                     <i class="fas fa-file-download"></i>

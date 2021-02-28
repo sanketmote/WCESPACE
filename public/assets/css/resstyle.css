@@ -408,7 +408,7 @@ button {
     cursor: pointer;
 }
 
-.is-checked,button:hover,:active {
+.is-checked,button:hover {
     outline: none;
     background-image:  -webkit-linear-gradient(45deg, #563afae6 0%, #563afae6 100%);
     color: #fff;

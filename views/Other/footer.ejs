@@ -24,10 +24,10 @@
             <ul>
               <li><i class="bx bx-chevron-right"></i> <a href="/" > Home</a> </li>
               <% if(curUser.admin === 1 ) {%>
-              <li><i class="bx bx-chevron-right"></i> <a href="contribute" > Contribute</a> </li>
+              <li><i class="bx bx-chevron-right"></i> <a href="/contribute" > Contribute</a> </li>
               <% } %>
               <% if(curUser.username !== "") {%>
-              <li><i class="bx bx-chevron-right"></i> <a href="resources" > Resourses</a> </li>
+              <li><i class="bx bx-chevron-right"></i> <a href="/resources" > Resourses</a> </li>
               <%}%>
               
             </ul>
@@ -39,7 +39,7 @@
                 Main purpose is that everyone gets their desired book on this website.
                 If you have any new  books then contribute to us.<br><br>
                 <% if(curUser.admin === 1  ) {%>
-                <a href="#" ><i class="fas fa-external-link-alt"></i> Contribute Us</a>
+                <a href="/contribute" ><i class="fas fa-external-link-alt"></i> Contribute Us</a>
                 <%}%>
             </p>
           </div>
