@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <title>Upload Files</title>
+  </head>
+  <body>
+    <h1>File Uploader</h1>
+    <!-- <form>
+        <input type="file" name="myFile" mulitple>
+        <br>
+        <br>
+        <input type="button" id="submitBtn" value="Upload Files">
+        <label id="resp"></label>
+    </form> -->
+    <form action="/contribute" method="post" enctype="multipart/form-data">
+        <input type="file" name="myFile1">
+        <br>
+        <br>
+	      <input type="file" name="myFile2">
+        <br>
+        <br>
+        <button type="submit">Upload</button>
+    </form>
+  </body>
+</html>

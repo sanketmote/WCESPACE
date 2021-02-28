@@ -1,11 +1,17 @@
+const { google } = require('googleapis');
+const path = require('path');
+const fs = require('fs');
+const { auth } = require('googleapis/build/src/apis/abusiveexperiencereport');
+
 const express  = require('express');
 
-const app = express('express');
-
-const BodyParser = require('body-parser');
+// const app = express('express');
+const bodyparser = require("body-parser");
+const upload = require('express-fileupload'); 
+const app = express();
 
 // added trial books.js file for testing of books.ejs file using array of key value pair see in books.js file 
-const books = require("./books")
+// const books = require("./books")
 
 
 var alert = require('alert');
@@ -71,11 +77,42 @@ const sampleOtp = new Otp({
 });
 
 
-app.use(BodyParser.urlencoded({extended : true}));
-
+app.use(bodyparser.urlencoded({extended:true}));
 app.use(express.static("public"));
+app.use(upload());
 
 app.set('view engine' , 'ejs');
+// contribute 
+const CLIENT_ID = '382614871956-6pecnaqrkthd4qac7nqm7spg037irfcd.apps.googleusercontent.com';
+const CLIENT_SECRENT = 'nnqLnJLHUkFI9Vhk6ShfvV4T';
+
+const REDIRECT_URI = 'https://developers.google.com/oauthplayground';
+
+const REFRESH_TOKEN = '1//04pnN0K-O79_cCgYIARAAGAQSNwF-L9IrQpRbqkcm4RqV8k_-kf7QiWr-S0ZZXuSsJVk14GT1LRa46ydBbRxvznVleXQTquKG228';
+
+const oauth2client = new google.auth.OAuth2(
+    CLIENT_ID,
+    CLIENT_SECRENT,
+    REDIRECT_URI,
+);
+
+oauth2client.setCredentials({ refresh_token: REFRESH_TOKEN });
+
+// google drive 
+const drive = google.drive({
+    version: 'v3',
+    auth : oauth2client,
+});
+
+let booksstore = {
+    year: "",
+    branch: "",
+    bookname : "",
+    author : "",
+    subject : "",
+    imagelink : "",
+    booklink : "",
+}
 
 let isSigningUp = false;
 let validated = false;
@@ -391,6 +428,80 @@ app.post('/cpass',(req,res)=>{
 });
 
 // other route 
+ 
+// file to upload in google drive 
+const filepath = path.join(__dirname,'dc.png');
+
+async function generatePublicurl(fileid,filedata) {
+    try {
+        const fileId = fileid;
+        await drive.permissions.create({
+            fileId: fileId,
+            requestBody : {
+                role: 'reader',
+                type: 'anyone',
+            },
+        });
+
+        const result = await drive.files.get({
+            fileId: fileId,
+            fields: 'webViewLink, webContentLink',
+        });
+        console.log(result.data);
+        if(filedata === 'myFile1')
+            booksstore.booklink =  result.data.webViewLink;
+        if(filedata === 'myFile2')
+            booksstore.imagelink = result.data.webViewLink;
+        else 
+            console.log("Somthing is Wrong");
+        console.log(booksstore);
+
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
+// To upload file 
+// to upload file in google drive => function 
+// below function is a async function 
+async function uploadFile(mimetype,bookname,filedata) {
+    var bookname1 = 'dcbook.pdf';
+    console.log(bookname,bookname1);
+    try{
+        const response = await drive.files.create({
+            requestBody: {
+                name : bookname,
+                mimeType: mimetype,
+            },
+            media: {
+                mimeType: mimetype,
+                body: fs.createReadStream('./public/books/'+bookname),
+            }
+        })
+        console.log(response.data.id);
+        generatePublicurl(response.data.id,filedata);
+
+    } catch (error) {
+        console.error(error.message);
+    }
+}
+
+// uploadFile();
+
+// to delete file from google drive 
+async function deletefilr() {
+    try {
+        const response = await drive.files.delete({
+            fileId : '1lrvmbZGVEsMPSvtfHfqxmnaMwGZYU4XE',
+        });
+        console.log(response.data, response.status);
+    } catch (error) {
+        console.log("error.message");        
+    }
+}
+
+// deletefilr();
+
 app.get("/contribute",function(req,res){
     if(isLogin )
     {
@@ -408,7 +519,59 @@ app.get("/contribute",function(req,res){
     }
     else
         res.redirect('/');
-}); 
+});
+
+app.post('/contribute', ( req , res ) => {
+    dir = './public/books';
+    if (!fs.existsSync(dir)){
+        fs.mkdirSync(dir);
+    } else {
+        fs.rmdirSync(dir, { recursive: true });
+        fs.mkdirSync(dir);
+    }
+    booksstore.branch = req.body.branch;
+    booksstore.year = req.body.year;
+    booksstore.bookname = req.body.bookname;
+    booksstore.author = req.body.author;
+    booksstore.subject = req.body.subject;
+    if (req.files){
+        // console.log(req.files);
+        var file = req.files.myFile1;
+        var filename = file.name;
+        file.mv('./public/books/'+filename,function(err){
+            if(err){
+                console.log(err);
+            } else {
+                // console.log("File Uploaded ");
+                var waitTill = new Date(new Date().getTime() + 10000);
+                while(waitTill > new Date()){};
+                
+                viewLinkbook = uploadFile(file.mimetype,filename,'myFile1');
+                while(waitTill > new Date()){};
+            }
+        });
+        var file = req.files.myFile2;
+        var filename1 = file.name;
+        file.mv('./public/books/'+filename1,function(err){
+            if(err){
+                console.log(err);
+            } else {
+                // console.log("File Uploaded ");
+                waitTill = new Date(new Date().getTime() + 10000 );
+                while(waitTill > new Date()){}
+                viewLinkimage = uploadFile(file.mimetype,filename1,'myFile2');
+                while(waitTill > new Date()){}; 
+            }
+        });
+        
+    }
+    res.redirect("/");
+    console.log(filename+" File Uploaded "); 
+    console.log(filename1+" File Uploaded "); 
+    console.log(file);
+});
+
+///////////////////////////////////////////////
 
 app.get("/resources",function(req,res){
     
@@ -916,7 +1079,11 @@ app.get('/shelf',(req,res)=>{
         res.redirect('/');
 });
 
-app.listen(3000,()=>{
+// app.listen(3000,()=>{
+//     console.log("server is running on port 3000");
+// });
+  
+app.listen(3000, function(){
     console.log("server is running on port 3000");
-});
+  })
   
