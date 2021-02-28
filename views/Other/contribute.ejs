@@ -15,7 +15,7 @@
 <section class="contribute-section">
     <div class="container-contact100">
 		<div class="wrap-contact100">
-			<form class="contact100-form validate-form">
+			<form action="/contribute" method="POST" enctype="multipart/form-data" class="contact100-form validate-form">
 				<span class="contact100-form-title">
 					Contribute Here!
 				</span>
@@ -37,12 +37,12 @@
 					<div>
 						<select class="selection-2" name="branch" required>
 							<option>Choose Branch</option>
-							<option value="">CSE</option>
-							<option value="">IT</option>
-							<option value="">Civil</option>
-							<option value="">Mechanical</option>
-							<option value="">Electrical</option>
-							<option value="">Electronics</option>
+							<option>CSE</option>
+							<option>IT</option>
+							<option>Civil</option>
+							<option>Mechanical</option>
+							<option>Electrical</option>
+							<option>Electronics</option>
 						</select>
 					</div>
 					<span class="focus-input100"></span>
@@ -64,12 +64,12 @@
 
 				<div class="wrap-input100 validate-input" data-validate = "Need to upload book">
 					<span class="label-input100">Upload Book / Note</span>
-					<input class="input100" type="file" name="file" id="" style="margin-top: 15px;" required>
+					<input class="input100" type="file" name="myFile1" id="" style="margin-top: 15px;" required>
 				</div>
 
 				<div class="wrap-input100">
 					<span class="label-input100">Upload Image of Book (if you have)</span>
-					<input class="input100" type="file" name="file" id="" style="margin-top: 15px;">
+					<input class="input100" type="file" name="myFile2" style="margin-top: 15px;">
 				</div>
 
 				<div class="wrap-input100 validate-input" data-validate = "Valid Book / Note Name required">
@@ -93,7 +93,7 @@
 				<div class="container-contact100-form-btn">
 					<div class="wrap-contact100-form-btn">
 						<div class="contact100-form-bgbtn"></div>
-						<button class="contact100-form-btn">
+						<button type="submit" class="contact100-form-btn">
 							<span>
 								Submit
 								<i class="fa fa-long-arrow-right m-l-7" aria-hidden="true"></i>
