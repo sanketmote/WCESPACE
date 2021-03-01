@@ -980,8 +980,9 @@ app.post("/resources/:yrbr", function(req,res){
     var wishyear = req.body.year;
     var list = { year : wishyear , id : wishId}
 
-    let x =  'CSE';
-    CSE.findOne({$and : [{ year : list.year },{ _id : list.id }] },(err,doc)=>{
+    let x =  CSE;
+    console.log(yrbr);
+    x.findOne({$and : [{ year : list.year },{ _id : list.id }] },(err,doc)=>{
         if(!err && doc)
         {
             let curShelf = [];
