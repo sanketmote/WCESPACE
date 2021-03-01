@@ -429,6 +429,83 @@ app.post('/cpass',(req,res)=>{
 
 // other route 
  
+// CSE books
+const CSEschema = new mongoose.Schema({
+    year : String,
+    bookname : String,
+    author : String,
+    subject : String,
+    imgUrl : String,
+    bookUrl : String
+});
+// IT books
+const ITschema = new mongoose.Schema({
+    year : String,
+    bookname : String,
+    author : String,
+    subject : String,
+    imgUrl : String,
+    bookUrl : String
+});
+// ELE books
+const ELEschema = new mongoose.Schema({
+    year : String,
+    bookname : String,
+    author : String,
+    subject : String,
+    imgUrl : String,
+    bookUrl : String
+});
+// ELET books
+const ELETschema = new mongoose.Schema({
+    year : String,
+    bookname : String,
+    author : String,
+    subject : String,
+    imgUrl : String,
+    bookUrl : String
+});
+// MECH books
+const MECHschema = new mongoose.Schema({
+    year : String,
+    bookname : String,
+    author : String,
+    subject : String,
+    imgUrl : String,
+    bookUrl : String
+});
+// CIVIL books
+const CIVILschema = new mongoose.Schema({
+    year : String,
+    bookname : String,
+    author : String,
+    subject : String,
+    imgUrl : String,
+    bookUrl : String
+});
+
+
+
+const CSE = mongoose.model("CSE", CSEschema);
+const IT = mongoose.model("IT", ITschema);
+const ELE = mongoose.model("ELE", ELEschema);
+const ELET = mongoose.model("ELET", ELETschema);
+const MECH = mongoose.model("MECH", MECHschema);
+const CIVIL = mongoose.model("CIVIL", CIVILschema);
+
+
+
+
+var sampleCSE = new CSE({
+    year : 'fy',
+    bookname : "Python",
+    author : "Pavan Shinde",
+    subject : "Coding",
+    imgUrl : 'https://media.newstracklive.com/uploads/sports-news/cricket/Aug/14/big_thumb/msd2_5f3609e79d303.jpg',
+    bookUrl : 'https://drive.google.com/file/d/1hxhUvb1FZW8dXgbIcF8JDPWAajkhuTVE/view?usp=sharing'
+})
+// sampleCSE.save();
+
 // file to upload in google drive 
 const filepath = path.join(__dirname,'dc.png');
 
@@ -449,12 +526,31 @@ async function generatePublicurl(fileid,filedata) {
         });
         console.log(result.data);
         if(filedata === 'myFile1')
+        {
             booksstore.booklink =  result.data.webViewLink;
-        if(filedata === 'myFile2')
+        }
+        if(filedata === 'myFile2'){
             booksstore.imagelink = result.data.webViewLink;
+            sampleCSE = new CSE({
+                year : booksstore.year,
+                bookname : booksstore.bookname,
+                author : booksstore.author,
+                subject : booksstore.subject,
+                imgUrl : booksstore.imagelink,
+                bookUrl : booksstore.booklink,
+            })
+            console.log(sampleCSE.imgUrl);
+            Promise.all(booksstore.imagelink)
+            .then(function(){
+                Promise.all(booksstore.booklink)
+                .then(function(){sampleCSE.save();})
+                .catch(console.error);
+            }) 
+            .catch(console.error);
+        }
         else 
             console.log("Somthing is Wrong");
-        console.log(booksstore);
+        // console.log(booksstore);
 
     } catch (error) {
         console.log(error.message);
@@ -478,8 +574,11 @@ async function uploadFile(mimetype,bookname,filedata) {
                 body: fs.createReadStream('./public/books/'+bookname),
             }
         })
+        var promises = response.data.id;
         console.log(response.data.id);
-        generatePublicurl(response.data.id,filedata);
+        Promise.all(promises)
+        .then(function() { generatePublicurl(response.data.id,filedata);console.log('all dropped)'); })
+        .catch(console.error);
 
     } catch (error) {
         console.error(error.message);
@@ -568,7 +667,7 @@ app.post('/contribute', ( req , res ) => {
     res.redirect("/");
     console.log(filename+" File Uploaded "); 
     console.log(filename1+" File Uploaded "); 
-    console.log(file);
+    // console.log(file);
 });
 
 ///////////////////////////////////////////////
@@ -584,91 +683,6 @@ app.get("/resources",function(req,res){
 // app.get("/books",function(req,res){
 //     res.render("Other/books",{curUser : curUser,bookinfo : books})
 // }); 
-
-
-
-
-
-
-
-
-// CSE books
-const CSEschema = new mongoose.Schema({
-    year : String,
-    bookname : String,
-    author : String,
-    subject : String,
-    imgUrl : String,
-    bookUrl : String
-});
-// IT books
-const ITschema = new mongoose.Schema({
-    year : String,
-    bookname : String,
-    author : String,
-    subject : String,
-    imgUrl : String,
-    bookUrl : String
-});
-// ELE books
-const ELEschema = new mongoose.Schema({
-    year : String,
-    bookname : String,
-    author : String,
-    subject : String,
-    imgUrl : String,
-    bookUrl : String
-});
-// ELET books
-const ELETschema = new mongoose.Schema({
-    year : String,
-    bookname : String,
-    author : String,
-    subject : String,
-    imgUrl : String,
-    bookUrl : String
-});
-// MECH books
-const MECHschema = new mongoose.Schema({
-    year : String,
-    bookname : String,
-    author : String,
-    subject : String,
-    imgUrl : String,
-    bookUrl : String
-});
-// CIVIL books
-const CIVILschema = new mongoose.Schema({
-    year : String,
-    bookname : String,
-    author : String,
-    subject : String,
-    imgUrl : String,
-    bookUrl : String
-});
-
-
-
-const CSE = mongoose.model("CSE", CSEschema);
-const IT = mongoose.model("IT", ITschema);
-const ELE = mongoose.model("ELE", ELEschema);
-const ELET = mongoose.model("ELET", ELETschema);
-const MECH = mongoose.model("MECH", MECHschema);
-const CIVIL = mongoose.model("CIVIL", CIVILschema);
-
-
-
-
-const sampleCSE = new CSE({
-    year : 'fy',
-    bookname : "Python",
-    author : "Pavan Shinde",
-    subject : "Coding",
-    imgUrl : 'https://media.newstracklive.com/uploads/sports-news/cricket/Aug/14/big_thumb/msd2_5f3609e79d303.jpg',
-    bookUrl : 'https://drive.google.com/file/d/1hxhUvb1FZW8dXgbIcF8JDPWAajkhuTVE/view?usp=sharing'
-})
-// sampleCSE.save();
-
 
 app.get("/resources/:yrbr",function(req,res){
     if(isLogin)
@@ -982,7 +996,7 @@ app.post("/resources/:yrbr", function(req,res){
 
     let x =  CSE;
     console.log(yrbr);
-    x.findOne({$and : [{ year : list.year },{ _id : list.id }] },(err,doc)=>{
+    CSE.findOne({$and : [{ year : list.year },{ _id : list.id }] },(err,doc)=>{
         if(!err && doc)
         {
             let curShelf = [];
