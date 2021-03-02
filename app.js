@@ -527,10 +527,12 @@ async function generatePublicurl(fileid,filedata) {
         console.log(result.data);
         if(filedata === 'myFile1')
         {
-            booksstore.booklink =  result.data.webViewLink;
+            Promise.all(result.data.webViewLink)
+            .then(function(){booksstore.booklink =  result.data.webViewLink;})
+            .catch(console.error);
         }
         if(filedata === 'myFile2'){
-            booksstore.imagelink = result.data.webViewLink;
+            booksstore.imagelink = 'https://drive.google.com/uc?export=view&id='+fileId;
             sampleCSE = new CSE({
                 year : booksstore.year,
                 bookname : booksstore.bookname,
@@ -539,11 +541,11 @@ async function generatePublicurl(fileid,filedata) {
                 imgUrl : booksstore.imagelink,
                 bookUrl : booksstore.booklink,
             })
-            console.log(sampleCSE.imgUrl);
+            // console.log(sampleCSE.imgUrl);
             Promise.all(booksstore.imagelink)
             .then(function(){
                 Promise.all(booksstore.booklink)
-                .then(function(){sampleCSE.save();})
+                .then(function(){alert('data successfully saved. Thank You For contributing Us......'); sampleCSE.save();})
                 .catch(console.error);
             }) 
             .catch(console.error);
@@ -575,9 +577,9 @@ async function uploadFile(mimetype,bookname,filedata) {
             }
         })
         var promises = response.data.id;
-        console.log(response.data.id);
+        // console.log(response.data.id);
         Promise.all(promises)
-        .then(function() { generatePublicurl(response.data.id,filedata);console.log('all dropped)'); })
+        .then(function() { generatePublicurl(response.data.id,filedata);console.log('File uploaded in drive creating link wait....'); alert('File uploaded in drive creating link wait....') })
         .catch(console.error);
 
     } catch (error) {
@@ -649,24 +651,31 @@ app.post('/contribute', ( req , res ) => {
                 while(waitTill > new Date()){};
             }
         });
-        var file = req.files.myFile2;
-        var filename1 = file.name;
-        file.mv('./public/books/'+filename1,function(err){
-            if(err){
-                console.log(err);
-            } else {
-                // console.log("File Uploaded ");
-                waitTill = new Date(new Date().getTime() + 10000 );
-                while(waitTill > new Date()){}
-                viewLinkimage = uploadFile(file.mimetype,filename1,'myFile2');
-                while(waitTill > new Date()){}; 
-            }
-        });
-        
+        if(req.files.myFile2){
+            var file = req.files.myFile2;
+            var filename1 = file.name;
+            file.mv('./public/books/'+filename1,function(err){
+                if(err){
+                    console.log(err);
+                } else {
+                    // console.log("File Uploaded ");
+                    waitTill = new Date(new Date().getTime() + 10000 );
+                    while(waitTill > new Date()){}
+                    viewLinkimage = uploadFile(file.mimetype,filename1,'myFile2');
+                    while(waitTill > new Date()){}; 
+                }
+            });
+        } else {
+            fileid = '1-yxOyT4sOXSI1d-urXz9hYKhTyXPmpcm';
+            waitTill = new Date(new Date().getTime() + 30000 );
+            while(waitTill > new Date()){}
+            generatePublicurl(fileid,'myFile2');
+            booksstore.imgUrl = 'https://drive.google.com/uc?export=view&id=1-yxOyT4sOXSI1d-urXz9hYKhTyXPmpcm';
+        }
     }
     res.redirect("/");
-    console.log(filename+" File Uploaded "); 
-    console.log(filename1+" File Uploaded "); 
+    // console.log(filename+" File Uploaded "); 
+    // console.log(filename1+" File Uploaded "); 
     // console.log(file);
 });
 
