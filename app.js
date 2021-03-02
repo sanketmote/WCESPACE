@@ -651,6 +651,8 @@ app.post('/contribute', ( req , res ) => {
                 while(waitTill > new Date()){};
             }
         });
+        waitTill = new Date(new Date().getTime() + 20000 );
+        while(waitTill > new Date()){}
         if(req.files.myFile2){
             var file = req.files.myFile2;
             var filename1 = file.name;
@@ -659,7 +661,7 @@ app.post('/contribute', ( req , res ) => {
                     console.log(err);
                 } else {
                     // console.log("File Uploaded ");
-                    waitTill = new Date(new Date().getTime() + 10000 );
+                    waitTill = new Date(new Date().getTime() + 30000 );
                     while(waitTill > new Date()){}
                     viewLinkimage = uploadFile(file.mimetype,filename1,'myFile2');
                     while(waitTill > new Date()){}; 
