@@ -10,6 +10,9 @@ const bodyparser = require("body-parser");
 const upload = require('express-fileupload'); 
 const app = express();
 
+// booksname
+var filename;
+var filename1;
 // added trial books.js file for testing of books.ejs file using array of key value pair see in books.js file 
 // const books = require("./books")
 
@@ -527,7 +530,8 @@ async function generatePublicurl(fileid,filedata) {
         console.log(result.data);
         if(filedata === 'myFile1')
         {
-            Promise.all(result.data.webViewLink)
+            booksstore.booklink =  result.data.webViewLink;
+            Promise.all(result.data)
             .then(function(){booksstore.booklink =  result.data.webViewLink;})
             .catch(console.error);
         }
@@ -545,7 +549,21 @@ async function generatePublicurl(fileid,filedata) {
             Promise.all(booksstore.imagelink)
             .then(function(){
                 Promise.all(booksstore.booklink)
-                .then(function(){alert('data successfully saved. Thank You For contributing Us......'); sampleCSE.save();})
+                .then(function(){
+                    alert('data successfully saved. Thank You For contributing Us......'); 
+                    sampleCSE.save();
+                    const path = './public/books/'+filename;
+                    const path1 = './public/books/'+filename1;
+
+                    try {
+                        fs.unlinkSync(path);
+                        fs.unlinkSync(path1);
+                        console.log("File Deleted ")
+                        //file removed
+                    } catch(err) {
+                        console.error(err);
+                    }
+                })
                 .catch(console.error);
             }) 
             .catch(console.error);
@@ -588,7 +606,11 @@ async function uploadFile(mimetype,bookname,filedata) {
 }
 
 // uploadFile();
-
+function intervalFunc() {
+    console.log('Cant stop me now!');
+  }
+  
+  
 // to delete file from google drive 
 async function deletefilr() {
     try {
@@ -624,12 +646,12 @@ app.get("/contribute",function(req,res){
 
 app.post('/contribute', ( req , res ) => {
     dir = './public/books';
-    if (!fs.existsSync(dir)){
-        fs.mkdirSync(dir);
-    } else {
-        fs.rmdirSync(dir, { recursive: true });
-        fs.mkdirSync(dir);
-    }
+    // if (!fs.existsSync(dir)){
+    //     fs.mkdirSync(dir);
+    // } else {
+    //     fs.rmdirSync(dir, { recursive: true });
+    //     fs.mkdirSync(dir);
+    // }
     booksstore.branch = req.body.branch;
     booksstore.year = req.body.year;
     booksstore.bookname = req.body.bookname;
@@ -638,24 +660,25 @@ app.post('/contribute', ( req , res ) => {
     if (req.files){
         // console.log(req.files);
         var file = req.files.myFile1;
-        var filename = file.name;
+        filename = file.name;
         file.mv('./public/books/'+filename,function(err){
             if(err){
                 console.log(err);
             } else {
                 // console.log("File Uploaded ");
-                var waitTill = new Date(new Date().getTime() + 10000);
+                var waitTill = new Date(new Date().getTime() + 20000);
                 while(waitTill > new Date()){};
                 
                 viewLinkbook = uploadFile(file.mimetype,filename,'myFile1');
                 while(waitTill > new Date()){};
             }
         });
-        waitTill = new Date(new Date().getTime() + 20000 );
+        var waitTill = new Date(new Date().getTime() + 3*file.size/1000000 );
+        setInterval(intervalFunc, 10000);
         while(waitTill > new Date()){}
         if(req.files.myFile2){
             var file = req.files.myFile2;
-            var filename1 = file.name;
+            filename1 = file.name;
             file.mv('./public/books/'+filename1,function(err){
                 if(err){
                     console.log(err);
