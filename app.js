@@ -40,7 +40,7 @@ const mongoose = require('mongoose');
 const { forEach } = require('./books');
 
 // connecting database to url
-mongoose.connect("mongodb://localhost:27017/User",{useUnifiedTopology: true,useNewUrlParser: true});
+mongoose.connect("mongodb+srv://admin-wcespace:WCESpace150401@cluster0.5htuy.mongodb.net/User",{useUnifiedTopology: true,useNewUrlParser: true});
 
 // Creating schema
 // for users
