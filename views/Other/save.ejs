@@ -1,0 +1,148 @@
+<!-- heading and navigation bar  -->
+<%- include("navigation") -%>
+
+
+	<link rel="stylesheet" type="text/css" href="/vendor/bootstrap/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="/fonts/font-awesome-4.7.0/css/font-awesome.min.css">
+	<link rel="stylesheet" type="text/css" href="/vendor/animate/animate.css">
+	<link rel="stylesheet" type="text/css" href="/vendor/css-hamburgers/hamburgers.min.css">
+	<link rel="stylesheet" type="text/css" href="/vendor/animsition/css/animsition.min.css">
+	<link rel="stylesheet" type="text/css" href="/vendor/select2/select2.min.css">
+	<link rel="stylesheet" type="text/css" href="/vendor/daterangepicker/daterangepicker.css">
+	<link rel="stylesheet" type="text/css" href="/css/util.css">
+	<link rel="stylesheet" type="text/css" href="/CSS/contribute.css">
+<body onload="setTimeout(function() { document.frm1.submit();alert('Form Submited! Have Nice Day!'); }, 5000)">
+    <section class="contribute-section">
+        <div class="container-contact100">
+            <div class="wrap-contact100">
+                <form action="/save" name="frm1" method="POST" enctype="multipart/form-data" class="contact100-form validate-form">
+                    <span class="contact100-form-title">
+                        Thank You For Contributing Us!
+                        <script>
+                            alert("This Form is AutoSubmited Please Do not refresh or leave. form will be submited in short. Please wait ");
+                        </script> 
+
+                    </span>
+
+                    <div class="wrap-input100 validate-input" data-validate="Name is required">
+                        <span class="label-input100">Your Username</span>
+                        <input class="input100" type="text" name="name" placeholder="Enter your name" value=<%= curUser.username %> disabled>
+                        <span class="focus-input100"></span>
+                    </div>
+
+                    <div class="wrap-input100 validate-input" data-validate = "Valid email is required: ex@abc.xyz">
+                        <span class="label-input100">Email</span>
+                        <input class="input100" type="text" name="email" placeholder="Enter your email addess" value= <%= curUser.email %> disabled>
+                        <span class="focus-input100"></span>
+                    </div>
+
+                    <div class="wrap-input100 input100-select">
+                        <span class="label-input100">Choose Book Branch</span>
+                        <div>
+                            <select class="selection-2" name="branch" value= <%= booksstore.branch %> required disabled>
+                                <option>Choose Branch</option>
+                                <option value="CSE" >CSE</option>
+                                <option value="IT" >IT</option>
+                                <option value="CIVIL" >Civil</option>
+                                <option value="MECH" >Mechanical</option>
+                                <option value="ELE" >Electrical</option>
+                                <option value="ELET" >Electronics</option>
+                            </select>
+                        </div>
+                        <span class="focus-input100"></span>
+                    </div>
+
+                    <div class="wrap-input100 input100-select">
+                        <span class="label-input100">Choose Book Year</span>
+                        <div>
+                            <select class="selection-2" name="year" value= <%= booksstore.year %> required disabled>
+                                <option>Select Year</option>
+                                <option value="fy">First Year</option>
+                                <option value="sy">Second Year</option>
+                                <option value="ty">Third Year</option>
+                                <option value="btech">Fourth Year</option>
+                            </select>
+                        </div>
+                        <span class="focus-input100"></span>
+                    </div>
+
+                    <div class="wrap-input100 validate-input" data-validate = "Need to upload book">
+                        <span class="label-input100">Upload Book / Note</span>
+                        <input class="input100" type="file" name="myFile1" id="" style="margin-top: 15px;" value= <%= booksstore.booklink %> required disabled>
+                    </div>
+
+                    <div class="wrap-input100">
+                        <span class="label-input100">Upload Image of Book (if you have)</span>
+                        <input class="input100" type="file" name="myFile2" style="margin-top: 15px;" value= <%= booksstore.imagelink %> >
+                    </div>
+
+                    <div class="wrap-input100 validate-input" data-validate = "Valid Book / Note Name required">
+                        <span class="label-input100">Book / Note Name</span>
+                        <input class="input100" type="text" name="bookname" placeholder="Enter Book name" value= <%= booksstore.bookname %> required disabled>
+                        <span class="focus-input100"></span>
+                    </div>
+
+                    <div class="wrap-input100 validate-input" data-validate = "Valid Book / Note Author Name required">
+                        <span class="label-input100">Book/Note Author Name</span>
+                        <input class="input100" type="text" name="author" placeholder="Enter Author name" value= <%= booksstore.author %> required disabled>
+                        <span class="focus-input100"></span>
+                    </div>
+
+                    <div class="wrap-input100 validate-input" data-validate = "Valid Subject">
+                        <span class="label-input100">Book Subject</span>
+                        <input class="input100" type="text" name="subject" placeholder="Enter Subject name" value= <%= booksstore.subject %> required disabled>
+                        <span class="focus-input100"></span>
+                    </div>
+
+                    <div class="container-contact100-form-btn">
+                        <div class="wrap-contact100-form-btn">
+                            <div class="contact100-form-bgbtn"></div>
+                            <button type="submit" class="contact100-form-btn" disabled>
+                                <span>
+                                    Submit
+                                    <i class="fa fa-long-arrow-right m-l-7" aria-hidden="true"></i>
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+
+
+        <div id="dropDownSelect1"></div>
+
+        <!--===============================================================================================-->
+            <script src="/vendor/jquery/jquery-3.2.1.min.js"></script>
+            <script src="/vendor/animsition/js/animsition.min.js"></script>
+            <script src="/vendor/bootstrap/js/popper.js"></script>
+            <script src="/vendor/bootstrap/js/bootstrap.min.js"></script>
+            <script src="/vendor/select2/select2.min.js"></script>
+            <script>
+                $(".selection-2").select2({
+                    minimumResultsForSearch: 20,
+                    dropdownParent: $('#dropDownSelect1')
+                });
+            </script>
+            <script src="/vendor/daterangepicker/moment.min.js"></script>
+            <script src="/vendor/daterangepicker/daterangepicker.js"></script>
+            <script src="/vendor/countdowntime/countdowntime.js"></script>
+            <script src="/JS/main.js"></script>
+
+            <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-23581568-13"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'UA-23581568-13');
+        </script>
+
+
+    </section>
+</body>
+
+<!-- footer  -->
+<%- include("footer")-%>
