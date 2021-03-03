@@ -276,17 +276,14 @@ app.post('/otp',(req,res)=>{
     Otp.findOne( {$and: [{ email: curMail},{ otp : req.body.otp }]} , (err,doc)=>{
         if(err)
         {
-            console.log("error Otp validation");
+            // console.log("error Otp validation");
             res.redirect("/");
         }
         else{
             if(doc)
             {  
                 Otp.deleteOne({ email: curMail, otp : req.body.otp },(error)=>{
-                    if(error)
-                        console.log("error in deletion otp");
-                    else
-                    {
+                    if(!error){
                         validated = true;
                         res.redirect('/info');
                     }
@@ -529,7 +526,7 @@ async function generatePublicurl(fileid,filedata) {
             fileId: fileId,
             fields: 'webViewLink, webContentLink',
         });
-        console.log(result.data);
+        // console.log(result.data);
         if(filedata === 'myFile1')
         {
             booksstore.booklink =  result.data.webViewLink;
@@ -552,7 +549,7 @@ async function generatePublicurl(fileid,filedata) {
                     try {
                         fs.unlinkSync(path);
                         fs.unlinkSync(path1);
-                        console.log("File Deleted ")
+                        // console.log("File Deleted ")
                         //file removed
                     } catch(err) {
                         console.error(err);
@@ -562,8 +559,8 @@ async function generatePublicurl(fileid,filedata) {
             }) 
             .catch(console.error);
         }
-        else 
-            console.log("Somthing is Wrong");
+        // else 
+            // console.log("Somthing is Wrong");
         // console.log(booksstore);
 
     } catch (error) {
@@ -576,7 +573,7 @@ async function generatePublicurl(fileid,filedata) {
 // below function is a async function 
 async function uploadFile(mimetype,bookname,filedata) {
     var bookname1 = 'dcbook.pdf';
-    console.log(bookname,bookname1);
+    // console.log(bookname,bookname1);
     try{
         const response = await drive.files.create({
             requestBody: {
@@ -595,7 +592,7 @@ async function uploadFile(mimetype,bookname,filedata) {
             file2id = response.data.id;
         // console.log(response.data.id);
         Promise.all(promises)
-        .then(function() { generatePublicurl(response.data.id,filedata);console.log('File uploaded in drive creating link wait....'); alert('File uploaded in drive creating link wait....') })
+        .then(function() { generatePublicurl(response.data.id,filedata);console.log('File uploaded in drive creating link wait....'); })
         .catch(console.error);
 
     } catch (error) {
@@ -1143,7 +1140,7 @@ app.post("/resources/:yrbr", function(req,res){
                             break;
                         }
                     }
-                    console.log(curShelf.length+" "+i);
+                    // console.log(curShelf.length+" "+i);
                     // Book not in shelf
                     if( i === curShelf.length ){
                         curShelf.push(doc);
@@ -1154,7 +1151,7 @@ app.post("/resources/:yrbr", function(req,res){
                     }
                     User.updateOne({username : curUser.username} , { shelf : curShelf } , (err)=>{
                         if(!err){
-                            console.log("Shelf Updated Successfully");
+                            // console.log("Shelf Updated Successfully");
                             res.redirect("/resources/"+yrbr);
                         }
                     });
