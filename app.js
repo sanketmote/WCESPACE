@@ -708,7 +708,7 @@ app.get("/resources/:yrbr",function(req,res){
                 {
                     if(doc)
                     {
-                        res.render('Other/books',{curUser : curUser,bookinfo : doc});           
+                        res.render('Other/books',{curUser : curUser,bookinfo : doc , yrbr : yrbr});           
                     }
                 }
             })

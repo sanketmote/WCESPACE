@@ -1,13 +1,24 @@
 "use strict";
 
-var express = require('express');
+var _require = require('googleapis'),
+    google = _require.google;
 
-var app = express('express');
+var path = require('path');
 
-var BodyParser = require('body-parser'); // added trial books.js file for testing of books.ejs file using array of key value pair see in books.js file 
+var fs = require('fs');
+
+var _require2 = require('googleapis/build/src/apis/abusiveexperiencereport'),
+    auth = _require2.auth;
+
+var express = require('express'); // const app = express('express');
 
 
-var books = require("./books");
+var bodyparser = require("body-parser");
+
+var upload = require('express-fileupload');
+
+var app = express(); // added trial books.js file for testing of books.ejs file using array of key value pair see in books.js file 
+// const books = require("./books")
 
 var alert = require('alert');
 
@@ -27,8 +38,8 @@ var transporter = nodemailer.createTransport({
 
 var mongoose = require('mongoose');
 
-var _require = require('./books'),
-    forEach = _require.forEach; // connecting database to url
+var _require3 = require('./books'),
+    forEach = _require3.forEach; // connecting database to url
 
 
 mongoose.connect("mongodb://localhost:27017/User", {
@@ -66,11 +77,35 @@ var sampleOtp = new Otp({
   email: "pavan.shinde@walchandsangli.ac.in",
   otp: 7777
 });
-app.use(BodyParser.urlencoded({
+app.use(bodyparser.urlencoded({
   extended: true
 }));
 app.use(express["static"]("public"));
-app.set('view engine', 'ejs');
+app.use(upload());
+app.set('view engine', 'ejs'); // contribute 
+
+var CLIENT_ID = '382614871956-6pecnaqrkthd4qac7nqm7spg037irfcd.apps.googleusercontent.com';
+var CLIENT_SECRENT = 'nnqLnJLHUkFI9Vhk6ShfvV4T';
+var REDIRECT_URI = 'https://developers.google.com/oauthplayground';
+var REFRESH_TOKEN = '1//04pnN0K-O79_cCgYIARAAGAQSNwF-L9IrQpRbqkcm4RqV8k_-kf7QiWr-S0ZZXuSsJVk14GT1LRa46ydBbRxvznVleXQTquKG228';
+var oauth2client = new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRENT, REDIRECT_URI);
+oauth2client.setCredentials({
+  refresh_token: REFRESH_TOKEN
+}); // google drive 
+
+var drive = google.drive({
+  version: 'v3',
+  auth: oauth2client
+});
+var booksstore = {
+  year: "",
+  branch: "",
+  bookname: "",
+  author: "",
+  subject: "",
+  imagelink: "",
+  booklink: ""
+};
 var isSigningUp = false;
 var validated = false;
 var isLogin = false; // This show which user is currently logged in
@@ -334,29 +369,6 @@ app.post('/cpass', function (req, res) {
     }
   });
 }); // other route 
-
-app.get("/contribute", function (req, res) {
-  if (isLogin) {
-    User.findOne({
-      username: curUser.username
-    }, function (err, doc) {
-      if (!err) {
-        if (doc.admin === 1) {
-          res.render("Other/contribute", {
-            curUser: curUser
-          });
-        } else res.redirect('/');
-      }
-    });
-  } else res.redirect('/');
-});
-app.get("/resources", function (req, res) {
-  if (isLogin) res.render("Other/resources", {
-    curUser: curUser
-  });else res.redirect('/');
-}); // app.get("/books",function(req,res){
-//     res.render("Other/books",{curUser : curUser,bookinfo : books})
-// }); 
 // CSE books
 
 var CSEschema = new mongoose.Schema({
@@ -426,6 +438,245 @@ var sampleCSE = new CSE({
   imgUrl: 'https://media.newstracklive.com/uploads/sports-news/cricket/Aug/14/big_thumb/msd2_5f3609e79d303.jpg',
   bookUrl: 'https://drive.google.com/file/d/1hxhUvb1FZW8dXgbIcF8JDPWAajkhuTVE/view?usp=sharing'
 }); // sampleCSE.save();
+// file to upload in google drive 
+
+var filepath = path.join(__dirname, 'dc.png');
+
+function generatePublicurl(fileid, filedata) {
+  var fileId, result;
+  return regeneratorRuntime.async(function generatePublicurl$(_context) {
+    while (1) {
+      switch (_context.prev = _context.next) {
+        case 0:
+          _context.prev = 0;
+          fileId = fileid;
+          _context.next = 4;
+          return regeneratorRuntime.awrap(drive.permissions.create({
+            fileId: fileId,
+            requestBody: {
+              role: 'reader',
+              type: 'anyone'
+            }
+          }));
+
+        case 4:
+          _context.next = 6;
+          return regeneratorRuntime.awrap(drive.files.get({
+            fileId: fileId,
+            fields: 'webViewLink, webContentLink'
+          }));
+
+        case 6:
+          result = _context.sent;
+          console.log(result.data);
+
+          if (filedata === 'myFile1') {
+            booksstore.booklink = result.data.webViewLink;
+          }
+
+          if (filedata === 'myFile2') {
+            booksstore.imagelink = result.data.webViewLink;
+            sampleCSE = new CSE({
+              year: booksstore.year,
+              bookname: booksstore.bookname,
+              author: booksstore.author,
+              subject: booksstore.subject,
+              imgUrl: booksstore.imagelink,
+              bookUrl: booksstore.booklink
+            });
+            console.log(sampleCSE.imgUrl);
+            Promise.all(booksstore.imagelink).then(function () {
+              Promise.all(booksstore.booklink).then(function () {
+                sampleCSE.save();
+              })["catch"](console.error);
+            })["catch"](console.error);
+          } else console.log("Somthing is Wrong"); // console.log(booksstore);
+
+
+          _context.next = 15;
+          break;
+
+        case 12:
+          _context.prev = 12;
+          _context.t0 = _context["catch"](0);
+          console.log(_context.t0.message);
+
+        case 15:
+        case "end":
+          return _context.stop();
+      }
+    }
+  }, null, null, [[0, 12]]);
+} // To upload file 
+// to upload file in google drive => function 
+// below function is a async function 
+
+
+function uploadFile(mimetype, bookname, filedata) {
+  var bookname1, response, promises;
+  return regeneratorRuntime.async(function uploadFile$(_context2) {
+    while (1) {
+      switch (_context2.prev = _context2.next) {
+        case 0:
+          bookname1 = 'dcbook.pdf';
+          console.log(bookname, bookname1);
+          _context2.prev = 2;
+          _context2.next = 5;
+          return regeneratorRuntime.awrap(drive.files.create({
+            requestBody: {
+              name: bookname,
+              mimeType: mimetype
+            },
+            media: {
+              mimeType: mimetype,
+              body: fs.createReadStream('./public/books/' + bookname)
+            }
+          }));
+
+        case 5:
+          response = _context2.sent;
+          promises = response.data.id;
+          console.log(response.data.id);
+          Promise.all(promises).then(function () {
+            generatePublicurl(response.data.id, filedata);
+            console.log('all dropped)');
+          })["catch"](console.error);
+          _context2.next = 14;
+          break;
+
+        case 11:
+          _context2.prev = 11;
+          _context2.t0 = _context2["catch"](2);
+          console.error(_context2.t0.message);
+
+        case 14:
+        case "end":
+          return _context2.stop();
+      }
+    }
+  }, null, null, [[2, 11]]);
+} // uploadFile();
+// to delete file from google drive 
+
+
+function deletefilr() {
+  var response;
+  return regeneratorRuntime.async(function deletefilr$(_context3) {
+    while (1) {
+      switch (_context3.prev = _context3.next) {
+        case 0:
+          _context3.prev = 0;
+          _context3.next = 3;
+          return regeneratorRuntime.awrap(drive.files["delete"]({
+            fileId: '1lrvmbZGVEsMPSvtfHfqxmnaMwGZYU4XE'
+          }));
+
+        case 3:
+          response = _context3.sent;
+          console.log(response.data, response.status);
+          _context3.next = 10;
+          break;
+
+        case 7:
+          _context3.prev = 7;
+          _context3.t0 = _context3["catch"](0);
+          console.log("error.message");
+
+        case 10:
+        case "end":
+          return _context3.stop();
+      }
+    }
+  }, null, null, [[0, 7]]);
+} // deletefilr();
+
+
+app.get("/contribute", function (req, res) {
+  if (isLogin) {
+    User.findOne({
+      username: curUser.username
+    }, function (err, doc) {
+      if (!err) {
+        if (doc.admin === 1) {
+          res.render("Other/contribute", {
+            curUser: curUser
+          });
+        } else res.redirect('/');
+      }
+    });
+  } else res.redirect('/');
+});
+app.post('/contribute', function (req, res) {
+  dir = './public/books';
+
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir);
+  } else {
+    fs.rmdirSync(dir, {
+      recursive: true
+    });
+    fs.mkdirSync(dir);
+  }
+
+  booksstore.branch = req.body.branch;
+  booksstore.year = req.body.year;
+  booksstore.bookname = req.body.bookname;
+  booksstore.author = req.body.author;
+  booksstore.subject = req.body.subject;
+
+  if (req.files) {
+    // console.log(req.files);
+    var file = req.files.myFile1;
+    var filename = file.name;
+    file.mv('./public/books/' + filename, function (err) {
+      if (err) {
+        console.log(err);
+      } else {
+        // console.log("File Uploaded ");
+        var waitTill = new Date(new Date().getTime() + 10000);
+
+        while (waitTill > new Date()) {}
+
+        ;
+        viewLinkbook = uploadFile(file.mimetype, filename, 'myFile1');
+
+        while (waitTill > new Date()) {}
+
+        ;
+      }
+    });
+    var file = req.files.myFile2;
+    var filename1 = file.name;
+    file.mv('./public/books/' + filename1, function (err) {
+      if (err) {
+        console.log(err);
+      } else {
+        // console.log("File Uploaded ");
+        waitTill = new Date(new Date().getTime() + 10000);
+
+        while (waitTill > new Date()) {}
+
+        viewLinkimage = uploadFile(file.mimetype, filename1, 'myFile2');
+
+        while (waitTill > new Date()) {}
+
+        ;
+      }
+    });
+  }
+
+  res.redirect("/");
+  console.log(filename + " File Uploaded ");
+  console.log(filename1 + " File Uploaded "); // console.log(file);
+}); ///////////////////////////////////////////////
+
+app.get("/resources", function (req, res) {
+  if (isLogin) res.render("Other/resources", {
+    curUser: curUser
+  });else res.redirect('/');
+}); // app.get("/books",function(req,res){
+//     res.render("Other/books",{curUser : curUser,bookinfo : books})
+// }); 
 
 app.get("/resources/:yrbr", function (req, res) {
   if (isLogin) {
@@ -455,7 +706,8 @@ app.get("/resources/:yrbr", function (req, res) {
           if (doc) {
             res.render('Other/books', {
               curUser: curUser,
-              bookinfo: doc
+              bookinfo: doc,
+              yrbr: yrbr
             });
           }
         }
@@ -826,7 +1078,8 @@ app.post("/resources/:yrbr", function (req, res) {
     year: wishyear,
     id: wishId
   };
-  var x = 'CSE';
+  var x = CSE;
+  console.log(yrbr);
   CSE.findOne({
     $and: [{
       year: list.year
@@ -945,7 +1198,10 @@ app.get('/shelf', function (req, res) {
       });
     });
   } else res.redirect('/');
-});
+}); // app.listen(3000,()=>{
+//     console.log("server is running on port 3000");
+// });
+
 app.listen(3000, function () {
   console.log("server is running on port 3000");
 });
