@@ -10,6 +10,11 @@ const bodyparser = require("body-parser");
 const upload = require('express-fileupload'); 
 const app = express();
 
+// booksname
+var filename;
+var filename1;
+var fille1id;
+var file2id;
 // added trial books.js file for testing of books.ejs file using array of key value pair see in books.js file 
 // const books = require("./books")
 
@@ -528,22 +533,31 @@ async function generatePublicurl(fileid,filedata) {
         if(filedata === 'myFile1')
         {
             booksstore.booklink =  result.data.webViewLink;
+            Promise.all(result.data.webViewLink)
+            .then(function(){booksstore.booklink =  result.data.webViewLink;})
+            .catch(console.error);
         }
         if(filedata === 'myFile2'){
-            booksstore.imagelink = result.data.webViewLink;
-            sampleCSE = new CSE({
-                year : booksstore.year,
-                bookname : booksstore.bookname,
-                author : booksstore.author,
-                subject : booksstore.subject,
-                imgUrl : booksstore.imagelink,
-                bookUrl : booksstore.booklink,
-            })
-            console.log(sampleCSE.imgUrl);
+            booksstore.imagelink = 'https://drive.google.com/uc?export=view&id='+fileId;
+            
+            // console.log(sampleCSE.imgUrl);
             Promise.all(booksstore.imagelink)
             .then(function(){
                 Promise.all(booksstore.booklink)
-                .then(function(){sampleCSE.save();})
+                .then(function(){
+                    alert('data successfully saved. Thank You For contributing Us......'); 
+                    const path = './public/books/'+filename;
+                    const path1 = './public/books/'+filename1;
+
+                    try {
+                        fs.unlinkSync(path);
+                        fs.unlinkSync(path1);
+                        console.log("File Deleted ")
+                        //file removed
+                    } catch(err) {
+                        console.error(err);
+                    }
+                })
                 .catch(console.error);
             }) 
             .catch(console.error);
@@ -575,9 +589,13 @@ async function uploadFile(mimetype,bookname,filedata) {
             }
         })
         var promises = response.data.id;
-        console.log(response.data.id);
+        if(filedata === 'myFile1')
+            fille1id = response.data.id;
+        if(filedata === 'myFile2')    
+            file2id = response.data.id;
+        // console.log(response.data.id);
         Promise.all(promises)
-        .then(function() { generatePublicurl(response.data.id,filedata);console.log('all dropped)'); })
+        .then(function() { generatePublicurl(response.data.id,filedata);console.log('File uploaded in drive creating link wait....'); alert('File uploaded in drive creating link wait....') })
         .catch(console.error);
 
     } catch (error) {
@@ -586,12 +604,16 @@ async function uploadFile(mimetype,bookname,filedata) {
 }
 
 // uploadFile();
-
+function intervalFunc() {
+    console.log('Wait');
+  }
+  
+  
 // to delete file from google drive 
-async function deletefilr() {
+async function deletefilr(fileid) {
     try {
         const response = await drive.files.delete({
-            fileId : '1lrvmbZGVEsMPSvtfHfqxmnaMwGZYU4XE',
+            fileId : fileid,
         });
         console.log(response.data, response.status);
     } catch (error) {
@@ -622,12 +644,12 @@ app.get("/contribute",function(req,res){
 
 app.post('/contribute', ( req , res ) => {
     dir = './public/books';
-    if (!fs.existsSync(dir)){
-        fs.mkdirSync(dir);
-    } else {
-        fs.rmdirSync(dir, { recursive: true });
-        fs.mkdirSync(dir);
-    }
+    // if (!fs.existsSync(dir)){
+    //     fs.mkdirSync(dir);
+    // } else {
+    //     fs.rmdirSync(dir, { recursive: true });
+    //     fs.mkdirSync(dir);
+    // }
     booksstore.branch = req.body.branch;
     booksstore.year = req.body.year;
     booksstore.bookname = req.body.bookname;
@@ -636,42 +658,152 @@ app.post('/contribute', ( req , res ) => {
     if (req.files){
         // console.log(req.files);
         var file = req.files.myFile1;
-        var filename = file.name;
+        filename = file.name;
         file.mv('./public/books/'+filename,function(err){
             if(err){
                 console.log(err);
             } else {
                 // console.log("File Uploaded ");
-                var waitTill = new Date(new Date().getTime() + 10000);
+                var waitTill = new Date(new Date().getTime() + 20000);
                 while(waitTill > new Date()){};
                 
                 viewLinkbook = uploadFile(file.mimetype,filename,'myFile1');
                 while(waitTill > new Date()){};
             }
         });
-        var file = req.files.myFile2;
-        var filename1 = file.name;
-        file.mv('./public/books/'+filename1,function(err){
-            if(err){
-                console.log(err);
-            } else {
-                // console.log("File Uploaded ");
-                waitTill = new Date(new Date().getTime() + 10000 );
-                while(waitTill > new Date()){}
-                viewLinkimage = uploadFile(file.mimetype,filename1,'myFile2');
-                while(waitTill > new Date()){}; 
-            }
-        });
-        
+        var waitTill = new Date(new Date().getTime() + 3*file.size/1000000 );
+        // setInterval(intervalFunc, 10000);
+        while(waitTill > new Date()){}
+        if(req.files.myFile2){
+            var file = req.files.myFile2;
+            filename1 = file.name;
+            file.mv('./public/books/'+filename1,function(err){
+                if(err){
+                    console.log(err);
+                } else {
+                    // console.log("File Uploaded ");
+                    waitTill = new Date(new Date().getTime() + 30000 );
+                    while(waitTill > new Date()){}
+                    viewLinkimage = uploadFile(file.mimetype,filename1,'myFile2');
+                    while(waitTill > new Date()){}; 
+                }
+            });
+        } else {
+            fileid = '1-yxOyT4sOXSI1d-urXz9hYKhTyXPmpcm';
+            waitTill = new Date(new Date().getTime() + 30000 );
+            while(waitTill > new Date()){}
+            generatePublicurl(fileid,'myFile2');
+            booksstore.imgUrl = 'https://drive.google.com/uc?export=view&id=1-yxOyT4sOXSI1d-urXz9hYKhTyXPmpcm';
+        }
     }
-    res.redirect("/");
-    console.log(filename+" File Uploaded "); 
-    console.log(filename1+" File Uploaded "); 
+    var waitTill = new Date(new Date().getTime() + 3*file.size/1000000 );
+    while(waitTill > new Date()){}
+    res.redirect("/save");
+    // console.log(filename+" File Uploaded "); 
+    // console.log(filename1+" File Uploaded "); 
     // console.log(file);
 });
 
 ///////////////////////////////////////////////
+app.get("/save",function(req,res){
+    if(isLogin )
+    {
+        User.findOne({username : curUser.username } , (err,doc)=>{
+            if(!err)
+            {
+                if(doc.admin === 1 )
+                {
+                    res.render("Other/save",{curUser : curUser,booksstore:booksstore})               
+                }
+                else
+                    res.redirect('/');
+            }
+        });
+    }
+    else
+        res.redirect('/');
+});
 
+app.post("/save", ( req , res ) => {
+    if(booksstore.branch === "CSE"){
+        sampleCSE = new CSE({
+            year : booksstore.year,
+            bookname : booksstore.bookname,
+            author : booksstore.author,
+            subject : booksstore.subject,
+            imgUrl : booksstore.imagelink,
+            bookUrl : booksstore.booklink,
+        }); 
+        sampleCSE.save();  
+    } else {
+        if(booksstore.branch === "IT"){
+            sampleCSE = new IT({
+                year : booksstore.year,
+                bookname : booksstore.bookname,
+                author : booksstore.author,
+                subject : booksstore.subject,
+                imgUrl : booksstore.imagelink,
+                bookUrl : booksstore.booklink,
+            }); 
+            sampleCSE.save();  
+        } else {
+            if(booksstore.branch === "CIVIL"){
+                sampleCSE = new CIVIL({
+                    year : booksstore.year,
+                    bookname : booksstore.bookname,
+                    author : booksstore.author,
+                    subject : booksstore.subject,
+                    imgUrl : booksstore.imagelink,
+                    bookUrl : booksstore.booklink,
+                }); 
+                sampleCSE.save();  
+            } else {
+                if(booksstore.branch === "MECH"){
+                    sampleCSE = new MECH({
+                        year : booksstore.year,
+                        bookname : booksstore.bookname,
+                        author : booksstore.author,
+                        subject : booksstore.subject,
+                        imgUrl : booksstore.imagelink,
+                        bookUrl : booksstore.booklink,
+                    }); 
+                    sampleCSE.save();  
+                } else {
+                    if(booksstore.branch === "ELE"){
+                        sampleCSE = new ELE({
+                            year : booksstore.year,
+                            bookname : booksstore.bookname,
+                            author : booksstore.author,
+                            subject : booksstore.subject,
+                            imgUrl : booksstore.imagelink,
+                            bookUrl : booksstore.booklink,
+                        }); 
+                        sampleCSE.save();  
+                    } else {
+                        if(booksstore.branch === "ELET"){
+                            sampleCSE = new ELET({
+                                year : booksstore.year,
+                                bookname : booksstore.bookname,
+                                author : booksstore.author,
+                                subject : booksstore.subject,
+                                imgUrl : booksstore.imagelink,
+                                bookUrl : booksstore.booklink,
+                            }); 
+                            sampleCSE.save();
+                        } else {
+                            alert("You didn't selected any branch Please Try again!!!");
+                            deletefilr(fille1id);
+                            deletefilr(file2id);
+                        } 
+                    }
+                }
+            } 
+        }
+    }
+    res.redirect("/contribute");
+});
+
+////////////////////////////////////////////
 app.get("/resources",function(req,res){
     
     if(isLogin )
