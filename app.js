@@ -542,18 +542,18 @@ async function generatePublicurl(fileid,filedata) {
             .then(function(){
                 Promise.all(booksstore.booklink)
                 .then(function(){
-                    alert('data successfully saved. Thank You For contributing Us......'); 
+                    // alert('data successfully saved. Thank You For contributing Us......'); 
                     const path = './public/books/'+filename;
                     const path1 = './public/books/'+filename1;
 
-                    try {
-                        fs.unlinkSync(path);
-                        fs.unlinkSync(path1);
-                        // console.log("File Deleted ")
-                        //file removed
-                    } catch(err) {
-                        console.error(err);
-                    }
+                    // try {
+                    //     fs.unlinkSync(path);
+                    //     fs.unlinkSync(path1);
+                    //     // console.log("File Deleted ")
+                    //     //file removed
+                    // } catch(err) {
+                    //     console.error(err);
+                    // }
                 })
                 .catch(console.error);
             }) 
