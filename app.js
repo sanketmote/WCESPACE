@@ -4,16 +4,12 @@ const fs = require('fs');
 const { auth } = require('googleapis/build/src/apis/abusiveexperiencereport');
 
 const express  = require('express');
-var timeout = require('connect-timeout')
-var cookieParser = require('cookie-parser')
+
 // const app = express('express');
 const bodyparser = require("body-parser");
 const upload = require('express-fileupload'); 
 const app = express();
-app.use(timeout('100s'))
-app.use(haltOnTimedout)
-app.use(cookieParser())
-app.use(haltOnTimedout)
+
 // booksname
 var filename;
 var filename1;
@@ -665,14 +661,14 @@ app.post('/contribute', ( req , res ) => {
                 console.log(err);
             } else {
                 // console.log("File Uploaded ");
-                var waitTill = new Date(new Date().getTime() + 20000);
+                var waitTill = new Date(new Date().getTime() + 10000);
                 while(waitTill > new Date()){};
                 
                 viewLinkbook = uploadFile(file.mimetype,filename,'myFile1');
                 while(waitTill > new Date()){};
             }
         });
-        var waitTill = new Date(new Date().getTime() + 3*file.size/1000000 );
+        var waitTill = new Date(new Date().getTime() + file.size/1000000 );
         // setInterval(intervalFunc, 10000);
         while(waitTill > new Date()){}
         if(req.files.myFile2){
@@ -683,7 +679,7 @@ app.post('/contribute', ( req , res ) => {
                     console.log(err);
                 } else {
                     // console.log("File Uploaded ");
-                    waitTill = new Date(new Date().getTime() + 30000 );
+                    waitTill = new Date(new Date().getTime() + 10000 );
                     while(waitTill > new Date()){}
                     viewLinkimage = uploadFile(file.mimetype,filename1,'myFile2');
                     while(waitTill > new Date()){}; 
@@ -691,14 +687,14 @@ app.post('/contribute', ( req , res ) => {
             });
         } else {
             fileid = '1-yxOyT4sOXSI1d-urXz9hYKhTyXPmpcm';
-            waitTill = new Date(new Date().getTime() + 30000 );
+            waitTill = new Date(new Date().getTime() + 10000 );
             while(waitTill > new Date()){}
             generatePublicurl(fileid,'myFile2');
             booksstore.imgUrl = 'https://drive.google.com/uc?export=view&id=1-yxOyT4sOXSI1d-urXz9hYKhTyXPmpcm';
         }
     }
-    var waitTill = new Date(new Date().getTime() + 3*file.size/1000000 );
-    while(waitTill > new Date()){}
+    // var waitTill = new Date(new Date().getTime() + 3*file.size/1000000 );
+    // while(waitTill > new Date()){}
     res.redirect("/save");
     // console.log(filename+" File Uploaded "); 
     // console.log(filename1+" File Uploaded "); 
@@ -1230,10 +1226,7 @@ app.get('/shelf',(req,res)=>{
 // app.listen(3000,()=>{
 //     console.log("server is running on port 3000");
 // });
-function haltOnTimedout (req, res, next) {
-    if (!req.timedout) next()
-  }
-  
+
 let port = process.env.PORT;
 if (port == null || port == "") {
   port = 3000;
