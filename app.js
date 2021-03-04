@@ -4,12 +4,16 @@ const fs = require('fs');
 const { auth } = require('googleapis/build/src/apis/abusiveexperiencereport');
 
 const express  = require('express');
-
+var timeout = require('connect-timeout')
+var cookieParser = require('cookie-parser')
 // const app = express('express');
 const bodyparser = require("body-parser");
 const upload = require('express-fileupload'); 
 const app = express();
-
+app.use(timeout('100s'))
+app.use(haltOnTimedout)
+app.use(cookieParser())
+app.use(haltOnTimedout)
 // booksname
 var filename;
 var filename1;
@@ -1226,7 +1230,10 @@ app.get('/shelf',(req,res)=>{
 // app.listen(3000,()=>{
 //     console.log("server is running on port 3000");
 // });
-
+function haltOnTimedout (req, res, next) {
+    if (!req.timedout) next()
+  }
+  
 let port = process.env.PORT;
 if (port == null || port == "") {
   port = 3000;
