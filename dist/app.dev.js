@@ -1,5 +1,7 @@
 "use strict";
 
+require('dotenv').config();
+
 var _require = require('googleapis'),
     google = _require.google;
 
@@ -10,84 +12,103 @@ var fs = require('fs');
 var _require2 = require('googleapis/build/src/apis/abusiveexperiencereport'),
     auth = _require2.auth;
 
-var express = require('express'); // const app = express('express');
+var express = require('express');
+
+var jwt = require('jsonwebtoken');
+
+var cookieParser = require('cookie-parser'); // const app = express('express');
 
 
 var bodyparser = require("body-parser");
 
 var upload = require('express-fileupload');
 
-var app = express(); // booksname
-
-var filename;
-var filename1;
-var fille1id;
-var file2id; // added trial books.js file for testing of books.ejs file using array of key value pair see in books.js file 
-// const books = require("./books")
+var app = express();
 
 var alert = require('alert');
 
-var sha256 = require('sha256'); // sending varification mail
+var sha256 = require('sha256');
 
+var ejs = require('ejs');
 
-var nodemailer = require('nodemailer'); // Author
+var mongoose = require('mongoose');
 
+var _require3 = require('./books'),
+    forEach = _require3.forEach;
 
+var nodemailer = require('nodemailer');
+
+app.use(bodyparser.urlencoded({
+  extended: true
+}));
+app.use(express["static"]("public"));
+app.use(upload());
+app.use(cookieParser());
+app.set('view engine', 'ejs');
 var transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
     user: 'wcespace1947@gmail.com',
     pass: 'WCESpace@150401'
   }
-}); // requiring
+}); // booksname
 
-var mongoose = require('mongoose');
+var filename;
+var filename1;
+var fille1id;
+var file2id; // connecting database to url
+// mongoose.connect("mongodb+srv://admin-wcespace:WCESpace150401@cluster0.5htuy.mongodb.net/User",{useUnifiedTopology: true,useNewUrlParser: true});
 
-var _require3 = require('./books'),
-    forEach = _require3.forEach; // connecting database to url
-
-
-mongoose.connect("mongodb+srv://admin-wcespace:WCESpace150401@cluster0.5htuy.mongodb.net/User", {
+mongoose.connect("mongodb://admin-wcespace:WCESpace150401@cluster0-shard-00-00.5htuy.mongodb.net:27017,cluster0-shard-00-01.5htuy.mongodb.net:27017,cluster0-shard-00-02.5htuy.mongodb.net:27017/User?ssl=true&replicaSet=atlas-rps98p-shard-0&authSource=admin&retryWrites=true&w=majority", {
   useUnifiedTopology: true,
   useNewUrlParser: true
-}); // Creating schema
-// for users
+}); // mongoose.connect('mongodb://localhost:27017/User',{ useUnifiedTopology: true , useNewUrlParser: true});
 
 var userSchema = new mongoose.Schema({
   email: String,
   username: String,
   password: String,
   admin: Number,
-  shelf: []
-}); // for otps
-
+  shelf: [],
+  tokens: [{
+    token: String
+  }]
+});
 var otpSchema = new mongoose.Schema({
   email: String,
   otp: Number
-});
-var samplePassword = "pavan";
-samplePassword = sha256(samplePassword); // console.log(samplePassword);
-// creating model
-// for users
+}); // Generating Tokens
 
-var User = mongoose.model("User", userSchema); // for otp
+userSchema.methods.generateAuthToken = function (req, res) {
+  try {
+    var token = jwt.sign({
+      _id: this._id
+    }, process.env.SECRET_KEY);
+    console.log(token);
+    this.tokens = this.tokens.concat({
+      token: token
+    });
+    this.save();
+    return token;
+  } catch (error) {
+    console.log("Error Part :" + error);
+  }
+};
 
-var Otp = mongoose.model("Otp", otpSchema);
-var sampleUser = new User({
-  email: "pavan.shinde@walchandsangli.ac.in",
-  username: "pavanshinde7494",
-  password: samplePassword
-});
-var sampleOtp = new Otp({
-  email: "pavan.shinde@walchandsangli.ac.in",
-  otp: 7777
-});
-app.use(bodyparser.urlencoded({
-  extended: true
-}));
-app.use(express["static"]("public"));
-app.use(upload());
-app.set('view engine', 'ejs'); // contribute 
+userSchema.methods.generateAuthTokenForLogin = function (req, res) {
+  try {
+    var token = jwt.sign({
+      _id: this._id.toString()
+    }, process.env.SECRET_KEY);
+    this.save();
+    return token;
+  } catch (error) {
+    console.log("Error Part :" + err);
+  }
+};
+
+var User = mongoose.model("User", userSchema);
+var Otp = mongoose.model("Otp", otpSchema); // contribute 
 
 var CLIENT_ID = '382614871956-6pecnaqrkthd4qac7nqm7spg037irfcd.apps.googleusercontent.com';
 var CLIENT_SECRENT = 'nnqLnJLHUkFI9Vhk6ShfvV4T';
@@ -120,26 +141,63 @@ var curUser = {
   username: "",
   password: "",
   admin: 0,
-  shelf: []
+  shelf: [],
+  tokens: []
 };
 app.get('/home', function (req, res) {
-  res.render('Other/home', {
-    curUser: curUser
-  });
+  try {
+    var token = req.cookies.jwt;
+    var verifyUser = jwt.verify(token, process.env.SECRET_KEY);
+    console.log(verifyUser);
+    User.findById(verifyUser._id, function (err, doc) {
+      res.render('Other/home', {
+        curUser: doc
+      });
+    });
+  } catch (error) {
+    res.render('Other/home', {
+      curUser: curUser
+    });
+  }
 });
-app.get('/logout', function (req, res) {
-  isLogin = false;
-  curUser = {
-    email: "",
-    username: "",
-    password: "",
-    admin: 0,
-    shelf: []
-  };
-  res.redirect('/home');
+
+var authorize = function authorize(req, res, next) {
+  try {
+    var token = req.cookies.jwt;
+    var verifyUser = jwt.verify(token, process.env.SECRET_KEY);
+    console.log(verifyUser);
+    User.findById(verifyUser._id, function (err, doc) {
+      console.log(doc);
+      req.token = token;
+      req.user = doc;
+      next();
+    });
+  } catch (error) {
+    console.log("1    " + error);
+  }
+};
+
+app.get('/logout', authorize, function (req, res) {
+  try {
+    res.clearCookie('jwt');
+    console.log("Logout");
+    req.user.save();
+    res.redirect('/home');
+  } catch (error) {
+    console.log("2      " + error);
+  }
 });
 app.get('/', function (req, res) {
-  if (isLogin) res.redirect('/home');else res.render('login/index');
+  try {
+    var token = req.cookies.jwt;
+    var verifyUser = jwt.verify(token, process.env.SECRET_KEY);
+    console.log(verifyUser);
+    User.findById(verifyUser._id, function (err, doc) {
+      res.redirect('/home');
+    });
+  } catch (error) {
+    res.render('login/index');
+  }
 });
 app.post('/', function (req, res) {
   var _ref = [req.body.username, sha256(req.body.pass)],
@@ -155,11 +213,14 @@ app.post('/', function (req, res) {
   }, function (err, doc) {
     if (err) {
       console.log("There might be some error");
-      res.redirect('/login');
+      res.redirect('/');
     } else {
       if (doc) {
-        curUser = doc;
-        isLogin = true;
+        var token = doc.generateAuthTokenForLogin();
+        res.cookie("jwt", token, {
+          expires: new Date(Date.now() + 1800000),
+          httpOnly: true
+        });
         res.redirect('/home');
       } else {
         alert("Invalid Credentials");
@@ -205,6 +266,11 @@ app.post('/signup', function (req, res) {
               }], function (err, doc) {
                 if (err) console.log("There might be some problem in inserting mail");
               });
+              var newOTP = new Otp({
+                email: curMail,
+                otp: randNumber
+              });
+              newOTP.save();
             } // sending varification mail
 
 
@@ -283,18 +349,25 @@ app.post('/info', function (req, res) {
         alert("This username already exists");
         res.redirect('/');
       } else {
-        User.insertMany([{
-          email: curMail,
-          password: curPassword,
-          username: curUsername,
-          admin: 0,
-          shelf: []
-        }], function (err) {
-          if (err) console.log("Error in successful signup");else {
-            alert('You have been signed up successfully');
-            res.redirect('/');
-          }
-        });
+        try {
+          var newUser = new User({
+            email: curMail,
+            username: curUsername,
+            password: curPassword,
+            admin: 0,
+            shelf: []
+          });
+          var token = newUser.generateAuthToken();
+          res.cookie("jwt", token, {
+            expires: new Date(Date.now() + 1800000),
+            httpOnly: true
+          });
+          newUser.save();
+          console.log("Success Part: " + newUser);
+          res.redirect('/');
+        } catch (error) {
+          console.log(error);
+        }
       }
     }
   });
@@ -342,37 +415,56 @@ app.post('/forget', function (req, res) {
   });
 });
 app.get('/cpass', function (req, res) {
-  if (isLogin) res.render('login/cpass');else res.redirect('/');
+  try {
+    var token = req.cookies.jwt;
+    var verifyUser = jwt.verify(token, process.env.SECRET_KEY);
+    console.log(verifyUser);
+    User.findById(verifyUser._id, function (err, doc) {
+      res.render('login/cpass');
+    });
+  } catch (error) {
+    res.redirect('/');
+  }
 });
 app.post('/cpass', function (req, res) {
   var curPassword = sha256(req.body.cur_pass);
   var newPassword = sha256(req.body.new_pass);
   console.log(newPassword);
   console.log(curUser);
+
+  try {
+    var token = req.cookies.jwt;
+    var verifyUser = jwt.verify(token, process.env.SECRET_KEY);
+    console.log(verifyUser);
+    User.findById(verifyUser._id, function (err, curUser) {
+      if (err) console.log("Error");else {
+        if (curUser) {
+          User.updateOne({
+            username: curUser.username
+          }, {
+            password: newPassword
+          }, function (error) {
+            if (error) console.log("Error in updating");
+          });
+          alert("Your Password Has been updated");
+          res.redirect('/home');
+        } else {
+          alert("Please Enter Correct Current Password");
+          res.redirect('/cpass');
+        }
+      }
+    });
+  } catch (error) {
+    res.redirect('/');
+  }
+
   User.findOne({
     $and: [{
       username: curUser.username
     }, {
       password: curPassword
     }]
-  }, function (err, doc) {
-    if (err) console.log("Error");else {
-      if (doc) {
-        User.updateOne({
-          username: curUser.username
-        }, {
-          password: newPassword
-        }, function (error) {
-          if (error) console.log("Error in updating");
-        });
-        alert("Your Password Has been updated");
-        res.redirect('/home');
-      } else {
-        alert("Please Enter Correct Current Password");
-        res.redirect('/cpass');
-      }
-    }
-  });
+  }, function (err, doc) {});
 }); // other route 
 // CSE books
 
@@ -448,127 +540,82 @@ var sampleCSE = new CSE({
 var filepath = path.join(__dirname, 'dc.png');
 
 function generatePublicurl(fileid, filedata) {
-  var fileId, result;
-  return regeneratorRuntime.async(function generatePublicurl$(_context) {
-    while (1) {
-      switch (_context.prev = _context.next) {
-        case 0:
-          _context.prev = 0;
-          fileId = fileid;
-          _context.next = 4;
-          return regeneratorRuntime.awrap(drive.permissions.create({
-            fileId: fileId,
-            requestBody: {
-              role: 'reader',
-              type: 'anyone'
-            }
-          }));
-
-        case 4:
-          _context.next = 6;
-          return regeneratorRuntime.awrap(drive.files.get({
-            fileId: fileId,
-            fields: 'webViewLink, webContentLink'
-          }));
-
-        case 6:
-          result = _context.sent;
-
-          // console.log(result.data);
-          if (filedata === 'myFile1') {
-            booksstore.booklink = result.data.webViewLink;
-            Promise.all(result.data.webViewLink).then(function () {
-              booksstore.booklink = result.data.webViewLink;
-            })["catch"](console.error);
-          }
-
-          if (filedata === 'myFile2') {
-            booksstore.imagelink = 'https://drive.google.com/uc?export=view&id=' + fileId; // console.log(sampleCSE.imgUrl);
-
-            Promise.all(booksstore.imagelink).then(function () {
-              Promise.all(booksstore.booklink).then(function () {
-                alert('data successfully saved. Thank You For contributing Us......');
-                var path = './public/books/' + filename;
-                var path1 = './public/books/' + filename1;
-
-                try {
-                  fs.unlinkSync(path);
-                  fs.unlinkSync(path1); // console.log("File Deleted ")
-                  //file removed
-                } catch (err) {
-                  console.error(err);
-                }
-              })["catch"](console.error);
-            })["catch"](console.error);
-          } // else 
-          // console.log("Somthing is Wrong");
-          // console.log(booksstore);
-
-
-          _context.next = 14;
-          break;
-
-        case 11:
-          _context.prev = 11;
-          _context.t0 = _context["catch"](0);
-          console.log(_context.t0.message);
-
-        case 14:
-        case "end":
-          return _context.stop();
+  try {
+    var fileId = fileid;
+    drive.permissions.create({
+      fileId: fileId,
+      requestBody: {
+        role: 'reader',
+        type: 'anyone'
       }
+    });
+    var result = drive.files.get({
+      fileId: fileId,
+      fields: 'webViewLink, webContentLink'
+    }); // console.log(result.data);
+
+    if (filedata === 'myFile1') {
+      booksstore.booklink = result.data.webViewLink;
+      Promise.all(result.data.webViewLink).then(function () {
+        booksstore.booklink = result.data.webViewLink;
+      })["catch"](console.error);
     }
-  }, null, null, [[0, 11]]);
+
+    if (filedata === 'myFile2') {
+      booksstore.imagelink = 'https://drive.google.com/uc?export=view&id=' + fileId; // console.log(sampleCSE.imgUrl);
+
+      Promise.all(booksstore.imagelink).then(function () {
+        Promise.all(booksstore.booklink).then(function () {
+          alert('data successfully saved. Thank You For contributing Us......');
+          var path = './public/books/' + filename;
+          var path1 = './public/books/' + filename1;
+
+          try {
+            fs.unlinkSync(path);
+            fs.unlinkSync(path1); // console.log("File Deleted ")
+            //file removed
+          } catch (err) {
+            console.error(err);
+          }
+        })["catch"](console.error);
+      })["catch"](console.error);
+    } // else 
+    // console.log("Somthing is Wrong");
+    // console.log(booksstore);
+
+  } catch (error) {
+    console.log(error.message);
+  }
 } // To upload file 
 // to upload file in google drive => function 
-// below function is a async function 
+// below function is a  function 
 
 
 function uploadFile(mimetype, bookname, filedata) {
-  var bookname1, response, promises;
-  return regeneratorRuntime.async(function uploadFile$(_context2) {
-    while (1) {
-      switch (_context2.prev = _context2.next) {
-        case 0:
-          bookname1 = 'dcbook.pdf'; // console.log(bookname,bookname1);
+  var bookname1 = 'dcbook.pdf'; // console.log(bookname,bookname1);
 
-          _context2.prev = 1;
-          _context2.next = 4;
-          return regeneratorRuntime.awrap(drive.files.create({
-            requestBody: {
-              name: bookname,
-              mimeType: mimetype
-            },
-            media: {
-              mimeType: mimetype,
-              body: fs.createReadStream('./public/books/' + bookname)
-            }
-          }));
-
-        case 4:
-          response = _context2.sent;
-          promises = response.data.id;
-          if (filedata === 'myFile1') fille1id = response.data.id;
-          if (filedata === 'myFile2') file2id = response.data.id; // console.log(response.data.id);
-
-          Promise.all(promises).then(function () {
-            generatePublicurl(response.data.id, filedata);
-            console.log('File uploaded in drive creating link wait....');
-          })["catch"](console.error);
-          _context2.next = 14;
-          break;
-
-        case 11:
-          _context2.prev = 11;
-          _context2.t0 = _context2["catch"](1);
-          console.error(_context2.t0.message);
-
-        case 14:
-        case "end":
-          return _context2.stop();
+  try {
+    var response = drive.files.create({
+      requestBody: {
+        name: bookname,
+        mimeType: mimetype
+      },
+      media: {
+        mimeType: mimetype,
+        body: fs.createReadStream('./public/books/' + bookname)
       }
-    }
-  }, null, null, [[1, 11]]);
+    });
+    var promises = response.data.id;
+    if (filedata === 'myFile1') fille1id = response.data.id;
+    if (filedata === 'myFile2') file2id = response.data.id; // console.log(response.data.id);
+
+    Promise.all(promises).then(function () {
+      generatePublicurl(response.data.id, filedata);
+      console.log('File uploaded in drive creating link wait....');
+    })["catch"](console.error);
+  } catch (error) {
+    console.error(error.message);
+  }
 } // uploadFile();
 
 
@@ -578,51 +625,34 @@ function intervalFunc() {
 
 
 function deletefilr(fileid) {
-  var response;
-  return regeneratorRuntime.async(function deletefilr$(_context3) {
-    while (1) {
-      switch (_context3.prev = _context3.next) {
-        case 0:
-          _context3.prev = 0;
-          _context3.next = 3;
-          return regeneratorRuntime.awrap(drive.files["delete"]({
-            fileId: fileid
-          }));
-
-        case 3:
-          response = _context3.sent;
-          console.log(response.data, response.status);
-          _context3.next = 10;
-          break;
-
-        case 7:
-          _context3.prev = 7;
-          _context3.t0 = _context3["catch"](0);
-          console.log("error.message");
-
-        case 10:
-        case "end":
-          return _context3.stop();
-      }
-    }
-  }, null, null, [[0, 7]]);
+  try {
+    var response = drive.files["delete"]({
+      fileId: fileid
+    });
+    console.log(response.data, response.status);
+  } catch (error) {
+    console.log("error.message");
+  }
 } // deletefilr();
 
 
 app.get("/contribute", function (req, res) {
-  if (isLogin) {
-    User.findOne({
-      username: curUser.username
-    }, function (err, doc) {
+  try {
+    var token = req.cookies.jwt;
+    var verifyUser = jwt.verify(token, process.env.SECRET_KEY);
+    console.log(verifyUser);
+    User.findById(verifyUser._id, function (err, doc) {
       if (!err) {
         if (doc.admin === 1) {
           res.render("Other/contribute", {
-            curUser: curUser
+            curUser: doc
           });
         } else res.redirect('/');
       }
     });
-  } else res.redirect('/');
+  } catch (error) {
+    res.redirect('/');
+  }
 });
 app.post('/contribute', function (req, res) {
   dir = './public/books'; // if (!fs.existsSync(dir)){
@@ -703,20 +733,23 @@ app.post('/contribute', function (req, res) {
 }); ///////////////////////////////////////////////
 
 app.get("/save", function (req, res) {
-  if (isLogin) {
-    User.findOne({
-      username: curUser.username
-    }, function (err, doc) {
+  try {
+    var token = req.cookies.jwt;
+    var verifyUser = jwt.verify(token, process.env.SECRET_KEY);
+    console.log(verifyUser);
+    User.findById(verifyUser._id, function (err, doc) {
       if (!err) {
         if (doc.admin === 1) {
           res.render("Other/save", {
-            curUser: curUser,
+            curUser: doc,
             booksstore: booksstore
           });
         } else res.redirect('/');
       }
     });
-  } else res.redirect('/');
+  } catch (error) {
+    res.redirect('/');
+  }
 });
 app.post("/save", function (req, res) {
   if (booksstore.branch === "CSE") {
@@ -799,403 +832,422 @@ app.post("/save", function (req, res) {
 }); ////////////////////////////////////////////
 
 app.get("/resources", function (req, res) {
-  if (isLogin) res.render("Other/resources", {
-    curUser: curUser
-  });else res.redirect('/');
-}); // app.get("/books",function(req,res){
-//     res.render("Other/books",{curUser : curUser,bookinfo : books})
-// }); 
-
+  try {
+    var token = req.cookies.jwt;
+    var verifyUser = jwt.verify(token, process.env.SECRET_KEY);
+    console.log(verifyUser);
+    User.findById(verifyUser._id, function (err, doc) {
+      if (!err) {
+        res.render("Other/resources", {
+          curUser: doc
+        });
+      }
+    });
+  } catch (error) {
+    res.redirect('/');
+  }
+});
 app.get("/resources/:yrbr", function (req, res) {
-  if (isLogin) {
-    var yrbr = req.params.yrbr; // CSE
+  try {
+    var token = req.cookies.jwt;
+    var verifyUser = jwt.verify(token, process.env.SECRET_KEY);
+    console.log(verifyUser);
+    User.findById(verifyUser._id, function (err, curUser) {
+      if (!err) {
+        var yrbr = req.params.yrbr; // CSE
 
-    if (yrbr === 'fycse') {
-      CSE.find({
-        year: 'fy'
-      }, function (err, doc) {
-        if (!err) {
-          if (doc) {
-            res.render('Other/books', {
-              curUser: curUser,
-              bookinfo: doc,
-              yrbr: yrbr
-            });
-          }
+        if (yrbr === 'fycse') {
+          CSE.find({
+            year: 'fy'
+          }, function (err, doc) {
+            if (!err) {
+              if (doc) {
+                res.render('Other/books', {
+                  curUser: curUser,
+                  bookinfo: doc,
+                  yrbr: yrbr
+                });
+              }
+            }
+          });
         }
-      });
-    }
 
-    if (yrbr === 'sycse') {
-      CSE.find({
-        year: 'sy'
-      }, function (err, doc) {
-        if (!err) {
-          if (doc) {
-            res.render('Other/books', {
-              curUser: curUser,
-              bookinfo: doc,
-              yrbr: yrbr
-            });
-          }
+        if (yrbr === 'sycse') {
+          CSE.find({
+            year: 'sy'
+          }, function (err, doc) {
+            if (!err) {
+              if (doc) {
+                res.render('Other/books', {
+                  curUser: curUser,
+                  bookinfo: doc,
+                  yrbr: yrbr
+                });
+              }
+            }
+          });
         }
-      });
-    }
 
-    if (yrbr === 'tycse') {
-      CSE.find({
-        year: 'ty'
-      }, function (err, doc) {
-        if (!err) {
-          if (doc) {
-            res.render('Other/books', {
-              curUser: curUser,
-              bookinfo: doc,
-              yrbr: yrbr
-            });
-          }
+        if (yrbr === 'tycse') {
+          CSE.find({
+            year: 'ty'
+          }, function (err, doc) {
+            if (!err) {
+              if (doc) {
+                res.render('Other/books', {
+                  curUser: curUser,
+                  bookinfo: doc,
+                  yrbr: yrbr
+                });
+              }
+            }
+          });
         }
-      });
-    }
 
-    if (yrbr === 'btechcse') {
-      CSE.find({
-        year: 'btech'
-      }, function (err, doc) {
-        if (!err) {
-          if (doc) {
-            res.render('Other/books', {
-              curUser: curUser,
-              bookinfo: doc,
-              yrbr: yrbr
-            });
-          }
+        if (yrbr === 'btechcse') {
+          CSE.find({
+            year: 'btech'
+          }, function (err, doc) {
+            if (!err) {
+              if (doc) {
+                res.render('Other/books', {
+                  curUser: curUser,
+                  bookinfo: doc,
+                  yrbr: yrbr
+                });
+              }
+            }
+          });
+        } // IT
+
+
+        if (yrbr === 'fyit') {
+          IT.find({
+            year: 'fy'
+          }, function (err, doc) {
+            if (!err) {
+              if (doc) {
+                res.render('Other/books', {
+                  curUser: curUser,
+                  bookinfo: doc,
+                  yrbr: yrbr
+                });
+              }
+            }
+          });
         }
-      });
-    } // IT
 
-
-    if (yrbr === 'fyit') {
-      IT.find({
-        year: 'fy'
-      }, function (err, doc) {
-        if (!err) {
-          if (doc) {
-            res.render('Other/books', {
-              curUser: curUser,
-              bookinfo: doc,
-              yrbr: yrbr
-            });
-          }
+        if (yrbr === 'syit') {
+          IT.find({
+            year: 'sy'
+          }, function (err, doc) {
+            if (!err) {
+              if (doc) {
+                res.render('Other/books', {
+                  curUser: curUser,
+                  bookinfo: doc
+                });
+              }
+            }
+          });
         }
-      });
-    }
 
-    if (yrbr === 'syit') {
-      IT.find({
-        year: 'sy'
-      }, function (err, doc) {
-        if (!err) {
-          if (doc) {
-            res.render('Other/books', {
-              curUser: curUser,
-              bookinfo: doc
-            });
-          }
+        if (yrbr === 'tyit') {
+          IT.find({
+            year: 'ty'
+          }, function (err, doc) {
+            if (!err) {
+              if (doc) {
+                res.render('Other/books', {
+                  curUser: curUser,
+                  bookinfo: doc,
+                  yrbr: yrbr
+                });
+              }
+            }
+          });
         }
-      });
-    }
 
-    if (yrbr === 'tyit') {
-      IT.find({
-        year: 'ty'
-      }, function (err, doc) {
-        if (!err) {
-          if (doc) {
-            res.render('Other/books', {
-              curUser: curUser,
-              bookinfo: doc,
-              yrbr: yrbr
-            });
-          }
+        if (yrbr === 'btechit') {
+          IT.find({
+            year: 'btech'
+          }, function (err, doc) {
+            if (!err) {
+              if (doc) {
+                res.render('Other/books', {
+                  curUser: curUser,
+                  bookinfo: doc,
+                  yrbr: yrbr
+                });
+              }
+            }
+          });
+        } // ELE
+
+
+        if (yrbr === 'fyele') {
+          ELE.find({
+            year: 'fy'
+          }, function (err, doc) {
+            if (!err) {
+              if (doc) {
+                res.render('Other/books', {
+                  curUser: curUser,
+                  bookinfo: doc,
+                  yrbr: yrbr
+                });
+              }
+            }
+          });
         }
-      });
-    }
 
-    if (yrbr === 'btechit') {
-      IT.find({
-        year: 'btech'
-      }, function (err, doc) {
-        if (!err) {
-          if (doc) {
-            res.render('Other/books', {
-              curUser: curUser,
-              bookinfo: doc,
-              yrbr: yrbr
-            });
-          }
+        if (yrbr === 'syele') {
+          ELE.find({
+            year: 'sy'
+          }, function (err, doc) {
+            if (!err) {
+              if (doc) {
+                res.render('Other/books', {
+                  curUser: curUser,
+                  bookinfo: doc
+                });
+              }
+            }
+          });
         }
-      });
-    } // ELE
 
-
-    if (yrbr === 'fyele') {
-      ELE.find({
-        year: 'fy'
-      }, function (err, doc) {
-        if (!err) {
-          if (doc) {
-            res.render('Other/books', {
-              curUser: curUser,
-              bookinfo: doc,
-              yrbr: yrbr
-            });
-          }
+        if (yrbr === 'tyele') {
+          ELE.find({
+            year: 'ty'
+          }, function (err, doc) {
+            if (!err) {
+              if (doc) {
+                res.render('Other/books', {
+                  curUser: curUser,
+                  bookinfo: doc,
+                  yrbr: yrbr
+                });
+              }
+            }
+          });
         }
-      });
-    }
 
-    if (yrbr === 'syele') {
-      ELE.find({
-        year: 'sy'
-      }, function (err, doc) {
-        if (!err) {
-          if (doc) {
-            res.render('Other/books', {
-              curUser: curUser,
-              bookinfo: doc
-            });
-          }
+        if (yrbr === 'btechele') {
+          ELE.find({
+            year: 'btech'
+          }, function (err, doc) {
+            if (!err) {
+              if (doc) {
+                res.render('Other/books', {
+                  curUser: curUser,
+                  bookinfo: doc,
+                  yrbr: yrbr
+                });
+              }
+            }
+          });
+        } // ELET
+
+
+        if (yrbr === 'fyelet') {
+          ELET.find({
+            year: 'fy'
+          }, function (err, doc) {
+            if (!err) {
+              if (doc) {
+                res.render('Other/books', {
+                  curUser: curUser,
+                  bookinfo: doc,
+                  yrbr: yrbr
+                });
+              }
+            }
+          });
         }
-      });
-    }
 
-    if (yrbr === 'tyele') {
-      ELE.find({
-        year: 'ty'
-      }, function (err, doc) {
-        if (!err) {
-          if (doc) {
-            res.render('Other/books', {
-              curUser: curUser,
-              bookinfo: doc,
-              yrbr: yrbr
-            });
-          }
+        if (yrbr === 'syelet') {
+          ELET.find({
+            year: 'sy'
+          }, function (err, doc) {
+            if (!err) {
+              if (doc) {
+                res.render('Other/books', {
+                  curUser: curUser,
+                  bookinfo: doc
+                });
+              }
+            }
+          });
         }
-      });
-    }
 
-    if (yrbr === 'btechele') {
-      ELE.find({
-        year: 'btech'
-      }, function (err, doc) {
-        if (!err) {
-          if (doc) {
-            res.render('Other/books', {
-              curUser: curUser,
-              bookinfo: doc,
-              yrbr: yrbr
-            });
-          }
+        if (yrbr === 'tyelet') {
+          ELET.find({
+            year: 'ty'
+          }, function (err, doc) {
+            if (!err) {
+              if (doc) {
+                res.render('Other/books', {
+                  curUser: curUser,
+                  bookinfo: doc,
+                  yrbr: yrbr
+                });
+              }
+            }
+          });
         }
-      });
-    } // ELET
+
+        if (yrbr === 'btechelet') {
+          ELET.find({
+            year: 'btech'
+          }, function (err, doc) {
+            if (!err) {
+              if (doc) {
+                res.render('Other/books', {
+                  curUser: curUser,
+                  bookinfo: doc,
+                  yrbr: yrbr
+                });
+              }
+            }
+          });
+        } // MECH
 
 
-    if (yrbr === 'fyelet') {
-      ELET.find({
-        year: 'fy'
-      }, function (err, doc) {
-        if (!err) {
-          if (doc) {
-            res.render('Other/books', {
-              curUser: curUser,
-              bookinfo: doc,
-              yrbr: yrbr
-            });
-          }
+        if (yrbr === 'fymech') {
+          MECH.find({
+            year: 'fy'
+          }, function (err, doc) {
+            if (!err) {
+              if (doc) {
+                res.render('Other/books', {
+                  curUser: curUser,
+                  bookinfo: doc,
+                  yrbr: yrbr
+                });
+              }
+            }
+          });
         }
-      });
-    }
 
-    if (yrbr === 'syelet') {
-      ELET.find({
-        year: 'sy'
-      }, function (err, doc) {
-        if (!err) {
-          if (doc) {
-            res.render('Other/books', {
-              curUser: curUser,
-              bookinfo: doc
-            });
-          }
+        if (yrbr === 'symech') {
+          MECH.find({
+            year: 'sy'
+          }, function (err, doc) {
+            if (!err) {
+              807969029;
+
+              if (doc) {
+                res.render('Other/books', {
+                  curUser: curUser,
+                  bookinfo: doc
+                });
+              }
+            }
+          });
         }
-      });
-    }
 
-    if (yrbr === 'tyelet') {
-      ELET.find({
-        year: 'ty'
-      }, function (err, doc) {
-        if (!err) {
-          if (doc) {
-            res.render('Other/books', {
-              curUser: curUser,
-              bookinfo: doc,
-              yrbr: yrbr
-            });
-          }
+        if (yrbr === 'tymech') {
+          MECH.find({
+            year: 'ty'
+          }, function (err, doc) {
+            if (!err) {
+              if (doc) {
+                res.render('Other/books', {
+                  curUser: curUser,
+                  bookinfo: doc,
+                  yrbr: yrbr
+                });
+              }
+            }
+          });
         }
-      });
-    }
 
-    if (yrbr === 'btechelet') {
-      ELET.find({
-        year: 'btech'
-      }, function (err, doc) {
-        if (!err) {
-          if (doc) {
-            res.render('Other/books', {
-              curUser: curUser,
-              bookinfo: doc,
-              yrbr: yrbr
-            });
-          }
+        if (yrbr === 'btechmech') {
+          MECH.find({
+            year: 'btech'
+          }, function (err, doc) {
+            if (!err) {
+              if (doc) {
+                res.render('Other/books', {
+                  curUser: curUser,
+                  bookinfo: doc,
+                  yrbr: yrbr
+                });
+              }
+            }
+          });
+        } // CIVIL
+
+
+        if (yrbr === 'fycivil') {
+          CIVIL.find({
+            year: 'fy'
+          }, function (err, doc) {
+            if (!err) {
+              if (doc) {
+                res.render('Other/books', {
+                  curUser: curUser,
+                  bookinfo: doc,
+                  yrbr: yrbr
+                });
+              }
+            }
+          });
         }
-      });
-    } // MECH
 
-
-    if (yrbr === 'fymech') {
-      MECH.find({
-        year: 'fy'
-      }, function (err, doc) {
-        if (!err) {
-          if (doc) {
-            res.render('Other/books', {
-              curUser: curUser,
-              bookinfo: doc,
-              yrbr: yrbr
-            });
-          }
+        if (yrbr === 'sycivil') {
+          CIVIL.find({
+            year: 'sy'
+          }, function (err, doc) {
+            if (!err) {
+              if (doc) {
+                res.render('Other/books', {
+                  curUser: curUser,
+                  bookinfo: doc
+                });
+              }
+            }
+          });
         }
-      });
-    }
 
-    if (yrbr === 'symech') {
-      MECH.find({
-        year: 'sy'
-      }, function (err, doc) {
-        if (!err) {
-          807969029;
-
-          if (doc) {
-            res.render('Other/books', {
-              curUser: curUser,
-              bookinfo: doc
-            });
-          }
+        if (yrbr === 'tycivil') {
+          CIVIL.find({
+            year: 'ty'
+          }, function (err, doc) {
+            if (!err) {
+              if (doc) {
+                res.render('Other/books', {
+                  curUser: curUser,
+                  bookinfo: doc,
+                  yrbr: yrbr
+                });
+              }
+            }
+          });
         }
-      });
-    }
 
-    if (yrbr === 'tymech') {
-      MECH.find({
-        year: 'ty'
-      }, function (err, doc) {
-        if (!err) {
-          if (doc) {
-            res.render('Other/books', {
-              curUser: curUser,
-              bookinfo: doc,
-              yrbr: yrbr
-            });
-          }
+        if (yrbr === 'btechcivil') {
+          CIVIL.find({
+            year: 'btech'
+          }, function (err, doc) {
+            if (!err) {
+              if (doc) {
+                res.render('Other/books', {
+                  curUser: curUser,
+                  bookinfo: doc,
+                  yrbr: yrbr
+                });
+              }
+            }
+          });
         }
-      });
-    }
+      }
+    });
+  } catch (error) {
+    res.redirect('/');
+  }
 
-    if (yrbr === 'btechmech') {
-      MECH.find({
-        year: 'btech'
-      }, function (err, doc) {
-        if (!err) {
-          if (doc) {
-            res.render('Other/books', {
-              curUser: curUser,
-              bookinfo: doc,
-              yrbr: yrbr
-            });
-          }
-        }
-      });
-    } // CIVIL
-
-
-    if (yrbr === 'fycivil') {
-      CIVIL.find({
-        year: 'fy'
-      }, function (err, doc) {
-        if (!err) {
-          if (doc) {
-            res.render('Other/books', {
-              curUser: curUser,
-              bookinfo: doc,
-              yrbr: yrbr
-            });
-          }
-        }
-      });
-    }
-
-    if (yrbr === 'sycivil') {
-      CIVIL.find({
-        year: 'sy'
-      }, function (err, doc) {
-        if (!err) {
-          if (doc) {
-            res.render('Other/books', {
-              curUser: curUser,
-              bookinfo: doc
-            });
-          }
-        }
-      });
-    }
-
-    if (yrbr === 'tycivil') {
-      CIVIL.find({
-        year: 'ty'
-      }, function (err, doc) {
-        if (!err) {
-          if (doc) {
-            res.render('Other/books', {
-              curUser: curUser,
-              bookinfo: doc,
-              yrbr: yrbr
-            });
-          }
-        }
-      });
-    }
-
-    if (yrbr === 'btechcivil') {
-      CIVIL.find({
-        year: 'btech'
-      }, function (err, doc) {
-        if (!err) {
-          if (doc) {
-            res.render('Other/books', {
-              curUser: curUser,
-              bookinfo: doc,
-              yrbr: yrbr
-            });
-          }
-        }
-      });
-    }
-  } else res.redirect('/');
+  if (isLogin) {}
 });
 app.post("/resources/:yrbr", function (req, res) {
   var yrbr = req.params.yrbr;
@@ -1208,134 +1260,139 @@ app.post("/resources/:yrbr", function (req, res) {
   };
   var x = CSE;
   console.log(yrbr);
-  CSE.findOne({
-    $and: [{
-      year: list.year
-    }, {
-      _id: list.id
-    }]
-  }, function (err, doc) {
-    if (!err && doc) {
-      var _curShelf = [];
-      User.findOne({
-        username: curUser.username
-      }, function (err, result) {
-        if (!err) {
-          _curShelf = result.shelf;
-          var i = 0;
 
-          for (i = 0; i < _curShelf.length; i++) {
-            if (JSON.stringify(_curShelf[i]) === JSON.stringify(doc)) {
-              break;
-            }
-          } // console.log(curShelf.length+" "+i);
-          // Book not in shelf
-
-
-          if (i === _curShelf.length) {
-            _curShelf.push(doc);
-          } // Book is in shelf
-          else {
-              _curShelf.splice(i, 1);
-            }
-
-          User.updateOne({
-            username: curUser.username
-          }, {
-            shelf: _curShelf
-          }, function (err) {
-            if (!err) {
-              // console.log("Shelf Updated Successfully");
-              res.redirect("/resources/" + yrbr);
-            }
-          });
+  try {
+    var token = req.cookies.jwt;
+    var verifyUser = jwt.verify(token, process.env.SECRET_KEY);
+    console.log(verifyUser);
+    User.findById(verifyUser._id, function (err, curUser) {
+      CSE.findOne({
+        $and: [{
+          year: list.year
+        }, {
+          _id: list.id
+        }]
+      }, function (err, doc) {
+        if (!err && doc) {
+          var _curShelf = [];
           User.findOne({
             username: curUser.username
-          }, function (err, doc) {
-            if (!err) curUser = doc;
+          }, function (err, result) {
+            if (!err) {
+              _curShelf = result.shelf;
+              var i = 0;
+
+              for (i = 0; i < _curShelf.length; i++) {
+                if (JSON.stringify(_curShelf[i]) === JSON.stringify(doc)) {
+                  break;
+                }
+              } // console.log(curShelf.length+" "+i);
+              // Book not in shelf
+
+
+              if (i === _curShelf.length) {
+                _curShelf.push(doc);
+              } // Book is in shelf
+              else {
+                  _curShelf.splice(i, 1);
+                }
+
+              User.updateOne({
+                username: curUser.username
+              }, {
+                shelf: _curShelf
+              }, function (err) {
+                if (!err) {
+                  // console.log("Shelf Updated Successfully");
+                  res.redirect("/resources/" + yrbr);
+                }
+              });
+              User.findOne({
+                username: curUser.username
+              }, function (err, doc) {
+                if (!err) curUser = doc;
+              });
+            }
           });
         }
       });
-    }
-  });
-  IT.findOne({
-    $and: [{
-      year: list.year
-    }, {
-      _id: list.id
-    }]
-  }, function (err, doc) {
-    if (!err && doc) {
-      var _curShelf2 = [];
-      User.findOne({
-        username: curUser.username
-      }, function (err, result) {
-        if (!err) {
-          _curShelf2 = result.shelf;
-          var i = 0;
-
-          for (i = 0; i < _curShelf2.length; i++) {
-            if (JSON.stringify(_curShelf2[i]) === JSON.stringify(doc)) {
-              break;
-            }
-          }
-
-          console.log(_curShelf2.length + " " + i); // Book not in shelf
-
-          if (i === _curShelf2.length) {
-            _curShelf2.push(doc);
-          } // Book is in shelf
-          else {
-              _curShelf2.splice(i, 1);
-            }
-
-          User.updateOne({
-            username: curUser.username
-          }, {
-            shelf: _curShelf2
-          }, function (err) {
-            if (!err) {
-              console.log("Shelf Updated Successfully");
-              res.redirect("/resources/" + yrbr);
-            }
-          });
+      IT.findOne({
+        $and: [{
+          year: list.year
+        }, {
+          _id: list.id
+        }]
+      }, function (err, doc) {
+        if (!err && doc) {
+          var _curShelf2 = [];
           User.findOne({
             username: curUser.username
-          }, function (err, doc) {
-            if (!err) curUser = doc;
+          }, function (err, result) {
+            if (!err) {
+              _curShelf2 = result.shelf;
+              var i = 0;
+
+              for (i = 0; i < _curShelf2.length; i++) {
+                if (JSON.stringify(_curShelf2[i]) === JSON.stringify(doc)) {
+                  break;
+                }
+              }
+
+              console.log(_curShelf2.length + " " + i); // Book not in shelf
+
+              if (i === _curShelf2.length) {
+                _curShelf2.push(doc);
+              } // Book is in shelf
+              else {
+                  _curShelf2.splice(i, 1);
+                }
+
+              User.updateOne({
+                username: curUser.username
+              }, {
+                shelf: _curShelf2
+              }, function (err) {
+                if (!err) {
+                  console.log("Shelf Updated Successfully");
+                  res.redirect("/resources/" + yrbr);
+                }
+              });
+              User.findOne({
+                username: curUser.username
+              }, function (err, doc) {
+                if (!err) curUser = doc;
+              });
+            }
           });
         }
-      });
-    }
-  });
-});
-app.get('/shelf', function (req, res) {
-  if (isLogin) {
-    var curShef = [];
-    User.findOne({
-      username: curUser.username
-    }, function (err, doc) {
-      if (!err) {
-        curShelf = doc.shelf;
-        console.log(curUser.shelf.length);
-      }
-
-      res.render('Other/shelf', {
-        bookinfo: curShelf,
-        curUser: curUser
       });
     });
-  } else res.redirect('/');
-}); // app.listen(3000,()=>{
-//     console.log("server is running on port 3000");
-// });
+  } catch (error) {
+    res.redirect('/');
+  }
+});
+app.get('/shelf', function (req, res) {
+  try {
+    var token = req.cookies.jwt;
+    var verifyUser = jwt.verify(token, process.env.SECRET_KEY);
+    console.log(verifyUser);
+    User.findById(verifyUser._id, function (err, doc) {
+      if (!err) {
+        if (!err) {
+          curShelf = doc.shelf;
+          console.log(curUser.shelf.length);
+        }
 
-var port = process.env.PORT;
-
-if (port == null || port == "") {
-  port = 3000;
-}
-
-app.listen(port, function () {
-  console.log("server is running successfully");
+        res.render('Other/shelf', {
+          bookinfo: curShelf,
+          curUser: doc
+        });
+      }
+    });
+  } catch (error) {
+    res.redirect('/');
+  }
+});
+app.listen(5000, function () {
+  console.log("server is running on port 5000");
 });
