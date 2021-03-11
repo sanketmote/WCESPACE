@@ -81,7 +81,7 @@ userSchema.methods.generateAuthTokenForLogin  =  function(req,res){
         this.save();
         return token;
     } catch (error) {
-        console.log("Error Part :"+err);
+        console.log("Error Part :"+error);
     }
 };
 
