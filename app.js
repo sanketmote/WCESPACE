@@ -1358,12 +1358,10 @@ app.get('/shelf',(req,res)=>{
 });
 
 let port = process.env.PORT;
-
-if( port==null || port=="")
-{
-    port = 5000;
+if (port == null || port == "") {
+  port = 5000;
 }
+
 app.listen(port, function(){
-    console.log("server has started successfully");
-  })
-  
+    console.log("server has started Successfully");
+});
