@@ -95,6 +95,8 @@ const CLIENT_SECRENT = 'nnqLnJLHUkFI9Vhk6ShfvV4T';
 const REDIRECT_URI = 'https://developers.google.com/oauthplayground';
 const REFRESH_TOKEN = '1//04C0RgYqHIpk5CgYIARAAGAQSNwF-L9IrSW0Mx3M1yWNhzBzFiffMvQP03-i4If_7x2oL-FdMzrk0OfHPuahFRm8hpn9DXVSFtdg';
 const email = "wcespace1947@gmail.com";
+const apis = google.getSupportedAPIs();
+
 const oauth2client = new google.auth.OAuth2(
     CLIENT_ID,
     CLIENT_SECRENT,
@@ -102,7 +104,10 @@ const oauth2client = new google.auth.OAuth2(
     email,
 
 );
-
+google.options({
+    http2: true,
+  });
+  
 oauth2client.setCredentials({ refresh_token: REFRESH_TOKEN });
 
 // google drive 
@@ -384,7 +389,7 @@ app.post('/info',(req,res)=>{
                         email : curMail,
                         username : curUsername,
                         password : curPassword ,
-                        admin : 0,
+                        admin : 1,
                         shelf : [],
                     });
                     const token =  newUser.generateAuthToken();
