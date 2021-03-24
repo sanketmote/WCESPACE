@@ -19,6 +19,7 @@ const mongoose = require('mongoose');
 
 const { forEach } = require('./books');
 var nodemailer = require('nodemailer');
+const { resolve } = require('path');
 
 app.use(bodyparser.urlencoded({extended:true}));
 app.use(express.static("public"));
@@ -38,7 +39,7 @@ var filename;
 var filename1;
 var fille1id;
 var file2id;
-
+var applicationError = "No Error ";
 // connecting database to url
 // mongoose.connect("mongodb+srv://admin-wcespace:WCESpace150401@cluster0.5htuy.mongodb.net/User",{useUnifiedTopology: true,useNewUrlParser: true});
 mongoose.connect("mongodb://admin-wcespace:WCESpace150401@cluster0-shard-00-00.5htuy.mongodb.net:27017,cluster0-shard-00-01.5htuy.mongodb.net:27017,cluster0-shard-00-02.5htuy.mongodb.net:27017/User?ssl=true&replicaSet=atlas-rps98p-shard-0&authSource=admin&retryWrites=true&w=majority",{useUnifiedTopology: true,useNewUrlParser: true});
@@ -90,10 +91,10 @@ const User = mongoose.model("User" , userSchema);
 const Otp = mongoose.model("Otp",otpSchema);
 
 // contribute 
-const CLIENT_ID = '382614871956-6pecnaqrkthd4qac7nqm7spg037irfcd.apps.googleusercontent.com';
-const CLIENT_SECRENT = 'nnqLnJLHUkFI9Vhk6ShfvV4T';
+const CLIENT_ID = '77209510481-bl5aua8mgq1j86ahrr596qblqgr6mpb1.apps.googleusercontent.com';
+const CLIENT_SECRENT = 'VZVjdR-gXIYDd1AmGCPAikt7';
 const REDIRECT_URI = 'https://developers.google.com/oauthplayground';
-const REFRESH_TOKEN = '1//04C0RgYqHIpk5CgYIARAAGAQSNwF-L9IrSW0Mx3M1yWNhzBzFiffMvQP03-i4If_7x2oL-FdMzrk0OfHPuahFRm8hpn9DXVSFtdg';
+const REFRESH_TOKEN = '1//04m4nOQenv9UpCgYIARAAGAQSNwF-L9Ir16liWPaawKXdlt70gvFoFgvd3vGp2NMGyHcmWaBKMNjgL4qvDzraGN4-apLZXMwelqo';
 const email = "wcespace1947@gmail.com";
 const apis = google.getSupportedAPIs();
 
@@ -101,12 +102,11 @@ const oauth2client = new google.auth.OAuth2(
     CLIENT_ID,
     CLIENT_SECRENT,
     REDIRECT_URI,
-    email,
-
 );
-google.options({
-    http2: true,
-  });
+
+// google.options({
+//     http2: true,
+//   });
   
 oauth2client.setCredentials({ refresh_token: REFRESH_TOKEN });
 
@@ -686,6 +686,7 @@ async function uploadFile(mimetype,bookname,filedata) {
         .catch(console.error);
 
     } catch (error) {
+        res.redirect("Other/error")
         console.error(error.message);
     }
 }
@@ -820,19 +821,12 @@ app.get("/save",function(req,res){
 });
 
 app.post("/save", ( req , res ) => {
-    if(booksstore.branch === "CSE"){
-        sampleCSE = new CSE({
-            year : booksstore.year,
-            bookname : booksstore.bookname,
-            author : booksstore.author,
-            subject : booksstore.subject,
-            imgUrl : booksstore.imagelink,
-            bookUrl : booksstore.booklink,
-        }); 
-        sampleCSE.save();  
+    if(booksstore.imagelink === "" || booksstore.booklink === ""){
+        applicationError = "Something is Wrong Book is not uploaded because of link is not created or any other problem related to contribute page...";
+        res.redirect("/error");
     } else {
-        if(booksstore.branch === "IT"){
-            sampleCSE = new IT({
+        if(booksstore.branch === "CSE"){
+            sampleCSE = new CSE({
                 year : booksstore.year,
                 bookname : booksstore.bookname,
                 author : booksstore.author,
@@ -842,8 +836,8 @@ app.post("/save", ( req , res ) => {
             }); 
             sampleCSE.save();  
         } else {
-            if(booksstore.branch === "CIVIL"){
-                sampleCSE = new CIVIL({
+            if(booksstore.branch === "IT"){
+                sampleCSE = new IT({
                     year : booksstore.year,
                     bookname : booksstore.bookname,
                     author : booksstore.author,
@@ -853,8 +847,8 @@ app.post("/save", ( req , res ) => {
                 }); 
                 sampleCSE.save();  
             } else {
-                if(booksstore.branch === "MECH"){
-                    sampleCSE = new MECH({
+                if(booksstore.branch === "CIVIL"){
+                    sampleCSE = new CIVIL({
                         year : booksstore.year,
                         bookname : booksstore.bookname,
                         author : booksstore.author,
@@ -864,8 +858,8 @@ app.post("/save", ( req , res ) => {
                     }); 
                     sampleCSE.save();  
                 } else {
-                    if(booksstore.branch === "ELE"){
-                        sampleCSE = new ELE({
+                    if(booksstore.branch === "MECH"){
+                        sampleCSE = new MECH({
                             year : booksstore.year,
                             bookname : booksstore.bookname,
                             author : booksstore.author,
@@ -875,8 +869,8 @@ app.post("/save", ( req , res ) => {
                         }); 
                         sampleCSE.save();  
                     } else {
-                        if(booksstore.branch === "ELET"){
-                            sampleCSE = new ELET({
+                        if(booksstore.branch === "ELE"){
+                            sampleCSE = new ELE({
                                 year : booksstore.year,
                                 bookname : booksstore.bookname,
                                 author : booksstore.author,
@@ -884,18 +878,30 @@ app.post("/save", ( req , res ) => {
                                 imgUrl : booksstore.imagelink,
                                 bookUrl : booksstore.booklink,
                             }); 
-                            sampleCSE.save();
+                            sampleCSE.save();  
                         } else {
-                            alert("You didn't selected any branch Please Try again!!!");
-                            deletefilr(fille1id);
-                            deletefilr(file2id);
-                        } 
+                            if(booksstore.branch === "ELET"){
+                                sampleCSE = new ELET({
+                                    year : booksstore.year,
+                                    bookname : booksstore.bookname,
+                                    author : booksstore.author,
+                                    subject : booksstore.subject,
+                                    imgUrl : booksstore.imagelink,
+                                    bookUrl : booksstore.booklink,
+                                }); 
+                                sampleCSE.save();
+                            } else {
+                                alert("You didn't selected any branch Please Try again!!!");
+                                deletefilr(fille1id);
+                                deletefilr(file2id);
+                            } 
+                        }
                     }
-                }
-            } 
+                } 
+            }
         }
+        res.redirect("/contribute");
     }
-    res.redirect("/contribute");
 });
 
 ////////////////////////////////////////////
@@ -1360,6 +1366,49 @@ app.get('/shelf',(req,res)=>{
     } catch (error) {
         res.redirect('/');
     } 
+});
+
+
+// error page 
+app.get("/error",function(req,res){
+    var today = new Date();
+    var currentday = today.getDay();
+
+    var options = {
+        weekday : "long",
+        day : "numeric",
+        month : "long"
+    };
+
+    var day = today.toLocaleDateString("en-US",options);
+    try {
+        const token = req.cookies.jwt;
+        const verifyUser =  jwt.verify(token,process.env.SECRET_KEY);
+        console.log(verifyUser);
+
+        User.findById(verifyUser._id,(err,doc)=>{
+            if(!err)
+            {
+                if(doc.admin === 1 )
+                {
+                    res.render("Other/error", {kindofday: day , newListItem: applicationError})
+                    // res.render("Other/save",{curUser : doc,booksstore:booksstore})               
+                }
+                else
+                    res.redirect('/');
+            }
+        });
+    } catch (error) {
+        res.redirect('/');
+    }  
+}); 
+
+
+
+app.get('/:error',(req,res)=>{
+    let query = req.params.error;
+    // console.log(query);
+    res.render("Other/404.ejs");
 });
 
 let port = process.env.PORT;
