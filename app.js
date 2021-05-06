@@ -241,7 +241,7 @@ app.post('/',(req,res)=>{
                 res.redirect('/home');
             }
             else{
-                res.send('<script>alert("Invalid Credentials"); window.location.replace("http://localhost:5000/");</script>');
+                res.send('<script>alert("Invalid Credentials"); window.location.replace("https://wcespace.herokuapp.com/");</script>');
                 return;
                 res.redirect('/');
             }
@@ -294,7 +294,7 @@ app.post('/signup',(req,res)=>{
         else{
             if(doc)
             {
-                res.send('<script> alert("Already Have an account");window.location.replace("http://localhost:5000/signup"); </script>');
+                res.send('<script> alert("Already Have an account");window.location.replace("https://wcespace.herokuapp.com/signup"); </script>');
                 return;              
                 isSigningUp = false;
                 res.redirect('/signup');
@@ -343,7 +343,7 @@ app.post('/signup',(req,res)=>{
                             const FirstName = req.body.fname.charAt(0).toUpperCase()+ req.body.fname.slice(1).toLowerCase();
                                 const LastName = req.body.lname.charAt(0).toUpperCase()+ req.body.lname.slice(1).toLowerCase();
                                 const mailText = " Dear "+ FirstName +" "+ LastName + "\nThank you for showing your interest in WCE SPACE."+
-                                                "\nYour varification link for signing up in WCE SPACE is http://localhost:5000/verify/" + newUser._id +
+                                                "\nYour varification link for signing up in WCE SPACE is https://wcespace.herokuapp.com/verify/" + newUser._id +
                                                 "\nThanks and Regards," +
                                                 "\nPlease do not reply to this e-mail,"+ 
                                                 "this is a system generated email sent from an unattended mail box."
@@ -359,7 +359,7 @@ app.post('/signup',(req,res)=>{
                                         console.log(error);
                                     } else {
                                         console.log('Email sent: ' + info.response);
-                                        res.send('<script> alert("Email is sent in your walchand college id. Please Verify it.");window.location.replace("http://localhost:5000/"); </script>');
+                                        res.send('<script> alert("Email is sent in your walchand college id. Please Verify it.");window.location.replace("https://wcespace.herokuapp.com/"); </script>');
                                         return;
                                     }
                                 }); 
@@ -371,7 +371,7 @@ app.post('/signup',(req,res)=>{
                         //         const FirstName = req.body.fname.charAt(0).toUpperCase()+ req.body.fname.slice(1).toLowerCase();
                         //         const LastName = req.body.lname.charAt(0).toUpperCase()+ req.body.lname.slice(1).toLowerCase();
                         //         const mailText = " Dear "+ FirstName +" "+ LastName + "\nThank you for showing your interest in WCE SPACE."+
-                        //                         "\nYour varification link for signing up in WCE SPACE is http://localhost:5000/verify/" + result._id +
+                        //                         "\nYour varification link for signing up in WCE SPACE is https://wcespace.herokuapp.com/verify/" + result._id +
                         //                         "\nThanks and Regards," +
                         //                         "\nPlease do not reply to this e-mail,"+ 
                         //                         "this is a system generated email sent from an unattended mail box."
@@ -389,11 +389,11 @@ app.post('/signup',(req,res)=>{
                         //             console.log('Email sent: ' + info.response);
                         //             }
                         //         }); 
-                        //         res.send('<script> alert("Email is sent in your walchand college id. Please Verify it.");window.location.replace("http://localhost:5000/"); </script>');
+                        //         res.send('<script> alert("Email is sent in your walchand college id. Please Verify it.");window.location.replace("https://wcespace.herokuapp.com/"); </script>');
                         //         return;
                         //         res.redirect('/otp');
                         //     } else {
-                        //         res.send('<script> alert("Something is wrong , Sorry for inconvenience Please try again"); window.location.replace("http://localhost:5000/signup");</script>');
+                        //         res.send('<script> alert("Something is wrong , Sorry for inconvenience Please try again"); window.location.replace("https://wcespace.herokuapp.com/signup");</script>');
                         //         return;
                         //         console.log("No document matches the provided query.");
                         //         res.redirect('/signup');
@@ -402,7 +402,7 @@ app.post('/signup',(req,res)=>{
                         // })
                         // .catch(err => console.error(`Failed to find document: ${err}`));  
                         //     console.log("Success Part: "+ newUser);
-                        //     res.send('<script> alert("Congratulations!! Account Created");window.location.replace("http://localhost:5000/"); </script>');
+                        //     res.send('<script> alert("Congratulations!! Account Created");window.location.replace("https://wcespace.herokuapp.com/"); </script>');
                         //     // res.send('<script> alert("Please Verify your account in your walchand college id."); </script>');
                         //     return;
                         //     res.redirect('/');
@@ -455,7 +455,7 @@ app.get("/verify/:id",(req,res)=>{
                     }
                 });
             } else {
-                res.send('<script> alert("Invalid link"); window.location.replace("http://localhost:5000/");</script>');
+                res.send('<script> alert("Invalid link"); window.location.replace("https://wcespace.herokuapp.com/");</script>');
                 return;
                 
             }
@@ -477,7 +477,7 @@ app.post("/verify/:id",(req,res)=>{
                 });
                 res.redirect('/');
             } else {
-                res.send('<script> alert("Invalid link"); window.location.replace("http://localhost:5000/");</script>');
+                res.send('<script> alert("Invalid link"); window.location.replace("https://wcespace.herokuapp.com/");</script>');
                 return;
                 res.render('Other/verify',{verifyUserid :0 });
             }
@@ -536,7 +536,7 @@ app.post('/info',(req,res)=>{
         else{
             if(doc)
             {
-                res.send('<script> alert("This username already exists"); window.location.replace("http://localhost:5000/");</script>');
+                res.send('<script> alert("This username already exists"); window.location.replace("https://wcespace.herokuapp.com/");</script>');
                 
                 res.redirect('/');
             }
@@ -605,13 +605,13 @@ app.post('/forget' , (req,res)=>{
                     console.log('Email sent: ' + info.response);
                     }
                 }); 
-                res.send('<script> alert("Mail has been sent to your Walchand Email ID"); window.location.replace("http://localhost:5000/");</script>');
+                res.send('<script> alert("Mail has been sent to your Walchand Email ID"); window.location.replace("https://wcespace.herokuapp.com/");</script>');
                 
                 res.redirect('/');
             }
             else
             {
-                res.send('<script> alert("No such user is available"); window.location.replace("http://localhost:5000/forget");</script>');
+                res.send('<script> alert("No such user is available"); window.location.replace("https://wcespace.herokuapp.com/forget");</script>');
                 
                 res.redirect('/forget');
             }
@@ -663,7 +663,7 @@ app.post('/cpass',(req,res)=>{
                     res.redirect('/home');
                 }
                 else{
-                    res.send('<script>alert("Please Enter Correct Current Password");window.location.replace("http://localhost:5000/cpass"); </script>');
+                    res.send('<script>alert("Please Enter Correct Current Password");window.location.replace("https://wcespace.herokuapp.com/cpass"); </script>');
                     
                     res.redirect('/cpass');
                 }
@@ -1053,7 +1053,7 @@ app.post("/save", ( req , res ) => {
                             } else {
                                 deletefilr(fille1id);
                                 deletefilr(file2id);
-                                res.send('<script>alert("You didnt selected any branch Please Try again!!!");window.location.replace("http://localhost:5000/contribute"); </script>');
+                                res.send('<script>alert("You didnt selected any branch Please Try again!!!");window.location.replace("https://wcespace.herokuapp.com/contribute"); </script>');
                                 return;
                                 
                             } 
