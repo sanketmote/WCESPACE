@@ -212,7 +212,13 @@ app.get('/',(req,res)=>{
         console.log(verifyUser);
 
         User.findById(verifyUser._id,(err,doc)=>{
-            res.redirect('/home');
+            if(verifyUser.admin == 1 )
+                res.redirect('/home');
+            else{
+                res.clearCookie('jwt');
+                req.user.save();
+                res.render('login/index');
+            }
         });
     } catch (error) {
         res.render('login/index');
@@ -340,6 +346,7 @@ app.post('/signup',(req,res)=>{
                                 expires : new Date(Date.now()+1800000),
                                 httpOnly : true
                             });
+
                             const FirstName = req.body.fname.charAt(0).toUpperCase()+ req.body.fname.slice(1).toLowerCase();
                                 const LastName = req.body.lname.charAt(0).toUpperCase()+ req.body.lname.slice(1).toLowerCase();
                                 const mailText = " Dear "+ FirstName +" "+ LastName + "\nThank you for showing your interest in WCE SPACE."+
@@ -359,11 +366,13 @@ app.post('/signup',(req,res)=>{
                                         console.log(error);
                                     } else {
                                         console.log('Email sent: ' + info.response);
+                                        res.clearCookie('jwt');
                                         res.send('<script> alert("Email is sent in your walchand college id. Please Verify it.");window.location.replace("https://wcespace.herokuapp.com/"); </script>');
                                         return;
                                     }
                                 }); 
-                        }
+                                res.clearCookie('jwt');
+                            }
                         //     return User.findOne({ $and:[{User_Email:gmail}] } , {"_id":1})
                         // .then(result => {
                         //     if(result) {
