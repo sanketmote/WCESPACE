@@ -1,0 +1,19 @@
+#include<bits/stdc++.h>
+
+using namespace std;
+
+#define ll long long
+#define mod 1000000007
+#define f first
+#define s second
+#define pb push_back
+
+int main()
+{
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+}
+
+
+
+

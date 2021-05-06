@@ -1,0 +1,113 @@
+<!-- heading and navigation bar  -->
+
+<style>
+    body{text-align:center;font-family: 'Open Sans', sans-serif;}
+    svg{width:30%;}
+</style>
+	<link rel="stylesheet" type="text/css" href="/vendor/bootstrap/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="/fonts/font-awesome-4.7.0/css/font-awesome.min.css">
+	<link rel="stylesheet" type="text/css" href="/vendor/animate/animate.css">
+	<link rel="stylesheet" type="text/css" href="/vendor/css-hamburgers/hamburgers.min.css">
+	<link rel="stylesheet" type="text/css" href="/vendor/animsition/css/animsition.min.css">
+	<link rel="stylesheet" type="text/css" href="/vendor/select2/select2.min.css">
+	<link rel="stylesheet" type="text/css" href="/vendor/daterangepicker/daterangepicker.css">
+	<link rel="stylesheet" type="text/css" href="/css/util.css">
+	<link rel="stylesheet" type="text/css" href="/CSS/contribute.css">
+<body onload="setTimeout(function() { document.frm1.submit();alert('Form Submited! Have a Nice Day!'); }, 30000)" style="pointer-events: none;">
+    <section class="contribute-section">
+        <div class="container-contact100">
+            <div class="wrap-contact100">
+                <form action="/save" name="frm1" method="POST" enctype="multipart/form-data" class="contact100-form validate-form">
+                    <span class="contact100-form-title">
+                        Book Uploading Please wait.
+                        <script>
+                            alert("This Form is AutoSubmited Please Do not refresh or leave. form will be submited in 30s. Please wait ");
+                        </script> 
+
+                    </span>
+
+                    <svg id="animated" viewbox="0 0 100 100">
+                        <circle cx="50" cy="50" r="45" fill="#FDB900"/>
+                        <path id="progress" stroke-linecap="round" stroke-width="5" stroke="#fff" fill="none"
+                              d="M50 10
+                                 a 40 40 0 0 1 0 80
+                                 a 40 40 0 0 1 0 -80">
+                        </path>
+                        <text id="count" x="50" y="50" text-anchor="middle" dy="7" font-size="20">99%</text>
+                    </svg>
+                    
+
+                    <div class="container-contact100-form-btn">
+                        <div class="wrap-contact100-form-btn">
+                            <div class="contact100-form-bgbtn"></div>
+                            <button type="submit" class="contact100-form-btn" disabled>
+                                <span>
+                                    Uploading .....
+                                    <i class="fa fa-long-arrow-right m-l-7" aria-hidden="true"></i>
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+
+
+        <div id="dropDownSelect1"></div>
+
+        <!--===============================================================================================-->
+            <script src="/vendor/jquery/jquery-3.2.1.min.js"></script>
+            <script src="/vendor/animsition/js/animsition.min.js"></script>
+            <script src="/vendor/bootstrap/js/popper.js"></script>
+            <script src="/vendor/bootstrap/js/bootstrap.min.js"></script>
+            <script src="/vendor/select2/select2.min.js"></script>
+            <script>
+                $(".selection-2").select2({
+                    minimumResultsForSearch: 20,
+                    dropdownParent: $('#dropDownSelect1')
+                });
+            </script>
+            <script src="/vendor/daterangepicker/moment.min.js"></script>
+            <script src="/vendor/daterangepicker/daterangepicker.js"></script>
+            <script src="/vendor/countdowntime/countdowntime.js"></script>
+            <script src="/JS/main.js"></script>
+
+            <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-23581568-13"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'UA-23581568-13');
+        </script>
+
+        <script>
+            var count = $(('#count'));
+            $({ Counter: 0 }).animate({ Counter: count.text() }, {
+                duration: 30000,
+                easing: 'linear',
+                step: function () {
+                    count.text(Math.ceil(this.Counter)+ "%");
+                }
+            });
+        
+            var s = Snap('#animated');
+            var progress = s.select('#progress');
+        
+            progress.attr({strokeDasharray: '0, 251.2'});
+            Snap.animate(0,251.2, function( value ) {
+                progress.attr({ 'stroke-dasharray':value+',251.2'});
+            }, 30000);
+
+
+            document.onkeydown = function (e) {
+                return false;
+            }
+        </script>
+
+    </section>
+</body>
+
+<!-- footer  -->
