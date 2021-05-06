@@ -247,6 +247,8 @@ app.post('/',(req,res)=>{
                     
                     res.redirect('/home');
                 } else {
+                    res.send('<script>alert("Please Verify Your Account to login"); window.location.replace("https://wcespace.herokuapp.com/");</script>');
+                    return;
                     res.render('login/index');
                 }
                 
