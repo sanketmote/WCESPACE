@@ -442,13 +442,40 @@ app.get("/verify/:id",(req,res)=>{
     const wrong = "Something is wrong try after some time";
     return User.findOne( {$and: [{ _id: id}]} ,{_id:"1"})
         .then(result => {
+            
+            if(result) {
+                // console.log(result);
+                var query = { "_id":id};
+                User.updateOne({"_id":id},{ admin : 1 } ,(err,doc)=>{
+                    if(err)
+                        console.log("error in updation");
+                    if(doc){
+                        console.log("You are now admin");
+                        res.render('Other/verify',{verifyUserid :0 });
+                    }
+                });
+            } else {
+                res.send('<script> alert("Invalid link"); window.location.replace("http://localhost:5000/");</script>');
+                return;
+                
+            }
+            return result;
+        })
+        .catch(err=> res.render('Other/verify',{verifyUserid : 1}));
+})
+
+app.post("/verify/:id",(req,res)=>{
+    let id = req.params.id;
+    const wrong = "Something is wrong try after some time";
+    return User.findOne( {$and: [{ _id: id}]} ,{_id:"1"})
+        .then(result => {
             if(result) {
                 var query = { "_id":id};
                 User.updateOne({ admin : 1 } ,(err,doc)=>{
                     if(err)
                         console.log("error in updation");
                 });
-                res.render('/');
+                res.redirect('/');
             } else {
                 res.send('<script> alert("Invalid link"); window.location.replace("http://localhost:5000/");</script>');
                 return;
@@ -458,7 +485,6 @@ app.get("/verify/:id",(req,res)=>{
         })
         .catch(err=> res.render('Other/verify',{verifyUserid : 1}));
 })
-
 
 app.post('/otp',(req,res)=>{
     Otp.findOne( {$and: [{ email: curMail},{ otp : req.body.otp }]} , (err,doc)=>{

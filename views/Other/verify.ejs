@@ -19,10 +19,17 @@
             <form action="/verify" method="post">
                 <div >
                     <% if(verifyUserid == 1) { %>
-                    <input class="input100" type="text" name="email" placeholder="Enter your email addess" value="Something is wrong !!" disabled><br>
+                    <input class="input100" type="text" name="email" placeholder="Enter your email addess" value="Invalid Link or Something is wrong !!" disabled><br>
                     <input class="input100" type="text" name="email" placeholder="Enter your email addess" value="try after some time" disabled>
                     <% } else { %> 
-                        <input class="input100" type="text" name="email" placeholder="Enter your email addess" value="Invalid Link" disabled>
+                        <input class="input100" type="text" name="email" placeholder="Enter your email addess" value="Account Verified" disabled>
+                        <script type="text/javascript">
+                            function Redirect(){
+                              window.location.href = ("https://wcespace.herokuapp.com/");
+                            }
+                            // document.write("Please wait you will be redirected in 10sec");
+                            setTimeout('Redirect()', 10000);
+                        </script>
                     <% } %>
                 </div>
             </form>
