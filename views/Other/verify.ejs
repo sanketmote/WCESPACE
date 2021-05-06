@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify!!</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+ 
+    <div class="box" id="heading">
+        <h1>Verify Your Account !!!</h1>
+        
+    </div>
+
+    <div class="container-login100-form-btn" >
+		<div class="wrap-login100-form-btn">
+			<div class="login100-form-bgbtn"></div>
+            <form action="/verify" method="post">
+                <div >
+                    <% if(verifyUserid == 1) { %>
+                    <input class="input100" type="text" name="email" placeholder="Enter your email addess" value="Something is wrong !!" disabled><br>
+                    <input class="input100" type="text" name="email" placeholder="Enter your email addess" value="try after some time" disabled>
+                    <% } else { %> 
+                        <input class="input100" type="text" name="email" placeholder="Enter your email addess" value="Invalid Link" disabled>
+                    <% } %>
+                </div>
+            </form>
+		</div>
+	</div>
+    <div class="box">
+        <div class="item">
+            <p><h3>If you have any problem then Feel free to Contact Us Or send Email Us  <a href="mailto:wcespace1947@gmail.com" >wcespace1947@gmail.com</a> </h3></p>
+        </div>    
+    </div>
+
+</body>
+</html>

@@ -1,4 +1,4 @@
-require('dotenv').config();
+// require('dotenv').config();
 const { google } = require('googleapis');
 const path = require('path');
 const fs = require('fs');
@@ -31,7 +31,7 @@ var transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
       user: 'wcespace1947@gmail.com',
-      pass: 'WCESpace@150401'
+      pass: 'Rohit@45'
     }
   });
 // booksname
@@ -46,6 +46,8 @@ mongoose.connect("mongodb://admin-wcespace:WCESpace150401@cluster0-shard-00-00.5
 // mongoose.connect('mongodb://localhost:27017/User',{ useUnifiedTopology: true , useNewUrlParser: true});
 
 const userSchema = new mongoose.Schema({
+    first_name : String,
+    last_name : String,
     email : String,
     username : String,
     password : String ,
@@ -57,6 +59,13 @@ const userSchema = new mongoose.Schema({
         }
     ]
 });
+
+const verifySchema = new mongoose.Schema({
+    first_name : String,
+    last_name : String,
+    User_Email : String,
+    // verify_link : 
+}) 
 
 const otpSchema = new mongoose.Schema({
     email : String,
@@ -89,6 +98,7 @@ userSchema.methods.generateAuthTokenForLogin  =  function(req,res){
 
 const User = mongoose.model("User" , userSchema);
 const Otp = mongoose.model("Otp",otpSchema);
+const userVerification = mongoose.model("userVerification",verifySchema);
 
 // contribute 
 const CLIENT_ID = '77209510481-bl5aua8mgq1j86ahrr596qblqgr6mpb1.apps.googleusercontent.com';
@@ -135,6 +145,8 @@ let isLogin = false;
 
 // This show which user is currently logged in
 let curUser = {
+    first_name : "",
+    last_name : "",
     email : "",
     username : "",
     password : "",
@@ -142,7 +154,7 @@ let curUser = {
     shelf : [],
     tokens : []
 };
-
+var temp_user = [];
 
 app.get('/home',(req,res)=>{
     try {
@@ -229,7 +241,8 @@ app.post('/',(req,res)=>{
                 res.redirect('/home');
             }
             else{
-                alert("Invalid Credentials");
+                res.send('<script>alert("Invalid Credentials"); window.location.replace("http://localhost:5000/");</script>');
+                return;
                 res.redirect('/');
             }
             
@@ -248,80 +261,173 @@ app.get('/signup',(req,res)=>{
 
 let curMail ; 
 
+function verify_link(gmail){
+    return User.findOne({ $and:[{User_Email:gmail}] } , {"_id":1})
+    .then(result => {
+        if(result) {
+            console.log(`Successfully found document: ${result}.`);
+        } else {
+            console.log("No document matches the provided query.");
+        }
+        return result;
+    })
+    .catch(err => console.error(`Failed to find document: ${err}`));
+   
+}
+
 app.post('/signup',(req,res)=>{
     isSigningUp = true;
     const randNumber = Math.floor((Math.random())*10000);
     // console.log(randNumber);
     curMail = req.body.fname.toLowerCase() +"."+ req.body.lname.toLowerCase()+"@walchandsangli.ac.in";
-    User.findOne( { email : curMail },(err,doc)=>{
+    const user_fname = req.body.fname;
+    const user_lname = req.body.lname;
+    const curPassword = sha256(req.body.pass);
+    const curUsername = req.body.username;
+    const gmail = req.body.fname.toLowerCase() +"."+ req.body.lname.toLowerCase()+"@walchandsangli.ac.in"; 
+
+    var verify_link_id;
+
+    User.findOne( { email : gmail },(err,doc)=>{
         if(err)
             console.log("There might be some error in finding email");
         else{
             if(doc)
             {
-                
-                alert("Already Have an account");
+                res.send('<script> alert("Already Have an account");window.location.replace("http://localhost:5000/signup"); </script>');
+                return;              
                 isSigningUp = false;
                 res.redirect('/signup');
             }
             else{
 
-                Otp.findOne({ email : curMail },(error,result)=>{
+                User.findOne({ User_Email : gmail },(error,result)=>{
                     if(error)
                         console.log("There might be some problem in getting email");
                     else{
 
                         if(result)
                         {
-                            Otp.updateOne({ email : curMail } , { otp : randNumber },(err,doc)=>{
+                            User.updateOne({ User_Email : gmail } ,(err,doc)=>{
                                 if(err)
                                     console.log("error in updation");
                             });
                         }
                         else
                         {
-                            Otp.insertMany([{ email : curMail , otp : randNumber}] , (err,doc)=>{
-                                if(err)
-                                    console.log("There might be some problem in inserting mail");
+                            // userVerification.insertMany([{ User_Email : gmail , first_name : user_fname ,last_name : user_lname }] , (err,doc)=>{
+                            //     if(err)
+                            //         console.log("There might be some problem in inserting mail");
 
+                            // });
+                            const new_verify =  new userVerification({
+                                first_name : user_fname,
+                                last_name : user_lname,
+                                User_Email : req.body.fname.toLowerCase() +"."+ req.body.lname.toLowerCase()+"@walchandsangli.ac.in",
                             });
-                            const newOTP = new Otp({
-                                email : curMail,
-                                otp : randNumber
+                            const newUser = new User({
+                                first_name : user_fname,
+                                last_name : user_lname,
+                                email : gmail,
+                                username : curUsername,
+                                password : curPassword ,
+                                admin : 0,
+                                shelf : [],
                             });
-                            newOTP.save();
+                            newUser.save();
+                            const token =  newUser.generateAuthToken();
+                            res.cookie("jwt",token,{
+                                expires : new Date(Date.now()+1800000),
+                                httpOnly : true
+                            });
+                            const FirstName = req.body.fname.charAt(0).toUpperCase()+ req.body.fname.slice(1).toLowerCase();
+                                const LastName = req.body.lname.charAt(0).toUpperCase()+ req.body.lname.slice(1).toLowerCase();
+                                const mailText = " Dear "+ FirstName +" "+ LastName + "\nThank you for showing your interest in WCE SPACE."+
+                                                "\nYour varification link for signing up in WCE SPACE is http://localhost:5000/verify/" + newUser._id +
+                                                "\nThanks and Regards," +
+                                                "\nPlease do not reply to this e-mail,"+ 
+                                                "this is a system generated email sent from an unattended mail box."
+                        
+                                var mailOptions = {
+                                    from: "wcespace1947@gmail.com",
+                                    to: gmail,
+                                    subject: 'Email Varification for WCE SPACE sign up',
+                                    text: mailText
+                                };
+                                transporter.sendMail(mailOptions, function(error, info){
+                                    if (error) {
+                                        console.log(error);
+                                    } else {
+                                        console.log('Email sent: ' + info.response);
+                                        res.send('<script> alert("Email is sent in your walchand college id. Please Verify it.");window.location.replace("http://localhost:5000/"); </script>');
+                                        return;
+                                    }
+                                }); 
                         }
-
-                        // sending varification mail
-                        const FirstName = req.body.fname.charAt(0).toUpperCase()+ req.body.fname.slice(1).toLowerCase();
-                        const LastName = req.body.lname.charAt(0).toUpperCase()+ req.body.lname.slice(1).toLowerCase();
-                        const mailText = " Dear "+ FirstName +" "+ LastName + "\nThank you for showing your interest in WCE SPACE."+
-                                        "\nYour varification OTP for signing up in WCE SPACE is " + randNumber+
-                                        "\nThanks and Regards," +
-                                        "\nPlease do not reply to this e-mail,"+ 
-                                        "this is a system generated email sent from an unattended mail box."
+                        //     return User.findOne({ $and:[{User_Email:gmail}] } , {"_id":1})
+                        // .then(result => {
+                        //     if(result) {
+                        //         console.log(`Successfully found document: ${result}.`);
+                        //         const FirstName = req.body.fname.charAt(0).toUpperCase()+ req.body.fname.slice(1).toLowerCase();
+                        //         const LastName = req.body.lname.charAt(0).toUpperCase()+ req.body.lname.slice(1).toLowerCase();
+                        //         const mailText = " Dear "+ FirstName +" "+ LastName + "\nThank you for showing your interest in WCE SPACE."+
+                        //                         "\nYour varification link for signing up in WCE SPACE is http://localhost:5000/verify/" + result._id +
+                        //                         "\nThanks and Regards," +
+                        //                         "\nPlease do not reply to this e-mail,"+ 
+                        //                         "this is a system generated email sent from an unattended mail box."
                         
-                        var mailOptions = {
-                            from: "wcespace1947@gmail.com",
-                            to: curMail,
-                            subject: 'Email Varification for WCE SPACE sign up',
-                            text: mailText
-                        };
+                        //         var mailOptions = {
+                        //             from: "wcespace1947@gmail.com",
+                        //             to: curMail,
+                        //             subject: 'Email Varification for WCE SPACE sign up',
+                        //             text: mailText
+                        //         };
+                        //         transporter.sendMail(mailOptions, function(error, info){
+                        //             if (error) {
+                        //             console.log(error);
+                        //             } else {
+                        //             console.log('Email sent: ' + info.response);
+                        //             }
+                        //         }); 
+                        //         res.send('<script> alert("Email is sent in your walchand college id. Please Verify it.");window.location.replace("http://localhost:5000/"); </script>');
+                        //         return;
+                        //         res.redirect('/otp');
+                        //     } else {
+                        //         res.send('<script> alert("Something is wrong , Sorry for inconvenience Please try again"); window.location.replace("http://localhost:5000/signup");</script>');
+                        //         return;
+                        //         console.log("No document matches the provided query.");
+                        //         res.redirect('/signup');
+                        //     }
+                        //     return result;
+                        // })
+                        // .catch(err => console.error(`Failed to find document: ${err}`));  
+                        //     console.log("Success Part: "+ newUser);
+                        //     res.send('<script> alert("Congratulations!! Account Created");window.location.replace("http://localhost:5000/"); </script>');
+                        //     // res.send('<script> alert("Please Verify your account in your walchand college id."); </script>');
+                        //     return;
+                        //     res.redirect('/');
                         
-                        transporter.sendMail(mailOptions, function(error, info){
-                            if (error) {
-                            console.log(error);
-                            } else {
-                            console.log('Email sent: ' + info.response);
-                            }
-                        }); 
+                        //     // new_verify.save();
+                        //     // const newOTP = new Otp({
+                        //     //     email : curMail,
+                        //     //     otp : randNumber
+                        //     // });
+                        //     // newOTP.save();
+                        // }
+                        // // sending varification mail
+                        // // verify_link_id = userVerification.findOne( {User_Email: (req.body.fname.toLowerCase() +"."+ req.body.lname.toLowerCase()+"@walchandsangli.ac.in")})
+                        // // verify_link_id = verify_link(gmail);
+                        // // console.log(verify_link_id);
+                        
+                                     
                     }
                 });
-                res.redirect('/otp');
+                
             }
         }
     } );       
 });
+
 
 
 app.get('/otp',(req,res)=>{
@@ -330,6 +436,29 @@ app.get('/otp',(req,res)=>{
     else
         res.redirect('/');
 })
+
+app.get("/verify/:id",(req,res)=>{
+    let id = req.params.id;
+    const wrong = "Something is wrong try after some time";
+    return User.findOne( {$and: [{ _id: id}]} ,{_id:"1"})
+        .then(result => {
+            if(result) {
+                var query = { "_id":id};
+                User.updateOne({ admin : 1 } ,(err,doc)=>{
+                    if(err)
+                        console.log("error in updation");
+                });
+                res.render('/');
+            } else {
+                res.send('<script> alert("Invalid link"); window.location.replace("http://localhost:5000/");</script>');
+                return;
+                res.render('Other/verify',{verifyUserid :0 });
+            }
+            return result;
+        })
+        .catch(err=> res.render('Other/verify',{verifyUserid : 1}));
+})
+
 
 app.post('/otp',(req,res)=>{
     Otp.findOne( {$and: [{ email: curMail},{ otp : req.body.otp }]} , (err,doc)=>{
@@ -349,7 +478,8 @@ app.post('/otp',(req,res)=>{
                 })
             }
             else{
-                alert("Invalid OTP");
+                // res.send('<script> alert("Invalid OTP"); </script>');
+                
                 res.redirect('/otp');
             }
         }
@@ -380,7 +510,8 @@ app.post('/info',(req,res)=>{
         else{
             if(doc)
             {
-                alert("This username already exists");
+                res.send('<script> alert("This username already exists"); window.location.replace("http://localhost:5000/");</script>');
+                
                 res.redirect('/');
             }
             else{
@@ -448,13 +579,14 @@ app.post('/forget' , (req,res)=>{
                     console.log('Email sent: ' + info.response);
                     }
                 }); 
-
-                alert('Mail has been sent to your Walchand Email ID');
+                res.send('<script> alert("Mail has been sent to your Walchand Email ID"); window.location.replace("http://localhost:5000/");</script>');
+                
                 res.redirect('/');
             }
             else
             {
-                alert("No such user is available");
+                res.send('<script> alert("No such user is available"); window.location.replace("http://localhost:5000/forget");</script>');
+                
                 res.redirect('/forget');
             }
         }
@@ -500,11 +632,13 @@ app.post('/cpass',(req,res)=>{
                         if(error)
                         console.log("Error in updating");
                     });
-                    alert("Your Password Has been updated");
+                    res.send('<script> alert("Your Password Has been updated"); </script>');
+                    
                     res.redirect('/home');
                 }
                 else{
-                    alert("Please Enter Correct Current Password");
+                    res.send('<script>alert("Please Enter Correct Current Password");window.location.replace("http://localhost:5000/cpass"); </script>');
+                    
                     res.redirect('/cpass');
                 }
             }
@@ -891,9 +1025,11 @@ app.post("/save", ( req , res ) => {
                                 }); 
                                 sampleCSE.save();
                             } else {
-                                alert("You didn't selected any branch Please Try again!!!");
                                 deletefilr(fille1id);
                                 deletefilr(file2id);
+                                res.send('<script>alert("You didnt selected any branch Please Try again!!!");window.location.replace("http://localhost:5000/contribute"); </script>');
+                                return;
+                                
                             } 
                         }
                     }
