@@ -237,14 +237,19 @@ app.post('/',(req,res)=>{
         else{
             if(doc)
             {
-                const token =  doc.generateAuthTokenForLogin();
-
-                res.cookie("jwt",token,{
-                    expires : new Date(Date.now()+1800000),
-                    httpOnly : true,
-                });
+                // console.log(doc.admin);
+                if(doc.admin == 1){
+                    const token =  doc.generateAuthTokenForLogin();
+                    res.cookie("jwt",token,{
+                        expires : new Date(Date.now()+1800000),
+                        httpOnly : true,
+                    });
+                    
+                    res.redirect('/home');
+                } else {
+                    res.render('login/index');
+                }
                 
-                res.redirect('/home');
             }
             else{
                 res.send('<script>alert("Invalid Credentials"); window.location.replace("https://wcespace.herokuapp.com/");</script>');
