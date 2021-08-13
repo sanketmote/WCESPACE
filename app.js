@@ -368,7 +368,7 @@ app.post('/signup',(req,res)=>{
                                             admin : 0,
                                             shelf : [],
                                         });
-                                        newUser.save();
+                                        await newUser.save();
                                         const token =  newUser.generateAuthToken();
                                         res.cookie("jwt",token,{
                                             expires : new Date(Date.now()+1800000),
@@ -389,7 +389,7 @@ app.post('/signup',(req,res)=>{
                                             subject: 'Email Varification for WCE SPACE sign up',
                                             text: mailText
                                         };
-                                        transporter.sendMail(mailOptions, function(error, info){
+                                        await transporter.sendMail(mailOptions, function(error, info){
                                             if (error) {
                                                 console.log(error);
                                             } else {
