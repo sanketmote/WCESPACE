@@ -216,7 +216,8 @@ app.get('/',(req,res)=>{
                 res.redirect('/home');
             else{
                 res.clearCookie('jwt');
-                console.log(req.user);
+                console.log(res);
+                console.log('\n => \n' + req);
                 // req.user.save();
                 res.render('login/index');
             }
@@ -246,6 +247,8 @@ app.post('/',(req,res)=>{
                         expires : new Date(Date.now()+1800000),
                         httpOnly : true,
                     });
+
+                    console.log(res);
                     
                     res.redirect('/home');
                 } else {
@@ -277,7 +280,7 @@ app.get('/signup',(req,res)=>{
                 res.redirect('/home');
             else{
                 res.clearCookie('jwt');
-                req.user.save();
+                // res.user.save();
                 res.render('login/signup');
             }
         });
