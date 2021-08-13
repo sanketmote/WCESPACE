@@ -280,12 +280,12 @@ app.get('/signup',(req,res)=>{
                 res.redirect('/home');
             else{
                 res.clearCookie('jwt');
-                // res.user.save();
+                // req.user.save();
                 res.render('login/signup');
             }
         });
     } catch(e){
-        console.log('Error in Signup');
+        console.log('Error in Signup + '+e);
         res.render('login/index');
     } 
 })
@@ -625,7 +625,7 @@ app.get('/forget' , (req,res)=>{
             res.redirect('/');
             else{
                 res.clearCookie('jwt');
-                req.user.save();
+                // req.user.save();
                 res.render('login/forget');
             }
         });
