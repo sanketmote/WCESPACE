@@ -216,11 +216,13 @@ app.get('/',(req,res)=>{
                 res.redirect('/home');
             else{
                 res.clearCookie('jwt');
-                req.user.save();
+                console.log(req.user);
+                // req.user.save();
                 res.render('login/index');
             }
         });
     } catch (error) {
+        console.log('Error in / => ' + error);
         res.render('login/index');
     }
 }); 
