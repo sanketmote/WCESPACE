@@ -286,7 +286,7 @@ app.get('/signup',(req,res)=>{
         });
     } catch(e){
         console.log('Error in Signup + '+e);
-        res.render('login/index');
+        res.render('login/signup');
     } 
 })
 
