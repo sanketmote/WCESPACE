@@ -112,7 +112,7 @@ const userVerification = mongoose.model("userVerification",verifySchema);
 // contribute 
 const CLIENT_ID = '77209510481-bl5aua8mgq1j86ahrr596qblqgr6mpb1.apps.googleusercontent.com';
 const CLIENT_SECRENT = 'VZVjdR-gXIYDd1AmGCPAikt7';
-const REDIRECT_URI = 'https://developers.google.com/oauthplayground';
+const REDIRECT_URI = 'https%3A%2F%2Fdevelopers.google.com%2Foauthplayground&client_id=77209510481-bl5aua8mgq1j86ahrr596qblqgr6mpb1.apps.googleusercontent.com&client_secret=VZVjdR-gXIYDd1AmGCPAikt7&scope=&grant_type=authorization_code';
 const REFRESH_TOKEN = '1//04m4nOQenv9UpCgYIARAAGAQSNwF-L9Ir16liWPaawKXdlt70gvFoFgvd3vGp2NMGyHcmWaBKMNjgL4qvDzraGN4-apLZXMwelqo';
 const email = "wcespace1947@gmail.com";
 const apis = google.getSupportedAPIs();
