@@ -3,4 +3,6 @@ Backend/config/config.json
 package-lock.json
 npm-debug.log
 .DS_Store
+credentials.json
+token.json
 *.env
