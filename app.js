@@ -2,7 +2,7 @@
 const { google } = require('googleapis');
 const path = require('path');
 const fs = require('fs');
-const { auth } = require('googleapis/build/src/apis/abusiveexperiencereport');
+// const { auth } = require('googleapis/build/src/apis/abusiveexperiencereport');
 const config = require('./Backend/config/config.json');
 const mongodbutil = require('./Backend/config/database')
 const express  = require('express');
@@ -13,14 +13,14 @@ const bodyparser = require("body-parser");
 const upload = require('express-fileupload'); 
 const app = express();
 
-var alert = require('alert');
+// var alert = require('alert');
 const sha256 = require('sha256');
 const ejs = require('ejs');
 const mongoose = require('mongoose');
 
-const { forEach } = require('./books');
+// const { forEach } = require('./books');
 var nodemailer = require('nodemailer');
-const { resolve } = require('path');
+// const { resolve } = require('path');
 
 app.use(bodyparser.urlencoded({extended:true}));
 app.use(express.static("public"));
