@@ -29,11 +29,21 @@ app.use(upload());
 app.use(cookieParser());
 app.set('view engine' , 'ejs');
 
+let emailid = process.env.email;
+if(emailid == NULL || emailid == ""){
+    emailid = config.email.emailid;
+}
+
+let password = process.env.password;
+if(password == NULL || password == ""){
+    password = config.email.password;
+}
+
 var transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-      user: config.email.emailid,
-      pass: config.email.password
+      user: emailid,
+      pass: password
     }
   });
 // booksname
@@ -44,7 +54,7 @@ var file2id;
 var applicationError = "No Error ";
 // connecting database to url
 // mongoose.connect("mongodb+srv://admin-wcespace:WCESpace150401@cluster0.5htuy.mongodb.net/User",{useUnifiedTopology: true,useNewUrlParser: true});
-mongoose.connect(config.db.url,{useUnifiedTopology: true,useNewUrlParser: true});
+// mongoose.connect(config.db.url,{useUnifiedTopology: true,useNewUrlParser: true});
 mongodbutil.connectToServer(function (err, client) {
     if (err) { 
       console.log(err); 

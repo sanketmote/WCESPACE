@@ -5,8 +5,12 @@ let _db
 module.exports = {
   connectToServer: async function (callback) {
     try {
+      let url = process.env.url;
+      if(url == NULL || url == ""){
+        url = config.db.url;
+      }
       console.log("Connecting to DataBase...");
-      await mongoose.connect(config.db.url, {
+      await mongoose.connect(url, {
         useNewUrlParser: true,
         useUnifiedTopology: true,
       }, (err, client) => {
