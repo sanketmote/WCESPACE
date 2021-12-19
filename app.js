@@ -4,7 +4,7 @@ const {OAuth2Client} = require('google-auth-library');
 const path = require('path');
 const fs = require('fs');
 // const { auth } = require('googleapis/build/src/apis/abusiveexperiencereport');
-const config = require('./Backend/config/config.json');
+// const config = require('./Backend/config/config.json');
 const mongodbutil = require('./Backend/config/database')
 const express  = require('express');
 const jwt = require('jsonwebtoken');
@@ -30,12 +30,12 @@ app.use(cookieParser());
 app.set('view engine' , 'ejs');
 
 let emailid = process.env.email;
-if(emailid == NULL || emailid == ""){
+if(emailid == null || emailid == ""){
     emailid = config.email.emailid;
 }
 
 let password = process.env.password;
-if(password == NULL || password == ""){
+if(password == null || password == ""){
     password = config.email.password;
 }
 
