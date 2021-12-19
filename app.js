@@ -30,16 +30,16 @@ app.use(cookieParser());
 app.set('view engine', 'ejs');
 
 let emailid = process.env.email;
-if (emailid == null || emailid == "") {
-    emailid = config.email.emailid;
-}
-if (process.env.SECRET_KEY == null || process.env.SECRET_KEY == "") {
-    process.env.SECRET_KEY = config.key;
-}
+// if (emailid == null || emailid == "") {
+//     emailid = config.email.emailid;
+// }
+// if (process.env.SECRET_KEY == null || process.env.SECRET_KEY == "") {
+//     process.env.SECRET_KEY = config.key;
+// }
 let password = process.env.password;
-if (password == null || password == "") {
-    password = config.email.password;
-}
+// if (password == null || password == "") {
+//     password = config.email.password;
+// }
 
 let transporter = nodemail.createTransport({
     host: 'smtp.gmail.com',

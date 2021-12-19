@@ -2,9 +2,9 @@
 const mongoose = require('mongoose');
 
 let url = process.env.url;
-if(url == null || url == ""){
-    url = config.db.url;
-}
+// if(url == null || url == ""){
+//     url = config.db.url;
+// }
 let _db
 module.exports = {
   connectToServer: async function (callback) {
