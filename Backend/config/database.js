@@ -1,4 +1,4 @@
-config = require("./config.json");
+// config = require("./config.json");
 const mongoose = require('mongoose');
 
 let url = process.env.url;
