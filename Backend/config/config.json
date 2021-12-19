@@ -1,0 +1,9 @@
+{
+    "db":{
+        "url":"mongodb://admin-wcespace:WCESpace150401@cluster0-shard-00-00.5htuy.mongodb.net:27017,cluster0-shard-00-01.5htuy.mongodb.net:27017,cluster0-shard-00-02.5htuy.mongodb.net:27017/User?ssl=true&replicaSet=atlas-rps98p-shard-0&authSource=admin&retryWrites=true&w=majority"
+    },
+    "email":{
+        "emailid":"wcespace1947@gmail.com",
+        "password":"Pavan@Sanket2021"
+    }
+}

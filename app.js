@@ -3,7 +3,8 @@ const { google } = require('googleapis');
 const path = require('path');
 const fs = require('fs');
 const { auth } = require('googleapis/build/src/apis/abusiveexperiencereport');
-
+const config = require('./Backend/config/config.json');
+const mongodbutil = require('./Backend/config/database')
 const express  = require('express');
 const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
@@ -30,8 +31,8 @@ app.set('view engine' , 'ejs');
 var transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-      user: 'wcespace1947@gmail.com',
-      pass: 'Pavan@Sanket2021'
+      user: config.email.emailid,
+      pass: config.email.password
     }
   });
 // booksname
@@ -42,7 +43,15 @@ var file2id;
 var applicationError = "No Error ";
 // connecting database to url
 // mongoose.connect("mongodb+srv://admin-wcespace:WCESpace150401@cluster0.5htuy.mongodb.net/User",{useUnifiedTopology: true,useNewUrlParser: true});
-mongoose.connect("mongodb://admin-wcespace:WCESpace150401@cluster0-shard-00-00.5htuy.mongodb.net:27017,cluster0-shard-00-01.5htuy.mongodb.net:27017,cluster0-shard-00-02.5htuy.mongodb.net:27017/User?ssl=true&replicaSet=atlas-rps98p-shard-0&authSource=admin&retryWrites=true&w=majority",{useUnifiedTopology: true,useNewUrlParser: true});
+mongoose.connect(config.db.url,{useUnifiedTopology: true,useNewUrlParser: true});
+mongodbutil.connectToServer(function (err, client) {
+    if (err) { 
+      console.log(err); 
+      console.log("Network Error: " + err.message); 
+    }  else console.log("Database connected!");
+    // start the rest of your app here
+  
+  });
 // mongoose.connect('mongodb://localhost:27017/User',{ useUnifiedTopology: true , useNewUrlParser: true});
 
 const userSchema = new mongoose.Schema({
