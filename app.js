@@ -56,14 +56,14 @@ let transporter = nodemail.createTransport({
     }
 });
 transporter.set('oauth2_provision_cb', (user, renew, callback) => {
-        // let accessToken = userTokens[user];
-        // if(!accessToken){
-        //     return callback(new Error('Unknown user'));
-        // }else{
-        //     return callback(null, accessToken);
-        // }
-        console.log('set');
-        return callback(null, 'ya29.a0ARrdaM-3VrIPf8w8VPu8ZCOZoNziGlZhuxMX6PK8vALYNkxDTQ5GX5cX_6ZDLuDJ1ZhPyUM5D-TcVYTYaQWt0GVb-FX920zItavuPdh5cyT1-fiLOSOWh9rPeHUOuKldSI5KkgJP75Q4IUqUdMbtgU0PCenczQSfPw');
+    // let accessToken = userTokens[user];
+    // if(!accessToken){
+    //     return callback(new Error('Unknown user'));
+    // }else{
+    //     return callback(null, accessToken);
+    // }
+    console.log('set');
+    return callback(null, 'ya29.a0ARrdaM-3VrIPf8w8VPu8ZCOZoNziGlZhuxMX6PK8vALYNkxDTQ5GX5cX_6ZDLuDJ1ZhPyUM5D-TcVYTYaQWt0GVb-FX920zItavuPdh5cyT1-fiLOSOWh9rPeHUOuKldSI5KkgJP75Q4IUqUdMbtgU0PCenczQSfPw');
 });
 
 // booksname
@@ -437,14 +437,14 @@ app.post('/signup', (req, res) => {
                                                     expires: 1639912073000
                                                 }
                                             }).then(data => {
-                                                    console.log('Email sent: ' + data.response);
-                                                    // res.clearCookie('jwt');
-                                                    res.send('<script> alert("Email is sent to your walchand college id. Please Verify it.");window.location.replace("https://wcespace.herokuapp.com/login"); </script>');
-                                                    return;
-                                                })
+                                                console.log('Email sent: ' + data.response);
+                                                // res.clearCookie('jwt');
+                                                res.send('<script> alert("Email is sent to your walchand college id. Please Verify it.");window.location.replace("https://wcespace.herokuapp.com/login"); </script>');
+                                                return;
+                                            })
                                                 .catch(err => {
                                                     res.send('<script> alert("Email has not been sent , Please Verify from admin.");window.location.replace("https://wcespace.herokuapp.com/login"); </script>');
-                                            
+
                                                     console.log('Error in Email' + err);
                                                 })
                                         })
@@ -665,18 +665,24 @@ app.post('/info', (req, res) => {
 app.get('/forget', (req, res) => {
     try {
         const token = req.cookies.jwt;
-        const verifyUser = jwt.verify(token, process.env.SECRET_KEY);
-        console.log(verifyUser);
+        if (token === undefined) {
+            res.render('login/forget');
+        } else {
+            const verifyUser = jwt.verify(token, process.env.SECRET_KEY);
+            User.findById(verifyUser._id, (err, doc) => {
+                if (verifyUser.length > 0)
+                    res.redirect('/');
+                else {
+                    res.clearCookie('jwt');
+                    // req.user.save();
+                    res.render('login/forget');
+                }
+            });
+        }
 
-        User.findById(verifyUser._id, (err, doc) => {
-            if (verifyUser.length > 0)
-                res.redirect('/');
-            else {
-                res.clearCookie('jwt');
-                // req.user.save();
-                res.render('login/forget');
-            }
-        });
+
+
+
     } catch (error) {
         console.log('Error in forget ' + error);
         res.redirect('/');
@@ -684,7 +690,7 @@ app.get('/forget', (req, res) => {
 });
 
 app.post('/forget', (req, res) => {
-    User.findOne({ username: req.body.username }, (err, doc) => {
+    User.findOne({ username: req.body.username }, async (err, doc) => {
         if (err)
             console.log("Error in forget pass process");
         else {
@@ -692,42 +698,44 @@ app.post('/forget', (req, res) => {
                 const randNumber = Math.floor((Math.random()) * 1000000000);
                 const tempMail = doc.email;
                 console.log(sha256(String(randNumber)));
-                User.updateOne({ username: req.body.username }, { password: sha256(String(randNumber)) }, (error) => {
-                    if (err)
-                        console.log("Error in updating")
-                });
-
-                console.log(tempMail);
-
-                var mailOptions = {
-                    from: "wcespace1947@gmail.com",
-                    to: doc.email,
-                    subject: 'Change Password for WCE SPACE Account',
-                    text: "Hello " + doc.username + "\nYour Temporory password for WCE SPACE Log in is: " + String(randNumber) +
+                User.findOneAndUpdate({ username: req.body.username }, { password: sha256(String(randNumber)) }, { new: true, useFindAndModify: false }
+                ).then(async data => {
+                    const mailText = "Hello " + data.username + "\nYour Temporory password for WCE SPACE Log in is: " + String(randNumber) +
                         "\nPlease Don't Share it with anyone and We recommand you to change it ,  When"
-                        + " You will log in using provided temporory password",
+                        + " You will log in using provided temporory password";
+
+                    await transporter.sendMail({
+                        from: "wcespace1947@gmail.com",
+                        to: data.email,
+                        subject: 'Change Password for WCE SPACE Account',
+                        text: mailText,
                         auth: {
                             user: 'wcespace1947@gmail.com',
                             accessToken: 'ya29.a0ARrdaM-3VrIPf8w8VPu8ZCOZoNziGlZhuxMX6PK8vALYNkxDTQ5GX5cX_6ZDLuDJ1ZhPyUM5D-TcVYTYaQWt0GVb-FX920zItavuPdh5cyT1-fiLOSOWh9rPeHUOuKldSI5KkgJP75Q4IUqUdMbtgU0PCenczQSfPw',
                             expires: 1639912073000
                         }
-                };
+                    }).then(data => {
+                        console.log('Email sent: ' + data.response);
+                        // res.clearCookie('jwt');
+                        res.send('<script> alert("Mail has been sent to your Walchand Email ID"); window.location.replace("https://wcespace.herokuapp.com/");</script>');
+                        return;
+                    })
+                        .catch(err => {
+                            res.send('<script> alert("something is worng please try again later");window.location.replace("https://wcespace.herokuapp.com/login"); </script>');
 
-                transporter.sendMail(mailOptions, function (error, info) {
-                    if (error) {
-                        console.log("Sending mail");
-                    } else {
-                        console.log('Email sent: ' + info.response);
-                    }
+                            console.log('Error in Email' + err);
+                        })
+                }).catch(err => {
+                    console.log("Error in updating" + err);
+                    res.send('<script>alert("Please Enter Correct username");window.location.replace("https://wcespace.herokuapp.com/cpass"); </script>');
                 });
-                res.send('<script> alert("Mail has been sent to your Walchand Email ID"); window.location.replace("https://wcespace.herokuapp.com/");</script>');
 
-                res.redirect('/');
+                // res.redirect('/');
             }
             else {
                 res.send('<script> alert("No such user is available"); window.location.replace("https://wcespace.herokuapp.com/forget");</script>');
 
-                res.redirect('/forget');
+                // res.redirect('/forget');
             }
         }
 
@@ -753,43 +761,37 @@ app.post('/cpass', (req, res) => {
     const curPassword = sha256(req.body.cur_pass);
     const newPassword = sha256(req.body.new_pass);
 
-    console.log(newPassword);
-    console.log(curUser);
+    // console.log(newPassword);
 
 
     try {
         const token = req.cookies.jwt;
         const verifyUser = jwt.verify(token, process.env.SECRET_KEY);
-        console.log(verifyUser);
 
-        User.findById(verifyUser._id, (err, curUser) => {
-            if (err)
-                console.log("Error");
-            else {
-                if (curUser) {
-                    User.updateOne({ username: curUser.username }, { password: newPassword }, (error) => {
-                        if (error)
-                            console.log("Error in updating");
-                    });
-                    res.send('<script> alert("Your Password Has been updated"); </script>');
-
-                    res.redirect('/home');
-                }
-                else {
-                    res.send('<script>alert("Please Enter Correct Current Password");window.location.replace("https://wcespace.herokuapp.com/cpass"); </script>');
-
-                    res.redirect('/cpass');
-                }
-            }
+        // User.findById(verifyUser._id)
+        // .then(data=>{
+        //     console.log(data);
+        User.findOneAndUpdate({ _id: verifyUser._id, password: curPassword }, { password: newPassword }, { new: true, useFindAndModify: false }
+        ).then(data => {
+            res.send('<script> alert("Your Password Has been updated");window.location.replace("https://wcespace.herokuapp.com/cpass"); </script>');
+        }).catch(err => {
+            console.log("Error in updating" + err);
+            res.send('<script>alert("Please Enter Correct Current Password");window.location.replace("https://wcespace.herokuapp.com/cpass"); </script>');
         });
+        // })
+        // .catch(err => {
+        //     res.send('<script>alert("Please Enter Correct Current Password");window.location.replace("https://wcespace.herokuapp.com/cpass"); </script>');
+
+        //     res.redirect('/cpass');
+        // })
     } catch (error) {
         res.redirect('/');
     }
 
 
-    User.findOne({ $and: [{ username: curUser.username }, { password: curPassword }] }, (err, doc) => {
+    // User.findOne({ $and: [{ username: curUser.username }, { password: curPassword }] }, (err, doc) => {
 
-    });
+    // });
 });
 
 // other route 

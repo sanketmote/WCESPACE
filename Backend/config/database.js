@@ -13,6 +13,7 @@ module.exports = {
       await mongoose.connect(url, {
         useNewUrlParser: true,
         useUnifiedTopology: true,
+        returnDocument: 'after',
       }, (err, client) => {
         console.log("Almost Connected to DataBase");
         // _db = client.db("organmanagement")
