@@ -73,8 +73,7 @@ var fille1id;
 var file2id;
 var applicationError = "No Error ";
 // connecting database to url
-// mongoose.connect("mongodb+srv://admin-wcespace:WCESpace150401@cluster0.5htuy.mongodb.net/User",{useUnifiedTopology: true,useNewUrlParser: true});
-// mongoose.connect(config.db.url,{useUnifiedTopology: true,useNewUrlParser: true});
+
 mongodbutil.connectToServer(function (err, client) {
     if (err) {
         console.log(err);
