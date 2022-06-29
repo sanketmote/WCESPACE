@@ -1,8 +1,13 @@
-// require('dotenv').config();
+if (process.env.online === undefined) {
+    require('dotenv').config();
+}
+
 const { google } = require('googleapis');
 const { OAuth2Client } = require('google-auth-library');
 const path = require('path');
 const fs = require('fs');
+const axios = require('axios').default;
+
 // const { auth } = require('googleapis/build/src/apis/abusiveexperiencereport');
 // const config = require('./Backend/config/config.json');
 const mongodbutil = require('./Backend/config/database')
@@ -41,30 +46,6 @@ let password = process.env.password;
 //     password = config.email.password;
 // }
 
-let transporter = nodemail.createTransport({
-    host: 'smtp.gmail.com',
-    service: 'gmail',
-    port: 465,
-    secure: true,
-    auth: {
-        type: 'OAuth2',
-        user: 'wcespace1947@gmail.com',
-        clientId: '77209510481-bl5aua8mgq1j86ahrr596qblqgr6mpb1.apps.googleusercontent.com',
-        clientSecret: 'VZVjdR-gXIYDd1AmGCPAikt7',
-        accessToken: 'ya29.a0ARrdaM-3VrIPf8w8VPu8ZCOZoNziGlZhuxMX6PK8vALYNkxDTQ5GX5cX_6ZDLuDJ1ZhPyUM5D-TcVYTYaQWt0GVb-FX920zItavuPdh5cyT1-fiLOSOWh9rPeHUOuKldSI5KkgJP75Q4IUqUdMbtgU0PCenczQSfPw',
-        expires: 1639914601641
-    }
-});
-transporter.set('oauth2_provision_cb', (user, renew, callback) => {
-    // let accessToken = userTokens[user];
-    // if(!accessToken){
-    //     return callback(new Error('Unknown user'));
-    // }else{
-    //     return callback(null, accessToken);
-    // }
-    console.log('set');
-    return callback(null, 'ya29.a0ARrdaM-3VrIPf8w8VPu8ZCOZoNziGlZhuxMX6PK8vALYNkxDTQ5GX5cX_6ZDLuDJ1ZhPyUM5D-TcVYTYaQWt0GVb-FX920zItavuPdh5cyT1-fiLOSOWh9rPeHUOuKldSI5KkgJP75Q4IUqUdMbtgU0PCenczQSfPw');
-});
 
 // booksname
 var filename;
@@ -138,6 +119,9 @@ userSchema.methods.generateAuthTokenForLogin = function (req, res) {
 const User = mongoose.model("User", userSchema);
 const Otp = mongoose.model("Otp", otpSchema);
 const userVerification = mongoose.model("userVerification", verifySchema);
+
+
+// email verification
 
 // contribute 
 const CLIENT_ID = '77209510481-bl5aua8mgq1j86ahrr596qblqgr6mpb1.apps.googleusercontent.com';
@@ -308,6 +292,9 @@ app.post('/', (req, res) => {
 
 app.get('/signup', (req, res) => {
     try {
+        // User.findOneAndDelete({email: 'pratik.raut@walchandsangli.ac.in'},(err, doc) => {
+        //     console.log(err, doc);
+        // });
         const token = req.cookies.jwt;
         const verifyUser = jwt.verify(token, process.env.SECRET_KEY);
         console.log(verifyUser);
@@ -406,47 +393,21 @@ app.post('/signup', (req, res) => {
 
                                     await newUser.save()
                                         .then(data => {
-                                            // const token =  newUser.generateAuthToken();
-                                            // res.cookie("jwt",token,{
-                                            //     expires : new Date(Date.now()+1800000),
-                                            //     httpOnly : true
-                                            // });
-                                            // console.log("hello3");
                                             const FirstName = req.body.fname.charAt(0).toUpperCase() + req.body.fname.slice(1).toLowerCase();
                                             const LastName = req.body.lname.charAt(0).toUpperCase() + req.body.lname.slice(1).toLowerCase();
-                                            const mailText = " Dear " + FirstName + " " + LastName + "\nThank you for showing your interest in WCE SPACE." +
-                                                "\nYour varification link for signing up in WCE SPACE is https://wcespace.herokuapp.com/verify/" + data._id +
-                                                "\nThanks and Regards," +
-                                                "\nPlease do not reply to this e-mail," +
-                                                "this is a system generated email sent from an unattended mail box."
-                                            var mailOptions = {
-                                                from: "wcespace1947@gmail.com",
-                                                to: gmail,
-                                                subject: 'Email Varification for WCE SPACE sign up',
-                                                text: mailText
-                                            };
-                                            console.log("hello4");
-                                            transporter.sendMail({
-                                                from: "wcespace1947@gmail.com",
-                                                to: gmail,
-                                                subject: 'Email Varification for WCE SPACE sign up',
-                                                text: mailText,
-                                                auth: {
-                                                    user: 'wcespace1947@gmail.com',
-                                                    accessToken: 'ya29.a0ARrdaM-3VrIPf8w8VPu8ZCOZoNziGlZhuxMX6PK8vALYNkxDTQ5GX5cX_6ZDLuDJ1ZhPyUM5D-TcVYTYaQWt0GVb-FX920zItavuPdh5cyT1-fiLOSOWh9rPeHUOuKldSI5KkgJP75Q4IUqUdMbtgU0PCenczQSfPw',
-                                                    expires: 1639912073000
-                                                }
-                                            }).then(data => {
-                                                console.log('Email sent: ' + data.response);
-                                                // res.clearCookie('jwt');
-                                                res.send('<script> alert("Email is sent to your walchand college id. Please Verify it.");window.location.replace("https://wcespace.herokuapp.com/login"); </script>');
+                                            const mailText = "Dear " + FirstName + " " + LastName + "\nThank you for showing your interest in WCE SPACE." +
+                                                "\nYour varification link for signing up in WCE SPACE is https://wcespace.herokuapp.com/verify/" + data._id + 
+                                                "\nThanks and Regards, \nWCESpace and Team\n" +
+                                                "\n\nPlease do not reply to this e-mail," +
+                                                "\n\nthis is a system generated email sent from an unattended mail box."
+                                            var hostlink = process.env.maillink + "?email=" + gmail + "&subject=Email Varification for WCE SPACE sign up&body=" + mailText;
+                                            
+                                            axios.post(encodeURI(hostlink)).then((_)=>{
+                                                res.send('<script> alert("Email is sent to your walchand college id '+ gmail +'. Please Verify it.");window.location.replace("https://wcespace.herokuapp.com/"); </script>');
                                                 return;
+                                            }).catch((err)=>{
+                                                res.send('<script> alert("Email has not been sent , Please Verify from admin.");window.location.replace("https://wcespace.herokuapp.com/"); </script>');
                                             })
-                                                .catch(err => {
-                                                    res.send('<script> alert("Email has not been sent , Please Verify from admin.");window.location.replace("https://wcespace.herokuapp.com/login"); </script>');
-
-                                                    console.log('Error in Email' + err);
-                                                })
                                         })
                                         .catch(err => {
                                             console.log('Error in signup with database connection => ' + err);
@@ -456,62 +417,6 @@ app.post('/signup', (req, res) => {
                                     console.log('Error in adding data and sending Email => ' + e);
                                 }
                             }
-                            //     return User.findOne({ $and:[{User_Email:gmail}] } , {"_id":1})
-                            // .then(result => {
-                            //     if(result) {
-                            //         console.log(`Successfully found document: ${result}.`);
-                            //         const FirstName = req.body.fname.charAt(0).toUpperCase()+ req.body.fname.slice(1).toLowerCase();
-                            //         const LastName = req.body.lname.charAt(0).toUpperCase()+ req.body.lname.slice(1).toLowerCase();
-                            //         const mailText = " Dear "+ FirstName +" "+ LastName + "\nThank you for showing your interest in WCE SPACE."+
-                            //                         "\nYour varification link for signing up in WCE SPACE is https://wcespace.herokuapp.com/verify/" + result._id +
-                            //                         "\nThanks and Regards," +
-                            //                         "\nPlease do not reply to this e-mail,"+ 
-                            //                         "this is a system generated email sent from an unattended mail box."
-
-                            //         var mailOptions = {
-                            //             from: "wcespace1947@gmail.com",
-                            //             to: curMail,
-                            //             subject: 'Email Varification for WCE SPACE sign up',
-                            //             text: mailText
-                            //         };
-                            //         transporter.sendMail(mailOptions, function(error, info){
-                            //             if (error) {
-                            //             console.log(error);
-                            //             } else {
-                            //             console.log('Email sent: ' + info.response);
-                            //             }
-                            //         }); 
-                            //         res.send('<script> alert("Email is sent in your walchand college id. Please Verify it.");window.location.replace("https://wcespace.herokuapp.com/"); </script>');
-                            //         return;
-                            //         res.redirect('/otp');
-                            //     } else {
-                            //         res.send('<script> alert("Something is wrong , Sorry for inconvenience Please try again"); window.location.replace("https://wcespace.herokuapp.com/signup");</script>');
-                            //         return;
-                            //         console.log("No document matches the provided query.");
-                            //         res.redirect('/signup');
-                            //     }
-                            //     return result;
-                            // })
-                            // .catch(err => console.error(`Failed to find document: ${err}`));  
-                            //     console.log("Success Part: "+ newUser);
-                            //     res.send('<script> alert("Congratulations!! Account Created");window.location.replace("https://wcespace.herokuapp.com/"); </script>');
-                            //     // res.send('<script> alert("Please Verify your account in your walchand college id."); </script>');
-                            //     return;
-                            //     res.redirect('/');
-
-                            //     // new_verify.save();
-                            //     // const newOTP = new Otp({
-                            //     //     email : curMail,
-                            //     //     otp : randNumber
-                            //     // });
-                            //     // newOTP.save();
-                            // }
-                            // // sending varification mail
-                            // // verify_link_id = userVerification.findOne( {User_Email: (req.body.fname.toLowerCase() +"."+ req.body.lname.toLowerCase()+"@walchandsangli.ac.in")})
-                            // // verify_link_id = verify_link(gmail);
-                            // // console.log(verify_link_id);
-
-
                         }
                     });
 
@@ -584,7 +489,6 @@ app.post("/verify/:id", (req, res) => {
 app.post('/otp', (req, res) => {
     Otp.findOne({ $and: [{ email: curMail }, { otp: req.body.otp }] }, (err, doc) => {
         if (err) {
-            // console.log("error Otp validation");
             res.redirect("/");
         }
         else {
@@ -597,7 +501,6 @@ app.post('/otp', (req, res) => {
                 })
             }
             else {
-                // res.send('<script> alert("Invalid OTP"); </script>');
 
                 res.redirect('/otp');
             }
@@ -923,10 +826,7 @@ async function generatePublicurl(fileid, filedata) {
                 })
                 .catch(console.error);
         }
-        // else 
-        // console.log("Somthing is Wrong");
-        // console.log(booksstore);
-
+        
     } catch (error) {
         console.log(error.message);
     }
@@ -937,7 +837,6 @@ async function generatePublicurl(fileid, filedata) {
 // below function is a  function 
 async function uploadFile(mimetype, bookname, filedata) {
     var bookname1 = 'dcbook.pdf';
-    // console.log(bookname,bookname1);
     try {
         const response = await drive.files.create({
             requestBody: {
@@ -1009,12 +908,6 @@ app.post('/contribute', (req, res) => {
 
 
     dir = './public/books';
-    // if (!fs.existsSync(dir)){
-    //     fs.mkdirSync(dir);
-    // } else {
-    //     fs.rmdirSync(dir, { recursive: true });
-    //     fs.mkdirSync(dir);
-    // }
     booksstore.branch = req.body.branch;
     booksstore.year = req.body.year;
     booksstore.bookname = req.body.bookname;
@@ -1585,7 +1478,6 @@ app.get("/error", function (req, res) {
             if (!err) {
                 if (doc.admin === 1) {
                     res.render("Other/error", { kindofday: day, newListItem: applicationError })
-                    // res.render("Other/save",{curUser : doc,booksstore:booksstore})               
                 }
                 else
                     res.redirect('/');
@@ -1600,7 +1492,6 @@ app.get("/error", function (req, res) {
 
 app.get('/:error', (req, res) => {
     let query = req.params.error;
-    // console.log(query);
     res.render("Other/404.ejs");
 });
 
