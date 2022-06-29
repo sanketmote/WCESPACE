@@ -16,7 +16,6 @@ module.exports = {
         returnDocument: 'after',
       }, (err, client) => {
         console.log("Almost Connected to DataBase");
-        // _db = client.db("organmanagement")
         return callback(err)
       })
     } catch (e) {
